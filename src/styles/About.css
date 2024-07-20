@@ -1,0 +1,26 @@
+.aboutContainer {
+    background-color: #e0ffff;
+    padding: 50px 20px;
+    margin: 40px 0;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 40px auto;
+  }
+  
+  .aboutContainer h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0ffff;
+    display: inline-block;
+    padding-bottom: 10px;
+  }
+  
+  .aboutTxt {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+  }
+  
+  .aboutSubTxt {
+    font-size: 1em;
+  }
+  
