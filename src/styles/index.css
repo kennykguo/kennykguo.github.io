@@ -4,14 +4,39 @@ html {
   margin: 0;
   padding: 0;
   background-color: #ffffff;
-  font-family: 'SF Mono', monospace;
-  color: #000;
+  /* font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; */
+  font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  /* font-family: Garamond, 'Times New Roman', Times, serif; */
+  /* font-family: Baskerville, 'Times New Roman', Times, serif; */
+  /* font-family: Didot, serif; */
+  /* font-family: 'Hoefler Text', 'Times New Roman', Times, serif; */
+  /* font-family: Constantia, 'Times New Roman', Times, serif; */
+  /* font-family: Bookman, 'Times New Roman', Times, serif; */
+  /* font-family: Perpetua, 'Times New Roman', Times, serif; */
+  /* font-family: Utopia, 'Times New Roman', Times, serif; */
+  /* font-family: 'Merriweather', serif; */
+
+  /* font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; */
+  color: #113946;
+  line-height: 1.5;
 }
 
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: 100%;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+}
+
+a {
+  color: #BCA37F;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #113946;
 }

@@ -1,16 +1,20 @@
 .header {
-    background-color: #61dafb;
-    padding: 20px;
-    border-bottom: 2px solid #61dafb;
+    background-color: #2C3639;
+    padding: 20px 0;
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
   }
   
   .header h1 {
-    font-size: 2.5em;
+    font-size: 3rem;
     margin: 0;
+    color: #FFF2D8;
   }
   
   .header p {
-    font-size: 1.2em;
+    font-size: 1rem;
     margin: 10px 0 0;
+    color: #EAD7BB;
   }
-  

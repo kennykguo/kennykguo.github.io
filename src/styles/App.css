@@ -1,11 +1,12 @@
 .App {
     text-align: center;
-    padding: 20px;
   }
   
   .error {
-    color: red;
-    font-size: 1.2em;
+    color: #C69B7B;
+    font-size: 1rem;
     margin-top: 20px;
+    padding: 10px;
+    background-color: rgba(198, 155, 123, 0.1);
+    border-radius: 8px;
   }
-  

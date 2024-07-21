@@ -1,94 +1,51 @@
-:root {
-    /* Single color implementation */
-    --limegreen: hsl(163, 72%, 41%);
-    --brightred: hsl(356, 69%, 56%);
-    --facebook: hsl(208, 92%, 53%);
-    --twitter: hsl(203, 89%, 53%);
-    --instagram-start: hsl(37, 97%, 70%);
-    --instagram-end: hsl(329, 70%, 58%);
-    --youtube: hsl(348, 97%, 39%);
-    
-    /* Linear gradient */
-    --toggle-bg-start: hsl(210, 78%, 56%);
-    --toggle-bg-end: hsl(146, 68%, 55%);
-    --toggle: hsl(230, 22%, 74%);
-    
-    /* Standard colors */
-    --bg: hsl(0, 0%, 100%);
-    --top-bg: hsl(225, 100%, 98%);
-    --card: hsl(227, 47%, 96%);
-    --card-hover: hsl(229, 14%, 77%);
-    --text1: hsl(0, 0%, 1%);
-    --text2: hsl(230, 17%, 14%);
-}
-
 .projects-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 20px; /* Space between cards */
-    padding: 20px; /* Add padding around the container */
-    background-color: var(--bg);
-    justify-items: center; /* Center items horizontally within each column */
-    align-items: center; /* Center items vertically within each row */
-}
-
-.project {
-    background-color: var(--card);
-    padding: 20px; /* Add padding inside the card */
-    border-radius: 10px;
-    width: 600px; /* Fixed width */
-    height: 400px; /* Fixed height */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-align: left; /* Align text to the left */
-    box-sizing: border-box; /* Include padding and border in width and height */
-}
-
-.project:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.project h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    color: var(--text1);
-    text-align: left; /* Align text to the left */
-}
-
-.project p {
-    font-size: 1em;
-    margin-bottom: 10px;
-    color: var(--text1);
-    text-align: left; /* Align text to the left */
-}
-
-.project a {
-    text-decoration: none;
-    color: var(--facebook); /* Use Facebook color for links */
-    font-weight: bold;
-}
-
-.project a:hover {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    padding: 40px 20px;
+    background-color: #ffffff;
+    text-align: top;
+  }
+  
+  .project {
+    background-color: #FFF2D8;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(188, 163, 127, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .project:hover {
+    transform: translateY(-5px) scale(1.001);
+    box-shadow: 0 20px 40px rgba(188, 163, 127, 0.2);
+  }
+  
+  .project h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0px;
+    color: #113946;
+  }
+  
+  .project p{
+    font-size: 1rem;
+    color: #113946;
+    align-content: left;
+  }
+  
+  
+  .project li {
+    font-size: 1rem;
+    color: #113946;
+    align-content: left;
+    text-align: left;
+  }
+  
+  .project a {
+    color: #BCA37F;
+    font-weight: 600;
+  }
+  
+  .project a:hover {
+    color: #113946;
     text-decoration: underline;
-}
-
-.project ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    color: var(--text1);
-    text-align: left; /* Align text to the left */
-}
-
-.project li {
-    margin-bottom: 10px;
-    color: var(--text1);
-    text-align: left; /* Align text to the left */
-}
-
-.project em {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text2); /* Use dark text color for emphasis */
-    text-align: left; /* Align text to the left */
-}
+  }

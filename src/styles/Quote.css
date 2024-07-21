@@ -1,0 +1,34 @@
+.daily-quote-card {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #BCA37F;
+    border-radius: 65px;
+    box-shadow: 0 10px 30px rgba(188, 163, 127, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .daily-quote-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(188, 163, 127, 0.2);
+  }
+
+  .daily-quote-card blockquote {
+    margin: 0;
+    padding: 0;
+    border-left: 5px solid #969696;
+    padding-left: 1rem;
+  }
+  
+  .daily-quote-card p {
+    font-size: 1.3rem;
+    font-style: italic;
+    margin-bottom: 1rem;
+    color: #000000;
+  }
+  
+  .daily-quote-card footer {
+    text-align: right;
+    font-size: 1rem;
+    color: #000000;
+  }

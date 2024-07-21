@@ -1,6 +1,18 @@
 .home {
-    padding: 2rem;
-    background-color: #f4f4f4;
+    padding: 4rem 2rem;
+    background-color: #ffffff;
     text-align: center;
   }
   
+  .home h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #113946;
+  }
+  
+  .home p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: #BCA37F;
+  }
