@@ -6,5 +6,5 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.cjs',
   },
-  base: '/kennykguo.github.io/',
+  base: '/', // Deploy to the root
 })
