@@ -6,4 +6,5 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.cjs',
   },
+  base: '/personal-website/', // Replace <repository-name> with your GitHub repo name
 })
