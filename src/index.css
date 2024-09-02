@@ -1,0 +1,19 @@
+@import '@fontsource/share-tech-mono';
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+  font-family: 'Share Tech Mono', monospace;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    font-family: 'Share Tech Mono', monospace;
+  }
+}

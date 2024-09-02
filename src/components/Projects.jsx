@@ -1,5 +1,4 @@
 import React from 'react';
-import '../styles/Projects.css';
 
 const projects = [
     {
@@ -68,25 +67,28 @@ const projects = [
 ];
 
 const Projects = () => {
-  return (
-    <div className="projects-container">
-      {projects.map((project, index) => (
-        <div className="project" key={index}>
-          <h2>
-            {project.title} 
-            <a href={project.link} target="_blank" rel="noopener noreferrer">🔗</a>
-          </h2>
-          <p><em>{project.date}</em></p>
-          <p>{project.technologies.join(', ')}</p>
-          <ul>
-            {project.details.map((detail, idx) => (
-              <li key={idx}>{detail}</li>
-            ))}
-          </ul>
+    return (
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8 text-white-500">Projects</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {projects.map((project, index) => (
+            <div key={index} className="border border-gray-700 p-6 rounded-lg shadow-md hover:shadow-white-700 transition duration-300">
+              <h3 className="text-xl font-semibold mb-2 text-white-500">
+                {project.title}
+                <a href={project.link} target="_blank" rel="noopener noreferrer" className="ml-2 text-gray-400 hover:text-white-500">🔗</a>
+              </h3>
+              <p className="text-sm mb-2 text-gray-400">{project.date}</p>
+              <p className="text-sm mb-4 text-gray-400">{project.technologies.join(', ')}</p>
+              <ul className="list-disc list-inside">
+                {project.details.map((detail, idx) => (
+                  <li key={idx} className="text-sm mb-1">{detail}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
-  );
-};
-
-export default Projects;
+      </section>
+    );
+  };
+  
+  export default Projects;

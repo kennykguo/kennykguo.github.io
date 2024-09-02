@@ -1,21 +1,22 @@
+// App.jsx
 import React from 'react';
-import Header from './components/Header.jsx';
-import Project from './components/Projects.jsx';
-import About from './components/About.jsx';
-import Contact from './components/Contact.jsx';
-import Quote from './components/Quote.jsx';
-import './styles/App.css';
+import About from './components/About';
+import Projects from './components/Projects';
+import Contact from './components/Contact';
+import AsciiArt from './components/AsciiArt';
+import './index.css';
+import Experience from './components/Experience';
 
 const App = () => {
   return (
-    <div className="App">
-      <Header />
-      <About />
-      <main>
-        <Project />
-      </main>
-      <Quote />
-      <Contact />
+    <div className="bg-gray-900 text-gray-300 min-h-screen font-mono relative">
+      <AsciiArt />
+      <div className="container mx-auto px-4 py-8 relative z-10">
+        <About />
+        <Experience/>
+        <Projects />
+        <Contact />
+      </div>
     </div>
   );
 };
