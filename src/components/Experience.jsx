@@ -4,7 +4,7 @@ const experiences = [
   {
     title: "ML Research Engineer Intern",
     company: "SmartMate",
-    location: "New York, NY",
+    location: "London, UK",
     date: "Jun. 2024 -- Sept. 2024",
     details: [
       "Revamped the implementations of 30+ research papers for American Sign Language (ASL) detection, utilizing a range of architectures in PyTorch including 3DCNNs, Bi-directional LSTMs, and Encoder-Decoder Transformers.",
@@ -36,29 +36,30 @@ const experiences = [
 ];
 
 const Experience = () => {
-  return (
-    <section className="mb-16">
-      <h2 className="text-3xl font-bold mb-8 text-white-500">Experience</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {experiences.map((exp, index) => (
-          <div key={index} className="border border-gray-700 p-6 rounded-lg shadow-md hover:shadow-white-700 transition duration-300">
-            <h3 className="text-xl font-semibold mb-2 text-white-500">
-              {exp.title}
-            </h3>
-            <p className="text-sm mb-2 text-gray-400">
-              {exp.company}, {exp.location}
-            </p>
-            <p className="text-sm mb-4 text-gray-400">{exp.date}</p>
-            <ul className="list-disc list-inside">
-              {exp.details.map((detail, idx) => (
-                <li key={idx} className="text-sm mb-1">{detail}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
+    return (
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8 text-white-500">Experience</h2>
+        <div className="grid grid-cols-1 gap-8">
+          {experiences.map((exp, index) => (
+            <div key={index} className="border border-gray-700 p-6 rounded-lg shadow-md hover:shadow-white-700 transition duration-300">
+              <h3 className="text-xl font-semibold mb-2 text-white-500">
+                {exp.title}
+              </h3>
+              <p className="text-sm mb-2 text-gray-400">
+                {exp.company}, {exp.location}
+              </p>
+              <p className="text-sm mb-4 text-gray-400">{exp.date}</p>
+              <ul className="list-disc ml-4">
+                {exp.details.map((detail, idx) => (
+                  <li key={idx} className="text-sm mb-1">{detail}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  };
+  
 
 export default Experience;

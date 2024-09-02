@@ -11,8 +11,7 @@ const About = () => {
             <br/>
             <br/>
           <h2 className="text-4xl font-semibold mb-4 text-white-700">About Me</h2>
-          <p className="mb-4">I am a Computer Engineering student at the University of Toronto with a passion for machine learning and full stack development.</p>
-          <p>I enjoy creating innovative solutions to complex problems and am always looking for new challenges.</p>
+          <p className="mb-4">I am a Computer Engineering student at the University of Toronto. At the moment, I am currently interested in deep learning, and low level optimizations involving GPUs. In the future, I would like to explore areas such as reverse engineering, cybersecurity, and firmware. </p>
         </div>
       </div>
     </section>

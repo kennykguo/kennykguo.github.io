@@ -35,35 +35,38 @@ const projects = [
         ]
     },
     {
-        title: "Project 4 ",
-        link: "#",
-        technologies: ["Tech1", "Tech2"],
-        date: "Date",
-        details: [
-            "Detail 1",
-            "Detail 2"
+        "title": "mini-torch",
+        "link": "https://github.com/kennykguo/mini-torch",
+        "technologies": ["C++", "CUDA"],
+        "date": "Jul. 2024 -- Aug. 2024",
+        "details": [
+            "Developed a lightweight C++ library for building and training neural networks.",
+            "Optimized CUDA kernel functions for matrix multiplication, achieving a 2x speedup in matrix operations through effective memory coalescing and tiling techniques."
         ]
     },
     {
-        title: "Project 5 ",
-        link: "#",
-        technologies: ["Tech1", "Tech2"],
-        date: "Date",
-        details: [
-            "Detail 1",
-            "Detail 2"
+        "title": "Trash Talk",
+        "link": "https://github.com/kennykguo/utrahacks2024",
+        "technologies": ["Arduino", "Flask", "HTML", "CSS"],
+        "date": "Jan. 2024",
+        "details": [
+            "Developed an Arduino-based waste sorting system that accurately categorizes trash into garbage or compostable materials, achieving a sorting accuracy of approximately 85%.",
+            "Integrated a web interface with real-time data visualization, reducing manual sorting time by 50% for users.",
+            "Implemented hardware components such as an ultrasonic sensor and moisture sensor, optimizing the sorting mechanism to handle up to 30 items per minute."
         ]
     },
     {
-        title: "Project 6 ",
-        link: "#",
-        technologies: ["Tech1", "Tech2"],
-        date: "Date",
-        details: [
-            "Detail 1",
-            "Detail 2"
+        "title": "FlowSense",
+        "link": "https://github.com/kennykguo/flow-sense",
+        "technologies": ["React", "Django", "PostgreSQL", "GPT-3.5"],
+        "date": "Aug. 2024",
+        "details": [
+            "Developed a reading tool that enhances productivity by integrating LLM API-based word definitions and inline note-taking, reducing research time by 40%.",
+            "Successfully preserved the original report formatting in PDF processing, maintaining 95% accuracy in layout retention.",
+            "Built and deployed within a 36-hour period during Hack the 6ix 2024, achieving a functional MVP with time to spare for feature enhancements."
         ]
     }
+    
 ];
 
 const Projects = () => {
