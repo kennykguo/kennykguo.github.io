@@ -4,9 +4,6 @@ title: veri-nn implementation
 date: 2025-01-05
 ---
 
-### Introduction
-Having taken a course at the University of Toronto on digital design (ECE241), I thought this was a chance for an ambitious project in deep learning (a small subsection of ML, but now more prominent with the effect of LLMs and diffusion models at this moment).
-
 ### Motivation
 You might ask: why would anybody ever build a neural network in Verilog? There are countless high-level implementations, and dealing with transistors is not only a complete waste of time, but it sounds like a complete head-banging idea, considering that a small mistake could lead to hours of debugging. There really is no argument from me on that, and you are completely right. My main driving motivation, outside of simply technical pursuit, was to appreciate why we have high-level implementations for a lot of tasks today. In other words, why do people program in C instead of Assembly, and Python instead of C? Outside of painstakingly difficult Verilog code to write, I found this project very fun! 
 
