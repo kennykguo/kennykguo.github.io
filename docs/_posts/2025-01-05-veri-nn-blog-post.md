@@ -5,11 +5,9 @@ date: 2025-01-05
 ---
 
 ### Introduction
-
-Having taken a course at the University of Toronto on digital design (ECE241), I thought it be the best use of time to make my final project in a field that I was really interested in at the time: deep learning (a small subsection of ML, but now more prominent with the effect of LLMs and diffusion models at this moment).
+Having taken a course at the University of Toronto on digital design (ECE241), I thought this was a chance for an ambitious project in deep learning (a small subsection of ML, but now more prominent with the effect of LLMs and diffusion models at this moment).
 
 ### Motivation
-
 You might ask: why would anybody ever build a neural network in Verilog? There are countless high-level implementations, and dealing with transistors is not only a complete waste of time, but it sounds like a complete head-banging idea, considering that a small mistake could lead to hours of debugging. There really is no argument from me on that, and you are completely right. My main driving motivation, outside of simply technical pursuit, was to appreciate why we have high-level implementations for a lot of tasks today. In other words, why do people program in C instead of Assembly, and Python instead of C? Outside of painstakingly difficult Verilog code to write, I found this project very fun! 
 
 Since the neural net is quite literally embedded into the FPGA through means of a compiled circuit, there are no overheads that you might have while training in Python and PyTorch, which may be due to operating system scheduling or file reading. What makes this project very interesting is that you can actively see how the imported neural net classifies the drawn digit *as* the user is drawing it, which was very cool to show some niche cases where you could draw a 0, and then draw a line through the middle, making it an 8, and then the classification mechanism (HEX0), displaying the updated prediction.
