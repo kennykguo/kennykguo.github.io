@@ -1,9 +1,9 @@
 ---
-title: Deep Learning Library From Scratch
-start_date: 2023-12-01
-end_date: 2024-06-01
+title: deep-learning-from-scratch
 technologies: ["C/C++", "CUDA", "Python", "PyTorch", "NumPy"]
 link: https://github.com/kennykguo/deep-learning-from-scratch
+start_date: 2023-12-01
+end_date: Present
 ---
 
 - Spearheaded Neural Networks, CNNs, RNNs, LSTMs, and Transformers from scratch using OOP principles, increasing code implementation efficiency by 50%.

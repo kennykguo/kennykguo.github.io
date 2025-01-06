@@ -1,9 +1,9 @@
 ###########
 # site.title
 
-title: ""
+title: "Personal Website"
 description: A minimal Jekyll theme
-url: ""
+url: "https://kennykguo.github.io"  # Replace with your GitHub Pages URL
 host: 0.0.0.0
 
 
@@ -37,3 +37,5 @@ exclude:
 collections:
   projects:
     output: false  # No individual pages for project entries
+
+highlighter: rouge

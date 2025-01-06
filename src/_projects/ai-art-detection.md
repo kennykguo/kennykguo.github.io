@@ -1,7 +1,7 @@
 ---
-title: AI-Generated Art Detection
+title: ai-art-detection
 link: https://github.com/kennykguo/ai-generated-art-detection
-technologies: ["Python", "PyTorch"]
+technologies: ["Python", "PyTorch", "NumPy"]
 start_date: 2023-12-01
 end_date: 2024-06-01
 ---
