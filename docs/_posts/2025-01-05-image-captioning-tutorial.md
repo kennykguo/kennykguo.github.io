@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Image captioning tutorial
+title: image captioning tutorial
 date: 2025-01-05
 ---
 
