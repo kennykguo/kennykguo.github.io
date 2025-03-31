@@ -1,0 +1,2 @@
+in docs
+bundle exec jekyll serve
