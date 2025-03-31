@@ -533,6 +533,30 @@ grid-template-columns: 1fr; /* Switch to 1 column on smaller screens */
 }
 }
 
+
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(600px, 3fr)); /* Adjusts the number of columns based on screen size */
+    gap: 5px; /* Adds space between images */
+    margin: 5px 0;
+  }
+
+
+.card {
+    background-color: #fff; /* White background for a clean look */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Prevents overflow of image */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+    width: 100%; /* Ensures cards take up full width of their grid cell */
+    max-width: 600px; /* Limits max width of the card */
+}
+
+.card img {
+width: 100%; /* Makes images fill the card */
+height: auto; /* Maintains aspect ratio */
+}
+
 // Keep at bottom!
 .ascii-art {
     all: unset;
