@@ -1,23 +1,21 @@
 ---
 # Main styling
 ---
-/* ET Book Regular */
-@font-face {
-  font-family: "et-book";
-  src: url("/fonts/et-book-roman-line-figures.eot");
-  src: url("/fonts/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), url("/fonts/et-book-roman-line-figures.woff") format("woff"), url("/fonts/et-book-roman-line-figures.ttf") format("truetype"), url("/fonts/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
+
+/* ==========================================================================
+   FONTS
+   ========================================================================== */
 
 /* ET Book Italic */
 @font-face {
   font-family: "et-book";
-  src: url("/fonts/et-book-display-italic-old-style-figures.eot");
-  src: url("/fonts/et-book-display-italic-old-style-figures.eot?#iefix") format("embedded-opentype"), url("/fonts/et-book-display-italic-old-style-figures.woff") format("woff"), url("/fonts/et-book-display-italic-old-style-figures.ttf") format("truetype"), url("/fonts/et-book-display-italic-old-style-figures.svg#etbookromanosf") format("svg");
+  src: url("/fonts/et-book-roman-line-figures.eot");
+  src: url("/fonts/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), 
+       url("/fonts/et-book-roman-line-figures.woff") format("woff"), 
+       url("/fonts/et-book-roman-line-figures.ttf") format("truetype"), 
+       url("/fonts/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
   font-weight: normal;
-  font-style: italic;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -25,15 +23,19 @@
 @font-face {
   font-family: "et-book";
   src: url("/fonts/et-book-bold-line-figures.eot");
-  src: url("/fonts/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), url("/fonts/et-book-bold-line-figures.woff") format("woff"), url("/fonts/et-book-bold-line-figures.ttf") format("truetype"), url("/fonts/et-book-bold-line-figures.svg#etbookromanosf") format("svg");
+  src: url("/fonts/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), 
+       url("/fonts/et-book-bold-line-figures.woff") format("woff"), 
+       url("/fonts/et-book-bold-line-figures.ttf") format("truetype"), 
+       url("/fonts/et-book-bold-line-figures.svg#etbookromanosf") format("svg");
   font-weight: 600;
-  font-style: bold;
+  font-style: normal;
   font-display: swap;
 }
 
-/**************************************
-$CRITICAL CSS
-/**************************************/
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+
 * {
   text-rendering: optimizeLegibility;
   font-kerning: auto;
@@ -45,521 +47,603 @@ html {
 }
 
 body {
-    -webkit-font-smoothing: antialiased;
-    background: #fffff8;
-    color: #111;
-    counter-reset: sidenote-counter;
-    font-family: 'Lucida Console', monospace;
-    height: 100%;
-    margin: 0 auto;
-    max-width: 1440px;
-    padding-left: 12.5%;
-    padding-top: 5rem;
-    width: 87.5%;
+  -webkit-font-smoothing: antialiased;
+  background: #fffff8;
+  color: #111;
+  counter-reset: sidenote-counter;
+  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", 
+               "Book Antiqua", Georgia, serif;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 1440px;
+  padding-left: 12.5%;
+  padding-top: 5rem;
+  width: 87.5%;
 }
+
+/* ==========================================================================
+   TYPOGRAPHY
+   ========================================================================== */
 
 h1,h2,h3,h4,h5,h6 {
-    font-style: bold;
-    font-weight: normal;
+    font-family: inherit;
+    font-style: normal; /* was "bold" - invalid */
+    font-weight: bold;   /* moved from font-style */
     line-height: 1;
     margin: 0;
-    // text-transform: capitalize;
-}
-h1 { 
-    font-size: 3.2rem; 
-    font-style: normal; 
-    margin-top: 2.6rem; 
-}
-h2 { font-size: 2.2rem; 
-    margin-top: 4.2rem; 
-}
-h3 { font-size: 1.7rem; 
-    margin-top: 2.6rem; 
 }
 
-p,table,blockquote,pre,img,hr,.mini-note,ul li,ol li {
-    // box-sizing: border-box;
-    max-width: 70%;
-    line-height: 1.6;
-    font-size: 16px;
+h1 { 
+  font-size: 3.2rem; 
+  margin-top: 2.6rem; 
 }
+
+h2 { 
+  font-size: 2.2rem; 
+  margin-top: 4.2rem; 
+}
+
+h3 { 
+  font-size: 1.7rem; 
+  margin-top: 2.6rem; 
+}
+
+p, table, blockquote, pre, img, hr, .mini-note, ul li, ol li {
+  max-width: 70%;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
 .MathJax_SVG_Display {
-    max-width: 55% !important;
+  max-width: 55% !important;
 }
-li ul li, li ol li {
-    max-width: 100%;
+
+li ul li, 
+li ol li {
+  max-width: 100%;
 }
 
 p {
-    position: relative;
+  position: relative;
 }
 
-a,a:visited {
-    color: #111;
-    font-size: 16px;
-    &:hover {
-        color: rgb(220, 40, 40);
-    }
+a, a:visited {
+  color: #111;
+  font-size: 16px;
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: rgb(220, 40, 40);
+  }
 }
 
 blockquote {
-    font-style: italic;
-    margin: 0;
-    padding: 2rem 0 2rem 4rem;
-}
-
-blockquote footer {
+  font-style: italic;
+  margin: 0;
+  padding: 2rem 0 2rem 4rem;
+  
+  footer {
     font-style: normal;
     font-size: 1.1rem;
     text-align: right;
+  }
 }
 
+/* ==========================================================================
+   LAYOUT COMPONENTS
+   ========================================================================== */
+
 figure {
-    align-items: flex-start;
-    display: flex;
-    margin: 0;
-    padding: 0;
-    position: relative;
+  align-items: flex-start;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  position: relative;
 }
 
 hr {
-    background: #111;
-    border: 0;
-    height: 1px;
-    margin: 4rem 0;
-    width: 100%;
+  background: #111;
+  border: 0;
+  height: 1px;
+  margin: 4rem 0;
+  width: 100%;
 }
 
 pre {
-    font-size: 80%;
-    margin: 0;
-    padding: 1rem;
-    overflow-x: auto;
+  font-size: 80%;
+  margin: 0;
+  padding: 1rem;
+  overflow-x: auto;
 }
 
 code {
-    font-size: 80%;
+  font-family: 'Lucida Console', Monaco, 'Courier New', monospace;
+  font-size: 80%;
 }
 
 img {
-    height: auto;
-    margin-right: 4rem;
-    width: 100%;
+  height: auto;
+  margin-right: 4rem;
+  width: 100%;
 }
 
-/**************************************
-    $DEFAULT ELEMENTS
-/**************************************/
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+
 table {
-    border-collapse: separate;
-    border-spacing: 1.5rem .5rem;
-    margin: 0 6rem 0 -1.5rem;
-    text-align: left;
-    width: 100%;
-
-    th, td {
-        font-weight: bold;
-        padding: 0;
-
-        &:not(:first-child) {
-            text-align: right;
-        }
+  th, td {
+    padding: 0;
+    
+    &:not(:first-child) {
+      text-align: right;
     }
-
-    thead th {
-        border-bottom: 1px solid #111;
-    }
+  }
+  
+  th {
+    font-weight: bold; /* Only headers are bold */
+  }
+  
+  td {
+    font-weight: normal; /* Data cells are normal weight */
+  }
+  
+  thead th {
+    border-bottom: 1px solid #111;
+  }
 }
 
-/**************************************
-    $DEFAULT CLASSES
-/**************************************/
-/*p*/.subtitle {
-    font-size: 1.8rem;
-    font-style: italic;
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.subtitle {
+  font-size: 1.8rem;
+  font-style: italic;
 }
 
-/*p*/.sans {
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
-    letter-spacing: .03em;
+.sans {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+  letter-spacing: 0.03em;
 }
 
-/*span*/.caps {
-    font-variant: small-caps;
+.caps {
+  font-variant: small-caps;
 }
 
-/*span*/.italics {
-    font-style: italic;
+.italics {
+  font-style: italic;
 }
 
-/*span*/.marginnote,
-/*span*/.sidenote,
+.mini-note {
+  display: block;
+  font-size: 80%;
+  font-style: italic;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ==========================================================================
+   SIDENOTES & MARGIN NOTES
+   ========================================================================== */
+
+.marginnote,
+.sidenote,
 figcaption {
+  font-size: 80%;
+  left: calc(100% + 4rem);
+  line-height: 1.3rem;
+  max-width: 400px;
+  padding-top: 1rem;
+  position: absolute;
+  top: 0;
+  width: 50%;
+}
+
+.sidenote {
+  &:before {
+    content: counter(sidenote-counter) " ";
+    font-family: et-book;
+    position: relative;
+    top: -0.5rem;
+    vertical-align: baseline;
+  }
+}
+
+.sidenote-number {
+  counter-increment: sidenote-counter;
+  
+  &:after {
+    content: counter(sidenote-counter);
+    font-family: et-book;
     font-size: 80%;
-    left: calc(100% + 4rem);
-    line-height: 1.3rem;
-    max-width: 400px;
-    padding-top: 1rem;
-    position: absolute;
-    top: 0;
-    width: 50%;
-}
-
-/*span*/.sidenote {
-    &:before {
-        content: counter(sidenote-counter) " ";
-        font-family: et-book-roman-old-style;
-        position: relative;
-        top: -0.5rem;
-        vertical-align: baseline;
-    }
-}
-
-/*span*/.sidenote-number {
-    counter-increment: sidenote-counter;
-
-    &:after {
-        content: counter(sidenote-counter);
-        font-family: et-book-roman-old-style;
-        font-size: 80%;
-        left: 0.1rem;
-        position: relative;
-        top: -0.5rem;
-        vertical-align: baseline;
-    }
+    left: 0.1rem;
+    position: relative;
+    top: -0.5rem;
+    vertical-align: baseline;
+  }
 }
 
 figure {
-    /*span*/.marginnote,
-    /*span*/.sidenote,
-    figcaption {
-        left: auto;
-        position: relative;
-    }
+  .marginnote,
+  .sidenote,
+  figcaption {
+    left: auto;
+    position: relative;
+  }
 }
 
-/*span*/.mini-note {
-    display: block;
-    font-size: 80%;
-    font-style: italic;
-}
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
 
-/*div*/.epigraph {
-    margin: 4rem 0;
-
-    blockquote {
-        font-style: italic;
-        margin: 2rem 0;
-
-        footer {
-            font-style: normal;
-        }
-    }
-}
-
-/*$CONTAINERS*/
-.bottom-footer {
-    margin: 6rem 0;
-}
-
-/*$NAVIGATION*/
 nav {
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-
-    .menu-icon {
-        cursor: pointer;
-        display: none;
-        text-decoration: underline;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  
+  .menu-icon {
+    cursor: pointer;
+    display: none;
+    text-decoration: underline;
+  }
+  
+  .menu-btn {
+    display: none;
+  }
+  
+  .menu-btn:checked ~ .site-nav {
+    display: block;
+  }
+  
+  ul.site-nav {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    li {
+      display: inline-block;
+      margin: 0 1.5rem 0 0;
     }
-
-    .menu-btn {
-        display: none;
+    
+    a, a:visited {
+      text-decoration: none;
     }
-
-    .menu-btn:checked ~ .site-nav {
-        display: block;
-    }
-
-    ul.site-nav {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-
-        li {
-            display: inline-block;
-            margin: 0 1.5rem 0 0;
-        }
-
-        a,a:visited {
-            text-decoration: none;
-        }
-    }
+  }
 }
 
-/* $MEDIA QUERIES - TABLET */
-@media(max-width: 850px) {
+/* ==========================================================================
+   HOMEPAGE LAYOUT
+   ========================================================================== */
 
-    body {
-        padding: 10px;
-        width: calc(100% - 20px);
-    }
-
-    h2.title { margin-top: 2rem; }
-
-    p,table,blockquote,pre,img,hr,.mini-note,ul li,ol li {
-        max-width: 100%;
-    }
-
-    .MathJax_SVG_Display {
-        max-width: 100% !important;
-    }
-
-    nav {
-
-        .menu-icon {
-            display: inline-block;
-        }
-
-        ul.site-nav {
-            display: none;
-
-            li {
-                display: block;
-                margin: 1rem 0;
-                width: 100%;
-
-                a,a:visited {
-                    display: block;
-                    width: 100%;
-                }
-            }
-        }
-    }
-
-    figure {
-        flex-direction: column;
-    }
-
-    /*span*/.marginnote,
-    /*span*/.sidenote,
-    figcaption {
-        display: block;
-        left: auto;
-        margin-top: 1rem;
-        position: relative;
-        top: auto;
-        width: 100%;
-    }
-
+.intro {
+  margin-bottom: 2rem;
+  
+  p {
+    max-width: 65%;
+    line-height: 1.6;
+    font-size: 16px;
+  }
 }
-
-// /* Dark Mode */
-// @media (prefers-color-scheme: dark) {
-//     body{background:#242424;filter:invert(1);}
-//     .highlight{border-color: grey !important;}
-//     img,iframe,.highlight,a:hover,a:focus{filter:invert(1);}
-// }
 
 .container {
-  display: flex; /* Use Flexbox to align items */
+  display: flex;
   margin-top: 40px;
-  gap: 100px; /* Add space between the contact section and ASCII art */
+  gap: 100px;
+  flex-wrap: wrap;
 }
 
-.contact-section p {
-  white-space: nowrap; /* Prevent text wrapping */
-  margin: 10; /* Remove default paragraph margins */
+.contact-section {
+  flex: 0 0 auto;
+  
+  p {
+    white-space: nowrap;
+    margin: 10px 0;
+  }
+}
+
+.ascii-art {
+  font-family: 'Lucida Console', Monaco, 'Courier New', monospace;
+  white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  word-wrap: break-word;
+}
+
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 10px 0;
+  width: 100%; // WIDTH OF THE ACTUAL GALLERY
+  justify-self: start;
+  
+  img {
+    display: block;
+    width: 100%;
+    max-width: none;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  video {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+  }
+
+}
+
+/* ==========================================================================
+   PROJECT LAYOUTS
+   ========================================================================== */
+
+main {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: none;
+  margin: 0 20px;
+  padding: 20px;
+}
+
+.project {
+  width: 70%;
+  text-align: left;
+  margin-bottom: 30px;
+  
+  ul {
+    width: 100%;
+    padding-left: 20px;
+    margin: 20px 0;
+  }
 }
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two equal columns */
-  gap: 30px; /* Space between columns and rows */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
 }
 
 .grid-item {
-  padding: 0px; /* Optional: Add padding for better spacing */
+  padding: 0;
 }
 
-/* Ensure no text-transform is applied to h4 headings */
-// h4 {
-//   text-transform: none;
-// }
-
-/* If you have a specific class for project headings, target that */
-// .project h4 {
-//   text-transform: none;
-// }
-
-/* Center the main element and align text inside it to the left */
-/* Center the main element and align text inside it to the left */
-main {
-  text-align: left; /* Align text inside main to the left */
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Align content to the left */
-  justify-content: center; /* Center content vertically (if needed) */
-  max-width: none; /* Remove max-width to allow full width */
-  margin: 0 20px; /* Add 20px space on the left and right */
-  padding: 20px; /* Add some padding for spacing */
+.bottom-footer {
+  margin: 6rem 0;
 }
 
-// /* Ensure child elements (like .project) are left-aligned */
-.project {
-  width: 70%; /* Ensure the project div takes full width */
-  text-align: left; /* Align text inside project div to the left */
-  margin-bottom: 30px; /* Add spacing between projects */
-}
-
-// /* Control the bullet points */
-.project ul {
-  width: 100%; /* Set the width of the list */
-  padding-left: 20px; /* Add some padding for the bullets */
-  margin: 20px; /* Remove default margin */
-}
-
-// .project li {
-//     max-width: 80%;
-// }
-
-
-/*/**************************************
-    $SYNTAX HIGHLIGHTING
-/**************************************/
-/* General styles for code blocks */
-pre {
-    background-color: #f5f5f5; /* Light grey background */
-    color: #000000; /* Black text color */
-    padding: 1em;
-    overflow-x: auto;
-    border-radius: 4px;
-    font-size: 14px;
-    line-height: 1.5;
-}
+.epigraph {
+  margin: 4rem 0;
   
-code {
-    font-family: 'Lucida Console', monospace;
-    font-size: 14px;
-    color: #000000; /* Black text color */
+  blockquote {
+    font-style: italic;
+    margin: 2rem 0;
+    
+    footer {
+      font-style: normal;
+    }
+  }
 }
 
-/* Syntax highlighting for Verilog and other languages */
+/* ==========================================================================
+   SYNTAX HIGHLIGHTING
+   ========================================================================== */
+
+pre {
+  background-color: #f5f5f5;
+  color: #000000;
+  padding: 1em;
+  overflow-x: auto;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 .highlight {
-    background-color: rgb(253, 245, 228); /* Light grey background */
-    color: #000000; /* Black text color */
-    padding: 1em;
-    overflow-x: auto;
-    border-radius: 4px;
-    max-width: 70%;
+  background-color: rgb(253, 245, 228);
+  color: #000000;
+  padding: 1em;
+  overflow-x: auto;
+  border-radius: 4px;
+  width: 100%;
 }
-
 
 /* Syntax highlighting colors */
-.highlight .c { color: #6a737d; } /* Comments (muted grey) */
-.highlight .k { color: #d73a49; } /* Keywords (soft red) */
-.highlight .n { color: #333333; } /* Numbers (dark grey) */
-.highlight .o { color: #005cc5; } /* Operators (blue) */
-.highlight .p { color: #333333; } /* Punctuation (dark grey) */
-.highlight .s { color: #22863a; } /* Strings (green) */
-.highlight .mi { color: #005cc5; } /* Numeric literals (blue) */
-.highlight .mf { color: #005cc5; } /* Floating-point literals (blue) */
-.highlight .mh { color: #005cc5; } /* Hexadecimal literals (blue) */
-.highlight .s2 { color: #22863a; } /* Double-quoted strings (green) */
-.highlight .se { color: #22863a; } /* Escape sequences (green) */
-.highlight .si { color: #22863a; } /* Interpolated strings (green) */
-.highlight .err { color: #d73a49; background-color: #f8d7da; } /* Errors (soft red with light red background) */
-.highlight .gd { color: #d73a49; } /* Deleted text (soft red) */
+.highlight .c { color: #6a737d; } /* Comments */
+.highlight .k { color: #d73a49; } /* Keywords */
+.highlight .n { color: #333333; } /* Numbers */
+.highlight .o { color: #005cc5; } /* Operators */
+.highlight .p { color: #333333; } /* Punctuation */
+.highlight .s { color: #22863a; } /* Strings */
+.highlight .mi { color: #005cc5; } /* Numeric literals */
+.highlight .mf { color: #005cc5; } /* Floating-point literals */
+.highlight .mh { color: #005cc5; } /* Hexadecimal literals */
+.highlight .s2 { color: #22863a; } /* Double-quoted strings */
+.highlight .se { color: #22863a; } /* Escape sequences */
+.highlight .si { color: #22863a; } /* Interpolated strings */
+.highlight .err { color: #d73a49; background-color: #f8d7da; } /* Errors */
+.highlight .gd { color: #d73a49; } /* Deleted text */
 .highlight .ge { font-style: italic; } /* Emphasis */
-.highlight .gr { color: #d73a49; } /* Errors (soft red) */
-.highlight .gh { color: #6a737d; } /* Headings (muted grey) */
-.highlight .gi { color: #22863a; } /* Inserted text (green) */
-.highlight .go { color: #6a737d; } /* Output (muted grey) */
-.highlight .gp { color: #6a737d; } /* Prompt (muted grey) */
+.highlight .gr { color: #d73a49; } /* Errors */
+.highlight .gh { color: #6a737d; } /* Headings */
+.highlight .gi { color: #22863a; } /* Inserted text */
+.highlight .go { color: #6a737d; } /* Output */
+.highlight .gp { color: #6a737d; } /* Prompt */
 .highlight .gs { font-weight: bold; } /* Strong */
-.highlight .gu { color: #6a737d; } /* Subheadings (muted grey) */
-.highlight .gt { color: #d73a49; } /* Traceback (soft red) */
-.highlight .kc { color: #d73a49; } /* Keyword constants (soft red) */
-.highlight .kd { color: #d73a49; } /* Keyword declarations (soft red) */
-.highlight .kn { color: #d73a49; } /* Keyword namespaces (soft red) */
-.highlight .kp { color: #d73a49; } /* Keyword pseudo-classes (soft red) */
-.highlight .kr { color: #d73a49; } /* Keyword reserved (soft red) */
-.highlight .kt { color: #d73a49; } /* Keyword types (soft red) */
-.highlight .na { color: #6f42c1; } /* Attribute names (purple) */
-.highlight .nb { color: #333333; } /* Built-in names (dark grey) */
-.highlight .nc { color: #6f42c1; } /* Class names (purple) */
-.highlight .no { color: #005cc5; } /* Constants (blue) */
-.highlight .nd { color: #6f42c1; } /* Decorators (purple) */
-.highlight .ni { color: #333333; } /* Entity names (dark grey) */
-.highlight .ne { color: #6f42c1; } /* Exceptions (purple) */
-.highlight .nf { color: #6f42c1; } /* Function names (purple) */
-.highlight .nl { color: #333333; } /* Labels (dark grey) */
-.highlight .nn { color: #333333; } /* Namespaces (dark grey) */
-.highlight .nx { color: #6f42c1; } /* Other names (purple) */
-.highlight .py { color: #333333; } /* Python built-ins (dark grey) */
-.highlight .nt { color: #d73a49; } /* Tags (soft red) */
-.highlight .nv { color: #333333; } /* Variables (dark grey) */
-.highlight .ow { color: #d73a49; } /* Operator words (soft red) */
-.highlight .w { color: #333333; } /* Whitespace (dark grey) */
-.highlight .bp { color: #333333; } /* Built-in pseudo (dark grey) */
-.highlight .vc { color: #333333; } /* Variable constants (dark grey) */
-.highlight .vg { color: #333333; } /* Variable globals (dark grey) */
-.highlight .vi { color: #333333; } /* Variable instance (dark grey) */
-.highlight .il { color: #005cc5; } /* Integers (blue) */
+.highlight .gu { color: #6a737d; } /* Subheadings */
+.highlight .gt { color: #d73a49; } /* Traceback */
+.highlight .kc { color: #d73a49; } /* Keyword constants */
+.highlight .kd { color: #d73a49; } /* Keyword declarations */
+.highlight .kn { color: #d73a49; } /* Keyword namespaces */
+.highlight .kp { color: #d73a49; } /* Keyword pseudo-classes */
+.highlight .kr { color: #d73a49; } /* Keyword reserved */
+.highlight .kt { color: #d73a49; } /* Keyword types */
+.highlight .na { color: #6f42c1; } /* Attribute names */
+.highlight .nb { color: #333333; } /* Built-in names */
+.highlight .nc { color: #6f42c1; } /* Class names */
+.highlight .no { color: #005cc5; } /* Constants */
+.highlight .nd { color: #6f42c1; } /* Decorators */
+.highlight .ni { color: #333333; } /* Entity names */
+.highlight .ne { color: #6f42c1; } /* Exceptions */
+.highlight .nf { color: #6f42c1; } /* Function names */
+.highlight .nl { color: #333333; } /* Labels */
+.highlight .nn { color: #333333; } /* Namespaces */
+.highlight .nx { color: #6f42c1; } /* Other names */
+.highlight .py { color: #333333; } /* Python built-ins */
+.highlight .nt { color: #d73a49; } /* Tags */
+.highlight .nv { color: #333333; } /* Variables */
+.highlight .ow { color: #d73a49; } /* Operator words */
+.highlight .w { color: #333333; } /* Whitespace */
+.highlight .bp { color: #333333; } /* Built-in pseudo */
+.highlight .vc { color: #333333; } /* Variable constants */
+.highlight .vg { color: #333333; } /* Variable globals */
+.highlight .vi { color: #333333; } /* Variable instance */
+.highlight .il { color: #005cc5; } /* Integers */
 
+/* ==========================================================================
+   MEDIA QUERIES
+   ========================================================================== */
 
-/**************************************
-    $IMAGE GRID
-/**************************************/
-/* Image Grid Container */
-.image-grid {
-display: grid;
-grid-template-columns: repeat(2, 1fr); /* 2 columns */
-gap: 20px; /* Space between images */
-margin: 20px 0; /* Add some margin for spacing */
-}
-
-/* Ensure images are responsive and fit within the grid */
-.image-grid img {
-width: 100%; /* Make images fill their grid cells */
-height: auto; /* Maintain aspect ratio */
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 768px) {
-.image-grid {
-grid-template-columns: 1fr; /* Switch to 1 column on smaller screens */
-}
-}
-
-
-.image-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(600px, 3fr)); /* Adjusts the number of columns based on screen size */
-    gap: 5px; /* Adds space between images */
-    margin: 5px 0;
+/* Tablet */
+@media (max-width: 850px) {
+  body {
+    padding: 10px;
+    width: calc(100% - 20px);
   }
-
-
-.card {
-    background-color: #fff; /* White background for a clean look */
-    border-radius: 8px; /* Rounded corners */
-    overflow: hidden; /* Prevents overflow of image */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effect */
-    width: 100%; /* Ensures cards take up full width of their grid cell */
-    max-width: 600px; /* Limits max width of the card */
-}
-
-.card img {
-width: 100%; /* Makes images fill the card */
-height: auto; /* Maintains aspect ratio */
-}
-
-// Keep at bottom!
-.ascii-art {
-    all: unset;
-    font-family: 'Lucida Console', monospace; /* Use a monospace font for ASCII art */
-    white-space: pre-wrap; /* Preserve line breaks and spaces in ASCII art */
+  
+  h1.title { 
+    margin-top: 2rem; 
+    font-size: 20px;
   }
+  
+  p, table, blockquote, pre, img, hr, .mini-note, ul li, ol li {
+    max-width: 100%;
+  }
+  
+  .MathJax_SVG_Display {
+    max-width: 100% !important;
+  }
+  
+  .intro p {
+    max-width: 100%;
+  }
+  
+  nav {
+    .menu-icon {
+      display: inline-block;
+    }
+    
+    ul.site-nav {
+      display: none;
+      
+      li {
+        display: block;
+        margin: 1rem 0;
+        width: 100%;
+        
+        a, a:visited {
+          display: block;
+          width: 100%;
+        }
+      }
+    }
+  }
+  
+  figure {
+    flex-direction: column;
+  }
+  
+  .marginnote,
+  .sidenote,
+  figcaption {
+    display: block;
+    left: auto;
+    margin-top: 1rem;
+    position: relative;
+    top: auto;
+    width: 100%;
+  }
+  
+  .container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .contact-section {
+    p {
+      white-space: normal;
+    }
+  }
+  
+  .ascii-art {
+    font-size: 12px;
+    overflow: visible;
+  }
+  
+  .image-gallery {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+  
+  .project {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  body {
+    padding: 5px;
+    padding-top: 2rem;
+  }
+  
+  h1 {
+    font-size: 2.4rem;
+    margin-top: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.8rem;
+    margin-top: 2rem;
+  }
+  
+  .intro p {
+    max-width: 100%;
+  }
+  
+  .container {
+    margin-top: 20px;
+    gap: 15px;
+  }
+  
+  .ascii-art {
+    font-size: 10px;
+    overflow: visible;
+  }
+  
+  .image-gallery {
+    width: 100%;
+  }
+  
+  nav ul.site-nav li {
+    margin: 0.5rem 0;
+  }
+}

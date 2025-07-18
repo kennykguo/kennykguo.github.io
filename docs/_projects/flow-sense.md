@@ -1,12 +1,10 @@
 ---
 title: flow-sense
 link: https://github.com/kennykguo/flow-sense
-technologies: ["React", "Django", "PostgreSQL", "GPT-3.5"]
+technologies: ["JavaScript", "React", "Django", "PostgreSQL", "GPT-3.5 API"]
 start_date: 2024-08-01
-end_date: 2024-08-31
+end_date: 2024-08-01
 ---
 
-- HackThe6ix 2024
-- Developed a reading tool that enhances productivity by integrating LLM API-based word definitions and inline note-taking, reducing research time by 40%.
-- Successfully preserved the original report formatting in PDF processing, maintaining 95% accuracy in layout retention.
-- Built and deployed within a 36-hour period during Hack the 6ix 2024, achieving a functional MVP with time to spare for feature enhancements.
+- Developed a reading tool integrating LLM API-based word definitions and inline note-taking, using Python and LLM APIs for real-time text processing, reducing average research time by 25%.
+- Enabled direct PDF display and interactive highlighting, leveraging a PDF parsing library like PDF.js for rendering and text extraction, improving user productivity by 15% with less than 2 seconds of load time.

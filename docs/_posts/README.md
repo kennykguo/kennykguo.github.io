@@ -1,0 +1,1 @@
+stores blog posts
