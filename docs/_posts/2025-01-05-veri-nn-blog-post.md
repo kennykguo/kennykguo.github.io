@@ -283,8 +283,8 @@ This covers nearly the entire codebase! The rest is just initializing .mif (memo
 
 The final product looks like this! Doesn't look too bad for a collection of transistors.
 <div class="image-grid">
-  <img src="{{ site.baseurl }}/images/rtl.png" alt="RTL Design">
-  <img src="{{ site.baseurl }}/images/modelsim_output.png" alt="ModelSim Output">
-  <img src="{{ site.baseurl }}/images/milestone_2.jpg" alt="Milestone 2">
-  <img src="{{ site.baseurl }}/images/digit_8.jpg" alt="Milestone 2">
+  <img src="{{ site.baseurl }}/media/images/veri-nn-rtl.png" alt="RTL Design">
+  <img src="{{ site.baseurl }}/media/images/modelsim-output.png" alt="ModelSim Output">
+  <img src="{{ site.baseurl }}/media/images/veri-nn-digit-7.jpg" alt="Verilog NN Digit 7">
+  <img src="{{ site.baseurl }}/media/images/veri-nn-digit-8.jpg" alt="Verilog NN Digit 8">
 </div>

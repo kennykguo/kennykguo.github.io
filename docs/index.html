@@ -3,6 +3,8 @@ layout: default
 title: Kenny Guo
 ---
 
+
+
 <section class="intro">
   <p>Welcome to my personal website! I am a Computer Engineering student at the University of Toronto. </p>
   <p>At the moment, I am currently interested in firmware/embedded programming, chip design for brain-computer interfaces (BCI), operating systems, and deep learning acceleration.</p>
@@ -54,44 +56,64 @@ title: Kenny Guo
 <br>
 <h2>gallery</h2>
 <div class="image-gallery">
-  <img src="/images/cartuino.jpg" alt="Cartuino project" loading="lazy">
-  <img src="/images/cartuino-video.gif" alt="Cartuino demo" loading="lazy">
-  <img src="/images/autogrid-ai.png" alt="AutoGrid AI project" loading="lazy">
-  
-  <img src="/images/mapcraft.jpg" alt="Mapcraft project" loading="lazy">
-  
-  <video autoplay muted loop>
-    <source src="/images/mapcraft.mp4" type="video/mp4">
+  <video autoplay muted loop style="cursor:pointer;">
+    <source src="/media/videos/tiny-tpu-video.mp4" type="video/mp4">
   </video>
   
-  <img src="/images/veri-nn-digit-7.jpg" alt="Verilog NN digit 7" loading="lazy">
-  <img src="/images/veri-nn-digit-8.jpg" alt="Verilog NN digit 8" loading="lazy">
-  <img src="/images/veri-nn-rtl.png" alt="Verilog NN RTL" loading="lazy">
+  <img src="/media/images/tiny-tpu-architecture.png" alt="Tiny TPU Architecture" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/tiny-tpu-testbench.png" alt="Tiny TPU Testbench" loading="lazy" style="cursor:pointer;">
+  <video autoplay muted loop style="cursor:pointer;">
+    <source src="/media/videos/hacker-fab.mp4" type="video/mp4">
+  </video>
   
-  <video autoplay muted loop>
-    <source src="/images/veri-nn.mp4" type="video/mp4">
+  <img src="/media/images/cartuino.jpg" alt="Cartuino project" loading="lazy" style="cursor:pointer;">
+  <img src="/media/gifs/cartuino-video.gif" alt="Cartuino demo" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/autogrid-ai.png" alt="AutoGrid AI project" loading="lazy" style="cursor:pointer;">
+  
+  <img src="/media/images/mapcraft.jpg" alt="Mapcraft project" loading="lazy" style="cursor:pointer;">
+  
+  <video autoplay muted loop style="cursor:pointer;">
+    <source src="/media/videos/mapcraft.mp4" type="video/mp4">
+  </video>
+  
+  <img src="/media/images/veri-nn-digit-7.jpg" alt="Verilog NN digit 7" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/veri-nn-digit-8.jpg" alt="Verilog NN digit 8" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/veri-nn-rtl.png" alt="Verilog NN RTL" loading="lazy" style="cursor:pointer;">
+  
+  <video autoplay muted loop style="cursor:pointer;">
+    <source src="/media/videos/veri-nn.mp4" type="video/mp4">
   </video>
 
-  <img src="/images/modelsim-output.png" alt="ModelSim output" loading="lazy">
-  <img src="/images/lstm.jpg" alt="LSTM project" loading="lazy">
-  <img src="/images/tiny-tpu.jpg" alt="Tiny TPU" loading="lazy">
+  <img src="/media/images/modelsim-output.png" alt="ModelSim output" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/lstm.jpg" alt="LSTM project" loading="lazy" style="cursor:pointer;">
   
-  <img src="/images/frenchables-circuit.jpg" alt="Frenchables circuit" loading="lazy">
-  <img src="/images/makeuoft_2025.jpeg" alt="MakeUofT 2025" loading="lazy">
+  <img src="/media/images/frenchables-circuit.jpg" alt="Frenchables circuit" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/makeuoft_2025.jpeg" alt="MakeUofT 2025" loading="lazy" style="cursor:pointer;">
   
-  <video autoplay muted loop>
-    <source src="/images/frenchables.mp4" type="video/mp4">
+  <video autoplay muted loop style="cursor:pointer;">
+    <source src="/media/videos/frenchables.mp4" type="video/mp4">
   </video>
 
-  <video autoplay muted loop>
-    <source src="/images/lab-circuit.mp4" type="video/mp4">
+  <video autoplay muted loop style="cursor:pointer;">
+    <source src="/media/videos/lab-circuit.mp4" type="video/mp4">
   </video>
   
-  <img src="/images/trash-talk.jpg" alt="Trash Talk project" loading="lazy">
-  <img src="/images/trash-talk-circuit.PNG" alt="Trash Talk circuit" loading="lazy">
-  <img src="/images/tank.jpg" alt="Tank project" loading="lazy">
+  <img src="/media/images/trash-talk.jpg" alt="Trash Talk project" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/trash-talk-circuit.PNG" alt="Trash Talk circuit" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/tank.jpg" alt="Tank project" loading="lazy" style="cursor:pointer;">
   
-  <img src="/images/origami-1.jpg" alt="Origami 1" loading="lazy">
-  <img src="/images/origami-2.jpg" alt="Origami 2" loading="lazy">
-  <img src="/images/origami-3.PNG" alt="Origami 3" loading="lazy">
+  <img src="/media/images/origami-1.jpg" alt="Origami 1" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/origami-2.jpg" alt="Origami 2" loading="lazy" style="cursor:pointer;">
+  <img src="/media/images/origami-3.PNG" alt="Origami 3" loading="lazy" style="cursor:pointer;">
 </div>
+
+<!-- Modal for enlarged images/videos -->
+<div id="galleryModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999;">
+  <span style="position:absolute; top:20px; right:35px; color:white; font-size:40px; font-weight:bold; cursor:pointer;">&times;</span>
+  <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:90%; max-height:90%;">
+    <img id="modalImage" style="max-width:100%; max-height:100%; border-radius:8px; display:none;">
+    <video id="modalVideo" style="max-width:100%; max-height:100%; border-radius:8px; display:none;" controls></video>
+  </div>
+</div>
+
+<script src="{{ site.baseurl }}/assets/gallery-modal.js"></script>

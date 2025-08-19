@@ -366,27 +366,106 @@ nav {
 
 .image-gallery {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin: 10px 0;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 20px 0;
   width: 100%; // WIDTH OF THE ACTUAL GALLERY
   justify-self: start;
   
-  img {
+  img, video {
     display: block;
     width: 100%;
     max-width: none;
     aspect-ratio: 4/3;
     object-fit: cover;
     object-position: center;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
   }
 
-  video {
-    width: 100%;
-    aspect-ratio: 4/3;
-    object-fit: cover;
+  img:hover, video:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    z-index: 10;
   }
 
+}
+
+/* ==========================================================================
+   MODAL/LIGHTBOX STYLES
+   ========================================================================== */
+
+.modal {
+  display: none !important;
+  position: fixed !important;
+  z-index: 1000 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal[style*="display: block"] {
+  display: block !important;
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: scaleIn 0.3s ease;
+}
+
+.modal-content img,
+.modal-content video {
+  width: 100%;
+  height: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+  transition: opacity 0.3s ease;
+}
+
+.modal-close:hover {
+  opacity: 0.7;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 /* ==========================================================================
@@ -600,7 +679,8 @@ pre {
   
   .image-gallery {
     width: 100%;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
   
   .project {
@@ -641,6 +721,8 @@ pre {
   
   .image-gallery {
     width: 100%;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   
   nav ul.site-nav li {
