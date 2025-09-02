@@ -6,6 +6,6 @@ start_date: 2024-07-01
 end_date: 2025-04-01
 ---
 
-- WIP
-- Developed a deepfake audio detection model using machine learning techniques.
-- Analyzed audio features and trained models to distinguish between real and fake audio.
+<!-- - WIP -->
+<!-- - Developed a deepfake audio detection model using machine learning techniques. -->
+<!-- - Analyzed audio features and trained models to distinguish between real and fake audio. -->

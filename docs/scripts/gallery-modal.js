@@ -1,15 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Setting up gallery modal...');
   
+  // Set all videos to slow motion (0.5x speed)
+  const allVideos = document.querySelectorAll('video');
+  allVideos.forEach(video => {
+    video.playbackRate = 0.5;
+  });
+  
   // Add click listeners to all gallery items using event delegation
-  const gallery = document.querySelector('.image-gallery');
-  if (gallery) {
+  const galleries = document.querySelectorAll('.gallery-top, .gallery-fullwidth, .image-gallery');
+  galleries.forEach(gallery => {
     gallery.addEventListener('click', function(e) {
-      if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+      const galleryItem = e.target.closest('.gallery-item');
+      if (galleryItem) {
+        const video = galleryItem.querySelector('video');
+        const imageUrl = galleryItem.getAttribute('data-image');
+        
+        if (video) {
+          openModal(video);
+        } else if (imageUrl) {
+          // Create a temporary img element for the modal
+          const tempImg = document.createElement('img');
+          tempImg.src = imageUrl;
+          tempImg.alt = galleryItem.getAttribute('alt') || '';
+          openModal(tempImg);
+        }
+      } else if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
         openModal(e.target);
       }
     });
-  }
+  });
   
   function openModal(element) {
     const modal = document.getElementById('galleryModal');
@@ -32,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalVideo.src = source.src;
       }
       modalVideo.style.display = 'block';
+      modalVideo.playbackRate = 0.5; // Set modal video to slow motion too
       modalVideo.play().catch(e => {});
     }
     

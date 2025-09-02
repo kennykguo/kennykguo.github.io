@@ -51,8 +51,7 @@ body {
   background: #fffff8;
   color: #111;
   counter-reset: sidenote-counter;
-  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", 
-               "Book Antiqua", Georgia, serif;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   height: 100%;
   margin: 0 auto;
   max-width: 1440px;
@@ -66,32 +65,40 @@ body {
    ========================================================================== */
 
 h1,h2,h3,h4,h5,h6 {
-    font-family: inherit;
-    font-style: normal; /* was "bold" - invalid */
-    font-weight: bold;   /* moved from font-style */
-    line-height: 1;
-    margin: 0;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 h1 { 
-  font-size: 3.2rem; 
-  margin-top: 2.6rem; 
+  font-size: 2.25rem;
+  margin-bottom: 2rem;
+}
+
+@media screen and (min-width: 48em) {
+  h1 {
+    font-size: 2.75rem;
+    margin-bottom: 2.5rem;
+  }
 }
 
 h2 { 
-  font-size: 2.2rem; 
-  margin-top: 4.2rem; 
+  font-size: 2rem; 
+  margin-top: 1rem; 
 }
 
 h3 { 
-  font-size: 1.7rem; 
-  margin-top: 2.6rem; 
+  font-size: 1.5rem; 
+  margin-top: 1rem; 
 }
 
 p, table, blockquote, pre, img, hr, .mini-note, ul li, ol li {
   max-width: 70%;
   line-height: 1.6;
-  font-size: 16px;
+  font-size: 12px;
 }
 
 .MathJax_SVG_Display {
@@ -109,7 +116,7 @@ p {
 
 a, a:visited {
   color: #111;
-  font-size: 16px;
+  font-size: 12px;
   transition: color 0.2s ease;
   
   &:hover {
@@ -317,6 +324,7 @@ nav {
     
     a, a:visited {
       text-decoration: none;
+      font-size: 16px;
     }
   }
 }
@@ -325,11 +333,131 @@ nav {
    HOMEPAGE LAYOUT
    ========================================================================== */
 
+.top-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  padding: 0;
+}
+
+.left-content {
+  width: 50%;
+  max-width: 50%;
+  padding-right: 1rem;
+}
+
+.right-gallery {
+  width: 50%;
+  max-width: 50%;
+}
+
 .intro {
   margin-bottom: 2rem;
+}
+
+.ascii-art {
+  margin-bottom: 1.5rem;
+}
+
+.contact-section {
+  margin-bottom: 0;
+  margin-top: 2rem;
+  
+  h2 {
+    font-size: 2rem;
+  }
   
   p {
-    max-width: 65%;
+    font-size: 15px;
+    max-width: 100%;
+  }
+  
+  a {
+    font-size: 15px;
+  }
+}
+
+.gallery-top {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 100%;
+  
+  .gallery-item {
+    aspect-ratio: 3/4;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    min-height: 180px;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+    
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+}
+
+.gallery-fullwidth {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  
+  .gallery-item {
+    aspect-ratio: 4/3;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border-radius: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+    
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+}
+
+.intro {
+  margin-bottom: 1.5rem;
+  
+  p {
+    max-width: 100%;
     line-height: 1.6;
     font-size: 16px;
   }
@@ -353,15 +481,18 @@ nav {
 
 .ascii-art {
   font-family: 'Lucida Console', Monaco, 'Courier New', monospace;
-  white-space: pre-wrap;
-  font-size: 15px;
+  white-space: pre;
+  font-size: 8px;
   line-height: 1;
   background: transparent;
   border: none;
   margin: 0;
   padding: 0;
   overflow: visible;
-  word-wrap: break-word;
+  width: 100%;
+  transform: scale(2.0);
+  transform-origin: top left;
+  margin-bottom: 15rem;
 }
 
 .image-gallery {
@@ -376,10 +507,10 @@ nav {
     display: block;
     width: 100%;
     max-width: none;
-    aspect-ratio: 4/3;
+    aspect-ratio: 3/4;
     object-fit: cover;
     object-position: center;
-    border-radius: 8px;
+    border-radius: 0;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
   }
@@ -390,6 +521,50 @@ nav {
     z-index: 10;
   }
 
+}
+
+.origami-page {
+  padding-bottom: 5rem;
+}
+
+.origami-header {
+  margin-bottom: 2rem;
+}
+
+.origami-content {
+  margin-bottom: 3rem;
+}
+
+.origami-gallery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+  width: 100%;
+  height: 80vh;
+  
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      z-index: 10;
+    }
+    
+    &:nth-child(3) {
+      grid-column: 2;
+      grid-row: 1 / 3;
+    }
+  }
 }
 
 /* ==========================================================================
@@ -421,7 +596,7 @@ nav {
   max-height: 90vh;
   width: auto;
   height: auto;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: scaleIn 0.3s ease;
 }
@@ -433,7 +608,7 @@ nav {
   max-width: 90vw;
   max-height: 90vh;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .modal-close {
@@ -610,7 +785,7 @@ pre {
   
   h1.title { 
     margin-top: 2rem; 
-    font-size: 20px;
+    font-size: 2rem;
   }
   
   p, table, blockquote, pre, img, hr, .mini-note, ul li, ol li {
@@ -623,6 +798,25 @@ pre {
   
   .intro p {
     max-width: 100%;
+  }
+  
+  .right-gallery {
+    float: none;
+    width: 100%;
+    margin: 2rem 0;
+  }
+  
+  .gallery-top {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  
+  .gallery-fullwidth {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .contact-section {
+    clear: both;
   }
   
   nav {
@@ -683,6 +877,17 @@ pre {
     gap: 10px;
   }
   
+  .origami-gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    height: auto;
+    
+    img:nth-child(3) {
+      grid-column: 1;
+      grid-row: 3;
+    }
+  }
+  
   .project {
     width: 100%;
   }
@@ -727,5 +932,9 @@ pre {
   
   nav ul.site-nav li {
     margin: 0.5rem 0;
+  }
+  
+  .gallery-fullwidth {
+    grid-template-columns: 1fr;
   }
 }
