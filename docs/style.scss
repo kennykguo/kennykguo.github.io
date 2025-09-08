@@ -513,12 +513,29 @@ nav {
     border-radius: 0;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+
+  /* Cinematic vignette effect */
+  video::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.1) 100%);
+    pointer-events: none;
+    border-radius: 4px;
   }
 
   img:hover, video:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
     z-index: 10;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
 }
@@ -570,7 +587,6 @@ nav {
 /* ==========================================================================
    MODAL/LIGHTBOX STYLES
    ========================================================================== */
-
 .modal {
   display: none !important;
   position: fixed !important;
