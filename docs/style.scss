@@ -168,9 +168,11 @@ code {
 }
 
 img {
-  height: auto;
-  margin-right: 4rem;
+  display: block;
   width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
 }
 
 /* ==========================================================================
@@ -383,7 +385,7 @@ nav {
   display: flex;
   justify-content: center;
   padding-top: 0.5rem;
-  overflow-x: auto;
+  overflow: hidden;
 }
 
 .grid-ascii-image {
@@ -970,6 +972,13 @@ pre {
   
   .top-section {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "about"
+      "photo"
+      "contact"
+      "ascii";
+    column-gap: 0;
+    row-gap: 2rem;
   }
   
   .column-right,
