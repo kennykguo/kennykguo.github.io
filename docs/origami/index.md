@@ -1,6 +1,7 @@
 ---
 layout: default
 title: origami
+published: false
 ---
 
 <div class="origami-page">
