@@ -2,75 +2,77 @@
 layout: default
 title: about
 ---
-
-
-
-<!-- primary layout -->
-<div class="top-section">
-  <section class="intro grid-about">
-    <p>Hey! I'm currently an ECE student at the University of Toronto.</p>
-    <p>Lately, I've been obsessed with system design and learning everything about how pieces fit together.</p>
-    <p>I've always been drawn to breaking down complexity and reverse engineering what makes things work.</p>
-    <p>This website is just a glimpse and not a whole picture. I tried to make it look as good as possible, but most of my projects are really messy!</p>
-    <p>If something here resonates, we should talk!</p>
+<div class="home-stack">
+  <section class="home-layer intro-layer layer-left">
+    <div class="layer-text">
+      <h2>Hi, I'm Kenny.</h2>
+      <p class="hello-zh">嗨，我是郭柯宇。</p>
+      <div class="intro-copy">
+        <p>Hey! I'm currently an ECE student at the University of Toronto.</p>
+        <p>Lately, I've been obsessed with system design and learning everything about how pieces fit together.</p>
+        <p>I've always been drawn to breaking down complexity and reverse engineering what makes things work.</p>
+        <p>This website is just a glimpse and not a whole picture. I tried to make it look as good as possible, but most
+          of my projects are really messy!</p>
+        <p>If something here resonates, we should talk!</p>
+      </div>
+    </div>
+    <div class="layer-media">
+      <img src="{{ site.baseurl }}/media/images/profile_pic.jpg" alt="Portrait of Kenny" loading="lazy">
+    </div>
+  </section>
+  <section class="home-layer layer-right">
+    <div class="layer-media">
+      <img src="{{ site.baseurl }}/media/images/tube-furnace-bimage.png" alt="Tube furnace build" loading="lazy">
+    </div>
+    <div class="layer-text center-text">
+      <h2>building @ hacker fab</h2>
+      <p><a href="https://www.torontohackerfab.com/" target="_blank"
+          rel="noopener noreferrer">https://www.torontohackerfab.com/</a></p>
+    </div>
   </section>
 
-  <aside class="contact-section grid-contact">
-    <h2>contact</h2>
-    <div class="contact-links">
-      <p>Email - <a href="mailto:kennyg.guo@mail.utoronto.ca" aria-label="Send email to Kenny">kennyg.guo🥸</span>mail.utoronto.ca</a></p>
-      <p>LinkedIn - <a href="https://linkedin.com/in/kennykguo" target="_blank" rel="noopener noreferrer" aria-label="Visit Kenny's LinkedIn profile">linkedin.com/in/kennykguo</a></p>
-      <p>GitHub - <a href="https://github.com/kennykguo" target="_blank" rel="noopener noreferrer" aria-label="Visit Kenny's GitHub profile">github.com/kennykguo</a></p>
-      <p>Twitter - <a href="https://x.com/kennykgguo" target="_blank" rel="noopener noreferrer" aria-label="Visit Kenny's Twitter profile">x.com/kennykgguo</a></p>
+  <section class="home-layer layer-left">
+    <div class="layer-media">
+      <img src="{{ site.baseurl }}/media/images/meraki_kickoff-extended.jpg" alt="Meraki kickoff event" loading="lazy">
     </div>
-  </aside>
-
-  
-  <div class="grid-ascii">
-    <!--
-    <pre class="ascii-art" aria-label="ASCII art dragon">
-⠀⠀⠀⠀⠀⠀⠀⢀⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⢿⣻⣾⡙⢷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠘⢧⢾⣟⣲⣻⡿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠏⢹⣹⣿⣿⣏⣿⢱⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠘⠉⠙⢿⢝⢲⠯⣶⣿⣯⣘⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⢴⣻⡷⣟⣻⣼⣖⠣⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⠚⢷⡿⣷⣬⣟⣏⣻⣤⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⢠⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠀⠀⢣⣼⣛⣯⣽⢻⣾⣻⣳⡗⣄⠀⠀⠀⠀⠀⠀⡆⠀⠀⠀⠀⣸⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠘⣿⣿⢿⣛⣿⣷⣦⣄⡀⠀⠀⠀⠀⠱⡧⣜⢏⣙⠧⣿⢿⣌⡿⣷⣄⠀⠀⠀⣰⠇⢀⣠⠔⠋⠀⠀⡇⠀⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠈⠻⣌⣹⢓⡻⢵⣟⣻⢶⣤⣀⠀⠀⠹⡉⣯⠻⢿⣽⡳⢟⣷⣞⢫⣷⣄⣰⠇⠀⠘⣷⣠⣾⣿⣿⣷⣤⠔⠂⢰⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠈⠳⣞⡹⠺⣽⣧⣙⡾⢶⣋⣶⣤⣹⡿⢵⣯⡟⢿⣶⠛⣿⣿⣽⣿⣿⣧⠀⠀⠈⢿⣻⣿⣿⣿⣿⡧⠀⡜⠀⢀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠈⠛⢭⣿⣭⣿⣿⣿⣯⡛⠿⣿⣿⣿⣿⣻⣟⣷⣛⣦⣿⣿⢿⣿⣿⡆⢀⣤⣾⣿⣿⣿⣿⣟⣡⣤⠇⢠⠏⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠙⢏⣱⢥⣾⡹⢿⡿⣷⣿⣗⣿⣿⣿⣶⣿⣿⣿⣽⢿⣻⣿⣿⣿⣿⣄⣾⣿⡏⠁⠀⠀⠀⢀⡎⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠧⡼⢤⣾⣗⣿⠻⢿⠟⢻⣿⡿⢿⣿⣿⣿⣾⣿⣿⣿⣻⣿⣿⣿⣿⣧⣠⣤⣶⣞⣋⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⠉⣀⣿⣶⣾⣶⡷⣶⣿⣾⣿⣿⣿⣿⣿⣿⣿⣏⣹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢿⣶⣶⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠹⢾⠰⣷⣾⣾⢾⣃⣼⣿⣟⣷⣯⣿⣿⣿⢉⣿⣿⣿⣿⣷⣥⣤⠋⡉⢻⣟⢪⣭⣿⢻⡿⣿⣿⣿⣶⣶⣦⣤⣤⣤⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⢽⣣⣿⡶⡟⣿⡷⢺⠝⠋⣽⣾⣿⣿⢻⣿⣿⣿⣯⣿⣿⣿⣿⣿⣳⣿⣿⣣⠴⣭⣿⠛⡷⢶⣙⡿⢷⣋⠯⡟⣲⢿⢻⣿⣽⣿⣿⣷⣤⡀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣤⠴⠚⠋⠚⠠⠟⠛⠋⠁⠀⡼⢿⣽⣿⣿⢻⣿⣿⣿⣯⣿⣿⣿⣿⣿⣳⣿⣿⣣⠴⣭⣿⠛⡷⢶⣙⡿⢷⣋⠯⡟⣲⢿⢻⣿⣽⣿⣿⣷⣤⡀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⠛⣾⣿⡿⠁⢸⣻⣏⣿⢻⣽⢿⣾⢷⣿⣿⣿⢷⣻⢳⣽⣞⣛⢬⡖⣻⢾⢫⡛⣆⣹⡭⣮⣹⣧⣏⣿⣿⣿⣿⠗
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⣦⣾⣿⠟⠀⠀⢺⣅⣽⣿⢮⣹⢚⠬⡿⠿⣾⡙⠍⣛⡟⢿⣿⠛⠛⠛⠛⠚⠋⠉⠉⠉⠉⠉⠘⠉⠉⠉⠉⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡔⢁⣾⣿⠋⠀⠀⠀⠘⣿⣿⣿⡡⢤⣋⠶⡵⡴⢉⣏⣶⣉⣷⢾⣈⡗⢤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⢿⣿⡿⠁⠀⠀⠀⠀⠀⠘⢆⣽⡖⢲⣩⡦⣜⣳⠉⡤⠴⢿⣿⣟⣺⡿⢟⣿⢷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣴⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⡞⠣⠎⣩⣺⢈⠷⣳⡹⡭⣏⡿⣶⢟⣌⣿⣽⡛⠷⣦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡴⣻⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⠛⠀⠀⠀⠈⠉⠙⠛⠒⠳⠇⣬⡏⡵⢝⣤⠛⣭⣿⣍⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠚⠷⠿⢧⣚⡦⢿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⡟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⡿⠋⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    </pre>
-    -->
-    <img src="{{ site.baseurl }}/media/images/boat.jpg" alt="Boat image" class="grid-ascii-image">
-  </div>
-  
-  <div class="home-photo grid-photo">
-    <div class="hello-card">
-      <p class="hello-en"><strong>Hi, I'm Kenny.</strong></p>
-      <p class="hello-zh"><strong>嗨，我是郭柯宇。</strong></p>
+    <div class="layer-text center-text">
+      <h2>co-host @ meraki</h2>
+      <p><a href="https://www.merakiuoft.com/" target="_blank" rel="noopener noreferrer">https://www.merakiuoft.com/</a>
+      </p>
     </div>
-    <img src="{{ site.baseurl }}/media/images/origami-2.jpg" alt="Origami samurai sculpture">
-  </div>
+  </section>
 
+  <section class="home-layer image-layer layer-right">
+    <div class="layer-media">
+      <img src="{{ site.baseurl }}/media/images/meraki_stage.jpg" alt="Meraki on stage" loading="lazy">
+    </div>
+    <div class="layer-text image-block">
+      <img src="{{ site.baseurl }}/media/images/boat.jpg" alt="Boat image" loading="lazy">
+    </div>
+  </section>
+
+  <section class="home-layer layer-right">
+    <div class="layer-media">
+      <img src="{{ site.baseurl }}/media/images/origami-1.jpg" alt="Origami sculpture" loading="lazy">
+    </div>
+    <div class="layer-text center-text">
+      <h2>origami</h2>
+    </div>
+  </section>
+
+  <section class="home-layer contact-layer">
+    <div class="layer-text">
+      <h2>contact</h2>
+      <div class="contact-links">
+        <p>Email - <a href="mailto:kennyg.guo@mail.utoronto.ca"
+            aria-label="Send email to Kenny">kennyg.guo@mail.utoronto.ca</a></p>
+        <p>LinkedIn - <a href="https://linkedin.com/in/kennykguo" target="_blank" rel="noopener noreferrer"
+            aria-label="Visit Kenny's LinkedIn profile">linkedin.com/in/kennykguo</a></p>
+        <p>GitHub - <a href="https://github.com/kennykguo" target="_blank" rel="noopener noreferrer"
+            aria-label="Visit Kenny's GitHub profile">github.com/kennykguo</a></p>
+        <p>Twitter - <a href="https://x.com/kennykgguo" target="_blank" rel="noopener noreferrer"
+            aria-label="Visit Kenny's Twitter profile">x.com/kennykgguo</a></p>
+      </div>
+    </div>
+  </section>
 </div>
