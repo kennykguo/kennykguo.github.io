@@ -7,6 +7,10 @@ Overview
 - Every layer is a row (1x2 grid) unless explicitly a 1x1 layer.
 - Always consult this AGENT.md before changing layout, styles, or markup.
 
+Terminology
+- Section: a group of consecutive layers that make up one topic area (Intro, Hacker Fab, Meraki, Origami, Contact).
+- Spacer: a 1x1 layer used as a visual break between sections.
+
 Layer Formats
 1x1
 - Structure: one block spanning the full row.
@@ -34,6 +38,12 @@ Image Block
 - No rounded corners for images in layered blocks.
 - Images use object-fit cover to maintain a consistent crop.
 
+Spacer Layer
+- Structure: one block spanning the full row.
+- Usage: visual break between sections.
+- Markup: `section.home-layer.spacer-layer` with a `div.spacer-block`.
+- Styling: `.spacer-block` uses `height: clamp(3rem, 6vw, 7rem)` and full width.
+
 Alternation Rule
 - Layer 1: text left, image right.
 - Layer 2: image left, text right.
@@ -46,11 +56,11 @@ Alignment Rules
 
 Homepage Layers (Current)
 - Intro layer: text + profile photo at the top.
-- Hacker Fab layer: centered text block with a single image.
-- Meraki layer: centered text block with a single image.
-- Meraki + Boat layer: two image blocks (one per column).
-- Origami layer: text + single image with link to /origami/.
+- Hacker Fab layers: centered text block with a single image, followed by a 1x2 image layer.
+- Meraki layers: centered text block with a single image, followed by three 1x2 image layers.
+- Origami layers: text + single image, followed by a 1x2 image layer.
 - Contact layer: 1x1 full-width block at the bottom.
+- Spacer layers: 1x1 visual breaks between sections.
 
 Homepage Markup Patterns
 - Container: `.home-stack` wraps the full layered layout.

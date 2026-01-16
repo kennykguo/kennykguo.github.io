@@ -462,6 +462,17 @@ nav {
   grid-column: 1 / -1;
 }
 
+.spacer-layer {
+  grid-template-columns: 1fr;
+  grid-template-areas: "spacer";
+}
+
+.spacer-layer .spacer-block {
+  grid-area: spacer;
+  height: clamp(3rem, 6vw, 7rem);
+  width: 100%;
+}
+
 .image-layer {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
