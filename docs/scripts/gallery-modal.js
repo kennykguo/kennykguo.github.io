@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   // Add click listeners to all gallery items using event delegation
-  const galleries = document.querySelectorAll('.gallery-top, .gallery-fullwidth, .image-gallery');
+  const galleries = document.querySelectorAll('.gallery-top, .gallery-fullwidth, .image-gallery, .origami-gallery');
   galleries.forEach(gallery => {
     gallery.addEventListener('click', function(e) {
       const galleryItem = e.target.closest('.gallery-item');

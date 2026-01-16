@@ -1,0 +1,19 @@
+current directory: /home/kennykguo/kennykguo.github.io/docs/vendor/bundle/ruby/3.4.0/gems/http_parser.rb-0.8.1/ext/ruby_http_parser
+/usr/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /home/kennykguo/kennykguo.github.io/docs/vendor/bundle/ruby/3.4.0/gems/http_parser.rb-0.8.1/ext/ruby_http_parser
+make DESTDIR\= sitearchdir\=./.gem.20260115-1382759-7en771 sitelibdir\=./.gem.20260115-1382759-7en771 clean
+
+current directory: /home/kennykguo/kennykguo.github.io/docs/vendor/bundle/ruby/3.4.0/gems/http_parser.rb-0.8.1/ext/ruby_http_parser
+make DESTDIR\= sitearchdir\=./.gem.20260115-1382759-7en771 sitelibdir\=./.gem.20260115-1382759-7en771
+compiling ruby_http_parser.c
+compiling ryah_http_parser.c
+linking shared-object ruby_http_parser.so
+
+current directory: /home/kennykguo/kennykguo.github.io/docs/vendor/bundle/ruby/3.4.0/gems/http_parser.rb-0.8.1/ext/ruby_http_parser
+make DESTDIR\= sitearchdir\=./.gem.20260115-1382759-7en771 sitelibdir\=./.gem.20260115-1382759-7en771 install
+/usr/bin/install -c -m 0755 ruby_http_parser.so ./.gem.20260115-1382759-7en771
+
+current directory: /home/kennykguo/kennykguo.github.io/docs/vendor/bundle/ruby/3.4.0/gems/http_parser.rb-0.8.1/ext/ruby_http_parser
+make DESTDIR\= sitearchdir\=./.gem.20260115-1382759-7en771 sitelibdir\=./.gem.20260115-1382759-7en771 clean

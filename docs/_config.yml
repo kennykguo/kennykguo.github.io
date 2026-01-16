@@ -33,6 +33,10 @@ future: false
 exclude:
 - README.md
 - LICENSE.md
+- Gemfile
+- Gemfile.lock
+- vendor
+- .bundle
 
 collections:
   projects:

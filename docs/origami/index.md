@@ -1,14 +1,14 @@
 ---
 layout: default
-title: 
+title: origami
 ---
 
 <div class="origami-page">
   <div class="origami-content">
     <div class="origami-gallery">
-      <img src="/media/images/origami-1.jpg" alt="Origami 1" loading="lazy" style="cursor:pointer;">
-      <img src="/media/images/origami-2.jpg" alt="Origami 2" loading="lazy" style="cursor:pointer;">
-      <img src="/media/images/origami-3.jpg" alt="Origami 3" loading="lazy" style="cursor:pointer;">
+      <img src="{{ site.baseurl }}/media/images/origami-1.jpg" alt="Origami 1" loading="lazy" style="cursor:pointer;">
+      <img src="{{ site.baseurl }}/media/images/origami-2.jpg" alt="Origami 2" loading="lazy" style="cursor:pointer;">
+      <img src="{{ site.baseurl }}/media/images/origami-3.jpg" alt="Origami 3" loading="lazy" style="cursor:pointer;">
     </div>
   </div>
 
