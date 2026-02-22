@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var canvas = document.getElementById('diffusion-bg');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');

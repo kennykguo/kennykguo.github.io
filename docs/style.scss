@@ -44,6 +44,7 @@ html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
   height: 100%;
+  background: transparent;
 }
 
 #diffusion-bg {
@@ -77,7 +78,7 @@ html {
 
 body {
   -webkit-font-smoothing: antialiased;
-  background: #fffff8;
+  background: transparent;
   color: #111;
   counter-reset: sidenote-counter;
   font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
@@ -89,6 +90,17 @@ body {
   max-width: 1440px;
   padding: 5rem 6% 0;
   width: 100%;
+  position: relative;
+  z-index: 0;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #fffff8;
+  z-index: -2;
+  pointer-events: none;
 }
 
 /* ==========================================================================
