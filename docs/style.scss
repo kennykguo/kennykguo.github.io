@@ -56,6 +56,25 @@ html {
   pointer-events: none;
 }
 
+
+.gradient-word{
+  /* a wider-than-text gradient so there’s room to “move” */
+  background: linear-gradient(90deg, #ffb3b3, #b3c7ff, #ffb3b3);
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  animation: gradient-sweep 3.5s linear infinite;
+}
+
+@keyframes gradient-sweep{
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 100% 50%; }
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   background: #fffff8;

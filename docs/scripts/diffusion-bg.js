@@ -2,7 +2,6 @@
   'use strict';
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
   var canvas = document.getElementById('diffusion-bg');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
@@ -12,14 +11,10 @@
   // =====================================================================
   var F2 = 0.5 * (Math.sqrt(3) - 1);
   var G2 = (3 - Math.sqrt(3)) / 6;
-  var grad3 = [
-    [1,1],[-1,1],[1,-1],[-1,-1],
-    [1,0],[-1,0],[0,1],[0,-1]
-  ];
+  var grad3 = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
   var perm = new Uint8Array(512);
   var permMod8 = new Uint8Array(512);
-
-  (function seedPerm() {
+  (function () {
     var p = new Uint8Array(256);
     for (var i = 0; i < 256; i++) p[i] = i;
     var s = 42;
@@ -36,8 +31,7 @@
 
   function simplex2(x, y) {
     var s = (x + y) * F2;
-    var i = Math.floor(x + s);
-    var j = Math.floor(y + s);
+    var i = Math.floor(x + s), j = Math.floor(y + s);
     var t = (i + j) * G2;
     var x0 = x - (i - t), y0 = y - (j - t);
     var i1, j1;
@@ -59,138 +53,151 @@
   //  Curl noise — single octave
   // =====================================================================
   var eps = 0.0001;
-  function curlSingle(x, y, t) {
+  function curlAt(x, y, t) {
     var dy = (simplex2(x, y + eps + t) - simplex2(x, y - eps + t)) / (2 * eps);
     var dx = (simplex2(x + eps, y + t) - simplex2(x - eps, y + t)) / (2 * eps);
     return { x: dy, y: -dx };
   }
 
   // =====================================================================
-  //  Multi-octave curl (big swirls + small eddies)
-  // =====================================================================
-  // Three scales: galaxy arms, mid structure, sparkle jitter
-  var S0 = 0.0006, S1 = 0.0024, S2 = 0.008;
-  var A0 = 1.0,    A1 = 0.4,    A2 = 0.15;
-  var K0 = 1.0,    K1 = 2.0,    K2 = 4.0;
-
-  function curlMulti(px, py, t) {
-    var c0 = curlSingle(px * S0, py * S0, t * K0);
-    var c1 = curlSingle(px * S1, py * S1, t * K1);
-    var c2 = curlSingle(px * S2, py * S2, t * K2);
-    return {
-      x: A0 * c0.x + A1 * c1.x + A2 * c2.x,
-      y: A0 * c0.y + A1 * c1.y + A2 * c2.y
-    };
-  }
-
-  // =====================================================================
   //  Config
   // =====================================================================
-  var PAINT_COUNT      = 2200;
-  var STAR_COUNT       = 7;
-  var PARTICLE_SPEED   = 0.55;
-  var FADE_ALPHA       = 0.008;
-  var CREAM            = '#fffff8';
+  var CREAM = '#fffff8';
 
-  // Stroke config
-  var BASE_STROKE_LEN  = 6;
-  var MAX_STROKE_LEN   = 18;
-  var STROKE_WIDTH_MIN = 0.6;
-  var STROKE_WIDTH_MAX = 1.8;
-  var ANGLE_QUANT      = Math.PI / 12; // 15-degree quantization for hand-done feel
+  // Sky paint particles
+  var SKY_COUNT = 1400;
+  var SKY_SPEED = 0.35;
+  var ANGLE_QUANT = Math.PI / 12;
 
-  // Dreaming config
-  var DREAM_CYCLE      = 900;   // frames per full dream cycle (~15s at 60fps)
-  var DREAM_CHAOS_FRAC = 0.7;   // fraction of cycle that is "noisy/chaotic"
+  // Multi-octave curl scales
+  var S0 = 0.0005, S1 = 0.002, S2 = 0.007;
+  var A0_BASE = 1.0, A1_BASE = 0.35, A2_BASE = 0.12;
+  var K0 = 1.0, K1 = 1.8, K2 = 3.5;
+
+  // Vortex attractors
+  var VORTEX_COUNT = 4;
+  var VORTEX_TANGENT_K = 0.12;
+  var VORTEX_RADIAL_K = 0.00005;
+  var VORTEX_FALLOFF = 120;
 
   // Density grid
-  var DENSITY_COLS     = 200;
-  var DENSITY_ROWS     = 120;
+  var DENSITY_COLS = 160, DENSITY_ROWS = 100;
 
-  // Sky-paint palette (muted blues, blue-grays, warm grays)
-  var SKY_COLORS = [
-    'rgba(100,110,140,',   // muted steel blue
-    'rgba(120,125,145,',   // blue gray
-    'rgba(90,100,130,',    // deeper blue
-    'rgba(140,135,150,',   // lavender gray
-    'rgba(110,115,125,',   // cool gray
-    'rgba(130,120,110,',   // warm taupe
-    'rgba(150,140,130,',   // sand
+  // Diffusion phase (oscillation between noise and coherence)
+  var PHASE_PERIOD = 1800;
+
+  // Dye drop events (replaces explosions)
+  var DYE_INTERVAL_MIN = 600;
+  var DYE_INTERVAL_MAX = 1400;
+  var DYE_PARTICLE_COUNT = 50;
+
+  // Rich palette — blues, ambers, muted reds, greens, purples
+  var SKY_PALETTE = [
+    [60, 75, 130],   // deep blue
+    [85, 95, 140],   // muted blue
+    [50, 65, 110],   // navy
+    [100, 70, 50],   // burnt sienna
+    [140, 100, 45],  // amber
+    [120, 80, 60],   // rust
+    [80, 100, 75],   // sage green
+    [65, 85, 70],    // dark teal
+    [100, 75, 110],  // muted purple
+    [85, 70, 100],   // dusty violet
+    [130, 110, 80],  // ochre
+    [110, 95, 120],  // lavender gray
   ];
 
-  // Star palette (bright warm accents)
-  var STAR_COLORS = [
-    'rgba(255,240,180,',   // warm yellow
-    'rgba(255,250,220,',   // pale gold
-    'rgba(240,230,200,',   // cream bright
-    'rgba(255,220,160,',   // amber
-    'rgba(230,235,255,',   // cool white
+  // Dye drop color palette — more saturated/concentrated versions
+  var DYE_PALETTE = [
+    [40, 50, 120],   // deep indigo
+    [130, 55, 30],   // burnt orange
+    [45, 80, 55],    // forest green
+    [90, 40, 90],    // plum
+    [150, 90, 25],   // golden amber
+    [55, 70, 120],   // steel blue
+    [120, 50, 50],   // brick red
+    [60, 95, 95],    // teal
   ];
 
   // =====================================================================
   //  State
   // =====================================================================
   var W, H;
-  var paintParticles = [];
-  var stars = [];
-  var attractors = [];
+  var skyParticles = [];
+  var vortices = [];
+  var dyeParticles = [];
   var time = 0;
   var frameCount = 0;
-  var densityGrid;
-  var densityCellW, densityCellH;
+  var nextDyeFrame = 250;
+  var densityGrid, densityCellW, densityCellH;
 
-  // Dream state
-  var dreamPhaseOffset = 0;
-  var dreamNoiseBoost  = 0;
-  var dreamPaletteShift = 0;
+  // Diffusion phase: 0 = most coherent, 1 = most noisy
+  var diffPhase = 0;
 
   // =====================================================================
-  //  Attractors (stable star-points that pull particles into halos)
+  //  Velocity field: multi-octave curl + vortex tangential flow
   // =====================================================================
-  var ATTRACTOR_COUNT    = 6;
-  var ATTRACTOR_STRENGTH = 0.00012;
-  var ATTRACTOR_EPSILON  = 80;
+  function velocityAt(px, py, t, phase) {
+    // Base curl with phase-modulated octave weights
+    var a0 = A0_BASE;
+    var a1 = A1_BASE + phase * 0.15;
+    var a2 = A2_BASE + phase * 0.4;
+    var c0 = curlAt(px * S0, py * S0, t * K0);
+    var c1 = curlAt(px * S1, py * S1, t * K1);
+    var c2 = curlAt(px * S2, py * S2, t * K2);
+    var vx = a0 * c0.x + a1 * c1.x + a2 * c2.x;
+    var vy = a0 * c0.y + a1 * c1.y + a2 * c2.y;
 
-  function initAttractors() {
-    attractors = [];
-    for (var i = 0; i < ATTRACTOR_COUNT; i++) {
-      attractors.push({
+    // Vortex attractors: tangential orbit + mild radial pull
+    for (var i = 0; i < vortices.length; i++) {
+      var v = vortices[i];
+      var dx = px - v.x, dy = py - v.y;
+      var dist = Math.sqrt(dx * dx + dy * dy) + 1;
+      var influence = 1 / (1 + dist / VORTEX_FALLOFF);
+      var tx = -dy / dist, ty = dx / dist;
+      vx += tx * VORTEX_TANGENT_K * influence * v.dir;
+      vy += ty * VORTEX_TANGENT_K * influence * v.dir;
+      vx -= dx * VORTEX_RADIAL_K * influence;
+      vy -= dy * VORTEX_RADIAL_K * influence;
+    }
+
+    // Brownian jitter during noisy phase
+    if (phase > 0.3) {
+      var jitterAmt = (phase - 0.3) * 0.08;
+      vx += (Math.random() - 0.5) * jitterAmt;
+      vy += (Math.random() - 0.5) * jitterAmt;
+    }
+
+    return { x: vx, y: vy };
+  }
+
+  // =====================================================================
+  //  Vortex attractors
+  // =====================================================================
+  function initVortices() {
+    vortices = [];
+    for (var i = 0; i < VORTEX_COUNT; i++) {
+      vortices.push({
         x: 0.1 * W + Math.random() * 0.8 * W,
         y: 0.1 * H + Math.random() * 0.8 * H,
-        // Attractors drift slowly
-        vx: (Math.random() - 0.5) * 0.05,
-        vy: (Math.random() - 0.5) * 0.05,
-        phase: Math.random() * Math.PI * 2
+        vx: (Math.random() - 0.5) * 0.03,
+        vy: (Math.random() - 0.5) * 0.03,
+        dir: Math.random() > 0.5 ? 1 : -1,
       });
     }
   }
 
-  function updateAttractors() {
-    for (var i = 0; i < attractors.length; i++) {
-      var a = attractors[i];
-      a.x += a.vx;
-      a.y += a.vy;
-      // Soft bounce off edges
-      if (a.x < W * 0.05 || a.x > W * 0.95) a.vx *= -1;
-      if (a.y < H * 0.05 || a.y > H * 0.95) a.vy *= -1;
+  function updateVortices() {
+    for (var i = 0; i < vortices.length; i++) {
+      var v = vortices[i];
+      v.x += v.vx; v.y += v.vy;
+      if (v.x < W * 0.05 || v.x > W * 0.95) v.vx *= -1;
+      if (v.y < H * 0.05 || v.y > H * 0.95) v.vy *= -1;
     }
-  }
-
-  function attractorPull(px, py) {
-    var ax = 0, ay = 0;
-    for (var i = 0; i < attractors.length; i++) {
-      var a = attractors[i];
-      var dx = a.x - px, dy = a.y - py;
-      var d2 = dx * dx + dy * dy + ATTRACTOR_EPSILON * ATTRACTOR_EPSILON;
-      var str = ATTRACTOR_STRENGTH / d2;
-      ax += dx * str;
-      ay += dy * str;
-    }
-    return { x: ax, y: ay };
   }
 
   // =====================================================================
-  //  Density grid (density → paint feedback)
+  //  Density grid (feedback: paint affects future paint)
   // =====================================================================
   function initDensity() {
     densityCellW = W / DENSITY_COLS;
@@ -199,160 +206,209 @@
   }
 
   function depositDensity(px, py) {
-    var col = Math.floor(px / densityCellW);
-    var row = Math.floor(py / densityCellH);
-    if (col >= 0 && col < DENSITY_COLS && row >= 0 && row < DENSITY_ROWS) {
-      densityGrid[row * DENSITY_COLS + col] += 1;
-    }
+    var c = Math.floor(px / densityCellW), r = Math.floor(py / densityCellH);
+    if (c >= 0 && c < DENSITY_COLS && r >= 0 && r < DENSITY_ROWS)
+      densityGrid[r * DENSITY_COLS + c] += 1;
   }
 
   function readDensity(px, py) {
-    var col = Math.floor(px / densityCellW);
-    var row = Math.floor(py / densityCellH);
-    if (col >= 0 && col < DENSITY_COLS && row >= 0 && row < DENSITY_ROWS) {
-      return densityGrid[row * DENSITY_COLS + col];
-    }
+    var c = Math.floor(px / densityCellW), r = Math.floor(py / densityCellH);
+    if (c >= 0 && c < DENSITY_COLS && r >= 0 && r < DENSITY_ROWS)
+      return densityGrid[r * DENSITY_COLS + c];
     return 0;
   }
 
-  function diffuseDensity() {
-    // Simple 3x3 box blur with decay
+  function diffuseDensityGrid() {
     var next = new Float32Array(DENSITY_COLS * DENSITY_ROWS);
     for (var r = 1; r < DENSITY_ROWS - 1; r++) {
       for (var c = 1; c < DENSITY_COLS - 1; c++) {
         var idx = r * DENSITY_COLS + c;
-        var sum = densityGrid[idx] * 4
+        next[idx] = (densityGrid[idx] * 4
           + densityGrid[idx - 1] + densityGrid[idx + 1]
-          + densityGrid[idx - DENSITY_COLS] + densityGrid[idx + DENSITY_COLS];
-        next[idx] = (sum / 8) * 0.97; // slight decay
+          + densityGrid[idx - DENSITY_COLS] + densityGrid[idx + DENSITY_COLS]
+        ) / 8 * 0.97;
       }
     }
     densityGrid = next;
   }
 
   // =====================================================================
-  //  Particles
+  //  Diffusion phase controller
   // =====================================================================
-  function initPaintParticles() {
-    paintParticles = [];
-    for (var i = 0; i < PAINT_COUNT; i++) {
-      paintParticles.push({
+  function updateDiffusionPhase() {
+    diffPhase = 0.5 + 0.5 * Math.sin(frameCount * Math.PI * 2 / PHASE_PERIOD);
+  }
+
+  function fadeAlpha() {
+    return 0.01 + diffPhase * 0.008;
+  }
+  function timeSpeed() {
+    return 0.00004 + diffPhase * 0.00006;
+  }
+  function strokeAlphaMod() {
+    return 1.0 + (1 - diffPhase) * 0.3;
+  }
+
+  // =====================================================================
+  //  Sky paint particles + brush-stroke deposition
+  // =====================================================================
+  function initSkyParticles() {
+    skyParticles = [];
+    for (var i = 0; i < SKY_COUNT; i++) {
+      var ci = Math.floor(Math.random() * SKY_PALETTE.length);
+      skyParticles.push({
         x: Math.random() * W,
         y: Math.random() * H,
-        color: SKY_COLORS[Math.floor(Math.random() * SKY_COLORS.length)],
-        alpha: 0.025 + Math.random() * 0.03,
-        w: STROKE_WIDTH_MIN + Math.random() * (STROKE_WIDTH_MAX - STROKE_WIDTH_MIN),
-        bristlePhase: Math.random() * Math.PI * 2
+        rgb: SKY_PALETTE[ci],
+        baseAlpha: 0.02 + Math.random() * 0.02,
+        baseWidth: 0.5 + Math.random() * 1.0,
+        bristleOff: Math.random() * Math.PI * 2,
       });
     }
   }
 
-  function initStars() {
-    stars = [];
-    for (var i = 0; i < STAR_COUNT; i++) {
-      // Place stars near attractors for coherent halos
-      var aIdx = i % attractors.length;
-      var a = attractors[aIdx];
-      stars.push({
-        x: a.x + (Math.random() - 0.5) * 60,
-        y: a.y + (Math.random() - 0.5) * 60,
-        color: STAR_COLORS[Math.floor(Math.random() * STAR_COLORS.length)],
-        baseAlpha: 0.15 + Math.random() * 0.2,
-        baseRadius: 2 + Math.random() * 2,
-        twinkleSpeed: 0.02 + Math.random() * 0.04,
-        twinklePhase: Math.random() * Math.PI * 2,
-        bristlePhase: Math.random() * Math.PI * 2
-      });
-    }
-  }
-
-  // =====================================================================
-  //  Dreaming: regime shifts
-  // =====================================================================
-  function updateDreamState() {
-    var cyclePos = (frameCount % DREAM_CYCLE) / DREAM_CYCLE;
-
-    if (cyclePos < DREAM_CHAOS_FRAC) {
-      // "Forward process" — gradually increasing noise/chaos
-      var t = cyclePos / DREAM_CHAOS_FRAC;
-      dreamNoiseBoost = t * 0.6;
-      dreamPaletteShift = t * 0.3;
-      dreamPhaseOffset += 0.00001 * t;
-    } else {
-      // "Reverse process" — denoising, cohering toward structure
-      var t = (cyclePos - DREAM_CHAOS_FRAC) / (1 - DREAM_CHAOS_FRAC);
-      dreamNoiseBoost = 0.6 * (1 - t);
-      dreamPaletteShift = 0.3 * (1 - t);
-    }
-  }
-
-  // =====================================================================
-  //  Drawing helpers
-  // =====================================================================
-  function quantizeAngle(theta) {
-    return Math.round(theta / ANGLE_QUANT) * ANGLE_QUANT;
-  }
-
-  function drawStroke(x, y, vx, vy, p) {
+  function drawBrushStroke(x, y, vx, vy, rgb, baseAlpha, baseWidth, bristleOff) {
     var speed = Math.sqrt(vx * vx + vy * vy);
     var theta = Math.atan2(vy, vx);
+    theta = Math.round(theta / ANGLE_QUANT) * ANGLE_QUANT;
 
-    // Quantize angle for hand-done coherence
-    theta = quantizeAngle(theta);
+    var baseLen = 5;
+    var maxLen = 16;
+    var len = baseLen + Math.min(speed * 20, maxLen - baseLen);
 
-    // Stroke length scales with speed
-    var len = BASE_STROKE_LEN + speed * (MAX_STROKE_LEN - BASE_STROKE_LEN) * 2;
-    if (len > MAX_STROKE_LEN) len = MAX_STROKE_LEN;
-
-    // Density feedback: thicker/brighter where paint has accumulated
     var density = readDensity(x, y);
-    var densityFactor = Math.min(density / 40, 1);
-    var width = p.w * (1 + densityFactor * 0.8);
-    var alpha = p.alpha * (1 + densityFactor * 0.4);
+    var df = Math.min(density / 50, 1);
+    var width = baseWidth * (1 + df * 0.6);
+    var alpha = baseAlpha * strokeAlphaMod() * (1 + df * 0.3);
 
-    // Bristle jitter — wobble endpoints
-    var jitter = simplex2(x * 0.01 + p.bristlePhase, y * 0.01) * 1.5;
     var cosT = Math.cos(theta), sinT = Math.sin(theta);
     var halfL = len * 0.5;
 
-    var x0 = x - cosT * halfL + sinT * jitter;
-    var y0 = y - sinT * halfL - cosT * jitter;
-    var x1 = x + cosT * halfL - sinT * jitter * 0.5;
-    var y1 = y + sinT * halfL + cosT * jitter * 0.5;
+    var jitter = simplex2(x * 0.008 + bristleOff, y * 0.008) * 1.2;
 
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = p.color + (alpha * 1.5).toFixed(3) + ')';
-    ctx.lineWidth = width;
     ctx.lineCap = 'round';
+
+    // Main stroke
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
+    ctx.lineWidth = width;
     ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.lineTo(x1, y1);
+    ctx.moveTo(x - cosT * halfL + sinT * jitter, y - sinT * halfL - cosT * jitter);
+    ctx.lineTo(x + cosT * halfL - sinT * jitter * 0.5, y + sinT * halfL + cosT * jitter * 0.5);
+    ctx.stroke();
+
+    // Side strand
+    var sideOff = width * 0.7;
+    var sideAlpha = alpha * 0.3;
+    var sideLen = halfL * (0.5 + Math.random() * 0.3);
+    ctx.globalAlpha = sideAlpha;
+    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + sideAlpha + ')';
+    ctx.lineWidth = width * 0.3;
+    ctx.beginPath();
+    ctx.moveTo(x - cosT * sideLen + sinT * sideOff, y - sinT * sideLen - cosT * sideOff);
+    ctx.lineTo(x + cosT * sideLen + sinT * sideOff, y + sinT * sideLen - cosT * sideOff);
     ctx.stroke();
   }
 
-  function drawStar(s) {
-    var twinkle = 0.5 + 0.5 * Math.sin(frameCount * s.twinkleSpeed + s.twinklePhase);
-    var alpha = s.baseAlpha * twinkle;
-    var radius = s.baseRadius * (0.8 + 0.4 * twinkle);
+  // =====================================================================
+  //  Dye drop system — concentrated color diffusing through the flow
+  //  Like a drop of ink in swirling water
+  // =====================================================================
+  function spawnDyeDrop(x, y) {
+    // Pick one color for the whole drop (coherent dye)
+    var ci = Math.floor(Math.random() * DYE_PALETTE.length);
+    var rgb = DYE_PALETTE[ci];
 
-    // Core glow
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = s.color + alpha.toFixed(3) + ')';
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, radius, 0, Math.PI * 2);
-    ctx.fill();
+    for (var i = 0; i < DYE_PARTICLE_COUNT; i++) {
+      // Start clustered tightly at drop point with small random offset
+      var ang = Math.random() * Math.PI * 2;
+      var dist = Math.random() * 8; // tight initial cluster
+      var pushSpd = 0.15 + Math.random() * 0.35; // mild outward push
 
-    // Cross glare (very faint)
-    ctx.globalAlpha = alpha * 0.3;
-    ctx.strokeStyle = s.color + (alpha * 0.3).toFixed(3) + ')';
-    ctx.lineWidth = 0.5;
-    var glareLen = radius * 3;
-    ctx.beginPath();
-    ctx.moveTo(s.x - glareLen, s.y);
-    ctx.lineTo(s.x + glareLen, s.y);
-    ctx.moveTo(s.x, s.y - glareLen);
-    ctx.lineTo(s.x, s.y + glareLen);
-    ctx.stroke();
+      dyeParticles.push({
+        x: x + Math.cos(ang) * dist,
+        y: y + Math.sin(ang) * dist,
+        // Small outward velocity — the flow field does most of the spreading
+        vx: Math.cos(ang) * pushSpd,
+        vy: Math.sin(ang) * pushSpd,
+        rgb: rgb,
+        life: 0,
+        maxLife: 200 + Math.floor(Math.random() * 250),
+        baseAlpha: 0.04 + Math.random() * 0.04,
+        baseWidth: 0.8 + Math.random() * 1.2,
+        bristleOff: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // Schedule next dye drop
+    nextDyeFrame = frameCount + DYE_INTERVAL_MIN +
+      Math.floor(Math.random() * (DYE_INTERVAL_MAX - DYE_INTERVAL_MIN));
+  }
+
+  function updateAndDrawDye() {
+    for (var i = dyeParticles.length - 1; i >= 0; i--) {
+      var d = dyeParticles[i];
+      d.life++;
+      if (d.life > d.maxLife) { dyeParticles.splice(i, 1); continue; }
+
+      var progress = d.life / d.maxLife;
+
+      // Follow the same flow field as sky particles
+      var v = velocityAt(d.x, d.y, time, diffPhase);
+      // Outward push decays, flow field takes over
+      d.vx *= 0.97;
+      d.vy *= 0.97;
+      d.x += d.vx + v.x * SKY_SPEED * 1.1;
+      d.y += d.vy + v.y * SKY_SPEED * 1.1;
+
+      // Wrap edges
+      if (d.x < 0) d.x += W;
+      if (d.x > W) d.x -= W;
+      if (d.y < 0) d.y += H;
+      if (d.y > H) d.y -= H;
+
+      // Alpha envelope: concentrated early, fading as it diffuses
+      // Quick ramp up, then long smooth fade out
+      var alpha;
+      if (progress < 0.05) {
+        alpha = d.baseAlpha * (progress / 0.05);
+      } else {
+        // Smooth cubic fade — dye diluting into the water
+        var fadeT = (progress - 0.05) / 0.95;
+        alpha = d.baseAlpha * (1 - fadeT) * (1 - fadeT);
+      }
+
+      if (alpha < 0.001) continue;
+
+      // Skip drawing near edges to avoid wrap artifacts
+      var edgeM = 20;
+      if (d.x < edgeM || d.x > W - edgeM || d.y < edgeM || d.y > H - edgeM) continue;
+
+      // Draw as brush stroke, same as sky particles — organic, not circular
+      depositDensity(d.x, d.y);
+      drawBrushStroke(d.x, d.y, v.x, v.y, d.rgb, alpha, d.baseWidth, d.bristleOff);
+    }
+  }
+
+  // =====================================================================
+  //  Hallucination events (dreamlike discontinuities)
+  // =====================================================================
+  var lastHallucinationFrame = 0;
+  var HALLUC_INTERVAL = 1800;
+
+  function maybeHallucinate() {
+    if (frameCount - lastHallucinationFrame < HALLUC_INTERVAL) return;
+    if (Math.random() > 0.02) return;
+    lastHallucinationFrame = frameCount;
+
+    var count = 1 + Math.floor(Math.random() * 2);
+    for (var i = 0; i < count && i < vortices.length; i++) {
+      var idx = Math.floor(Math.random() * vortices.length);
+      var v = vortices[idx];
+      v.x = 0.15 * W + Math.random() * 0.7 * W;
+      v.y = 0.15 * H + Math.random() * 0.7 * H;
+      v.dir *= -1;
+    }
   }
 
   // =====================================================================
@@ -372,86 +428,58 @@
   }
 
   // =====================================================================
-  //  Main animation loop
+  //  Main loop
   // =====================================================================
   function animate() {
     requestAnimationFrame(animate);
     frameCount++;
 
-    // Update dream state (diffusion forward/reverse cycles)
-    updateDreamState();
+    updateDiffusionPhase();
+    maybeHallucinate();
 
-    // Fade previous frame — slower fade for trail persistence
+    // Fade overlay
     ctx.globalAlpha = 1;
-    ctx.fillStyle = 'rgba(255,255,248,' + FADE_ALPHA + ')';
+    ctx.fillStyle = 'rgba(255,255,248,' + fadeAlpha() + ')';
     ctx.fillRect(0, 0, W, H);
 
-    time += 0.00008;
-    var effectiveTime = time + dreamPhaseOffset;
+    time += timeSpeed();
+    updateVortices();
 
-    // Update attractors
-    updateAttractors();
+    if (frameCount % 30 === 0) diffuseDensityGrid();
 
-    // Diffuse density grid periodically
-    if (frameCount % 30 === 0) {
-      diffuseDensity();
+    // Dye drop scheduling
+    if (frameCount >= nextDyeFrame) {
+      spawnDyeDrop(
+        0.15 * W + Math.random() * 0.7 * W,
+        0.15 * H + Math.random() * 0.7 * H);
     }
 
-    // High-frequency boost during "chaotic" dream phase
-    var boostedA2 = A2 + dreamNoiseBoost;
+    // --- Sky paint particles ---
+    ctx.globalCompositeOperation = 'source-over';
+    for (var i = 0; i < SKY_COUNT; i++) {
+      var p = skyParticles[i];
+      var v = velocityAt(p.x, p.y, time, diffPhase);
 
-    // --- Paint particles ---
-    for (var i = 0; i < PAINT_COUNT; i++) {
-      var p = paintParticles[i];
+      p.x += v.x * SKY_SPEED;
+      p.y += v.y * SKY_SPEED;
 
-      // Multi-octave curl with dream boost on high-freq
-      var c0 = curlSingle(p.x * S0, p.y * S0, effectiveTime * K0);
-      var c1 = curlSingle(p.x * S1, p.y * S1, effectiveTime * K1);
-      var c2 = curlSingle(p.x * S2, p.y * S2, effectiveTime * K2);
-
-      var vx = A0 * c0.x + A1 * c1.x + boostedA2 * c2.x;
-      var vy = A0 * c0.y + A1 * c1.y + boostedA2 * c2.y;
-
-      // Attractor pull
-      var pull = attractorPull(p.x, p.y);
-      vx += pull.x;
-      vy += pull.y;
-
-      p.x += vx * PARTICLE_SPEED;
-      p.y += vy * PARTICLE_SPEED;
-
-      // Wrap edges
       if (p.x < 0) p.x += W;
       if (p.x > W) p.x -= W;
       if (p.y < 0) p.y += H;
       if (p.y > H) p.y -= H;
 
-      // Deposit density
       depositDensity(p.x, p.y);
-
-      // Draw oriented brush stroke
-      drawStroke(p.x, p.y, vx, vy, p);
+      var edgeM = 20;
+      if (p.x > edgeM && p.x < W - edgeM && p.y > edgeM && p.y < H - edgeM) {
+        drawBrushStroke(p.x, p.y, v.x, v.y, p.rgb, p.baseAlpha, p.baseWidth, p.bristleOff);
+      }
     }
 
-    // --- Star particles ---
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-
-      // Stars drift slowly with low-freq curl only
-      var sc = curlSingle(s.x * S0 * 0.5, s.y * S0 * 0.5, effectiveTime * 0.3);
-      s.x += sc.x * 0.08;
-      s.y += sc.y * 0.08;
-
-      // Soft wrap
-      if (s.x < -20) s.x += W + 40;
-      if (s.x > W + 20) s.x -= W + 40;
-      if (s.y < -20) s.y += H + 40;
-      if (s.y > H + 20) s.y -= H + 40;
-
-      drawStar(s);
-    }
+    // --- Dye particles (ink diffusing in water) ---
+    updateAndDrawDye();
 
     ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   // =====================================================================
@@ -459,9 +487,8 @@
   // =====================================================================
   resize();
   initDensity();
-  initAttractors();
-  initPaintParticles();
-  initStars();
+  initVortices();
+  initSkyParticles();
   animate();
 
   var resizeTimer;
@@ -470,9 +497,9 @@
     resizeTimer = setTimeout(function () {
       resize();
       initDensity();
-      initAttractors();
-      initPaintParticles();
-      initStars();
+      initVortices();
+      initSkyParticles();
+      dyeParticles = [];
     }, 200);
   });
 })();
