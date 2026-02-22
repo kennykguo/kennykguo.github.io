@@ -390,7 +390,7 @@ nav {
   --layer-fade-strength: calc(1 - var(--layer-focus));
   opacity: var(--layer-focus);
   filter: blur(calc(var(--layer-fade-strength) * 12px));
-  transition: opacity 180ms linear, filter 180ms linear;
+  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, filter;
 }
 
