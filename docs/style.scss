@@ -46,6 +46,35 @@ html {
   height: 100%;
 }
 
+#diffusion-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+
+.gradient-word{
+  /* a wider-than-text gradient so there’s room to “move” */
+  background: linear-gradient(90deg, #ffb3b3, #b3c7ff, #ffb3b3);
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  animation: gradient-sweep 3.5s linear infinite;
+}
+
+@keyframes gradient-sweep{
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 100% 50%; }
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   background: #fffff8;
@@ -355,6 +384,43 @@ nav {
   width: 100%;
   max-width: 1240px;
   padding: 0 2.5rem;
+  position: relative;
+}
+
+.home-stack.edge-blur::before,
+.home-stack.edge-blur::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 40;
+  background: rgba(255, 255, 248, 0.01);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.home-stack.edge-blur::before {
+  top: 0;
+  height: min(24vh, 180px);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.home-stack.edge-blur::after {
+  bottom: 0;
+  height: min(24vh, 180px);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.home-stack.edge-blur .home-layer {
+  --layer-focus: 1;
+  --layer-fade-strength: calc(1 - var(--layer-focus));
+  opacity: var(--layer-focus);
+  filter: blur(calc(var(--layer-fade-strength) * 12px));
+  transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, filter;
 }
 
 .home-layer {
@@ -363,6 +429,19 @@ nav {
   gap: 2.5rem;
   align-items: stretch;
   justify-items: stretch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-stack.edge-blur::before,
+  .home-stack.edge-blur::after {
+    display: none;
+  }
+
+  .home-stack.edge-blur .home-layer {
+    opacity: 1;
+    filter: none;
+    transition: none;
+  }
 }
 
 .layer-text {
