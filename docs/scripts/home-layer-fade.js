@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Fade in/out only across the edge band (top 10% and bottom 10% of viewport).
           const t = Math.min(1, visibleHeight / edgeBand);
           const held = Math.pow(t, 1.5);
-          // Cinematic profile: hold blur near edges, then clear smoothly.
+          // Cinematic profile: hold layers dimmed near edges, then lift smoothly.
           focus = held * held * (3 - 2 * held);
         }
       }

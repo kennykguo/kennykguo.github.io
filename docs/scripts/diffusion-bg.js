@@ -3,7 +3,9 @@
 
   var canvas = document.getElementById('diffusion-bg');
   if (!canvas) return;
-  var ctx = canvas.getContext('2d');
+  var ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
+  if (!ctx) ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
   // =====================================================================
   //  Simplex noise (2D)
@@ -62,16 +64,17 @@
   //  Config
   // =====================================================================
   var CREAM = '#fffff8';
+  var FRAME_DURATION = 1000 / 60;
 
   // Sky paint particles
   var SKY_COUNT = 1400;
-  var SKY_SPEED = 0.35;
+  var SKY_SPEED = 0.58;
   var ANGLE_QUANT = Math.PI / 12;
 
   // Multi-octave curl scales
   var S0 = 0.0005, S1 = 0.002, S2 = 0.007;
   var A0_BASE = 1.0, A1_BASE = 0.35, A2_BASE = 0.12;
-  var K0 = 1.0, K1 = 1.8, K2 = 3.5;
+  var K0 = 1.35, K1 = 2.35, K2 = 4.4;
 
   // Vortex attractors
   var VORTEX_COUNT = 4;
@@ -83,12 +86,17 @@
   var DENSITY_COLS = 160, DENSITY_ROWS = 100;
 
   // Diffusion phase (oscillation between noise and coherence)
-  var PHASE_PERIOD = 1800;
+  var PHASE_PERIOD = 1200 * FRAME_DURATION;
 
   // Dye drop events (replaces explosions)
-  var DYE_INTERVAL_MIN = 600;
-  var DYE_INTERVAL_MAX = 1400;
+  var DYE_INTERVAL_MIN = 420 * FRAME_DURATION;
+  var DYE_INTERVAL_MAX = 980 * FRAME_DURATION;
   var DYE_PARTICLE_COUNT = 50;
+  var QUALITY_PROFILES = [
+    { skyCount: 1400, dyeParticleCount: 50, densityCols: 160, densityRows: 100, dprCap: 1.5 },
+    { skyCount: 950, dyeParticleCount: 36, densityCols: 120, densityRows: 76, dprCap: 1.25 },
+    { skyCount: 650, dyeParticleCount: 24, densityCols: 90, densityRows: 56, dprCap: 1 }
+  ];
 
   // Rich palette — blues, ambers, muted reds, greens, purples
   var SKY_PALETTE = [
@@ -127,11 +135,81 @@
   var dyeParticles = [];
   var time = 0;
   var frameCount = 0;
-  var nextDyeFrame = 250;
+  var elapsedMs = 0;
+  var densityElapsedMs = 0;
+  var nextDyeTime = 250 * FRAME_DURATION;
   var densityGrid, densityCellW, densityCellH;
+  var qualityLevel = 0;
+  var renderDprCap = QUALITY_PROFILES[0].dprCap;
+  var lastQualitySampleTime = 0;
+  var lastAnimationTime = 0;
+  var slowFrameStreak = 0;
 
   // Diffusion phase: 0 = most coherent, 1 = most noisy
   var diffPhase = 0;
+
+  function initialQualityLevel() {
+    var cores = navigator.hardwareConcurrency || 4;
+    var memory = navigator.deviceMemory || 4;
+    if (cores <= 4 || memory <= 4) return 2;
+    if (cores >= 8 && memory >= 8) return 0;
+    return 1;
+  }
+
+  function viewportScale() {
+    var width = W || window.innerWidth || 1440;
+    var height = H || window.innerHeight || 900;
+    var area = Math.max(1, width * height);
+    return Math.max(0.65, Math.min(1, Math.sqrt(area / (1440 * 900))));
+  }
+
+  function applyQuality(level) {
+    var clamped = Math.max(0, Math.min(level, QUALITY_PROFILES.length - 1));
+    var profile = QUALITY_PROFILES[clamped];
+    var scale = viewportScale();
+
+    qualityLevel = clamped;
+    SKY_COUNT = Math.max(360, Math.round(profile.skyCount * scale));
+    DYE_PARTICLE_COUNT = Math.max(14, Math.round(profile.dyeParticleCount * scale));
+    DENSITY_COLS = Math.max(72, Math.round(profile.densityCols * scale));
+    DENSITY_ROWS = Math.max(44, Math.round(profile.densityRows * scale));
+    renderDprCap = profile.dprCap;
+  }
+
+  function resetScene() {
+    initDensity();
+    initVortices();
+    initSkyParticles();
+    dyeParticles = [];
+    densityElapsedMs = 0;
+    nextDyeTime = elapsedMs + (45 * FRAME_DURATION);
+    lastHallucinationTime = elapsedMs;
+  }
+
+  function maybeReduceQuality(now) {
+    if (!lastQualitySampleTime) {
+      lastQualitySampleTime = now;
+      return;
+    }
+
+    var delta = now - lastQualitySampleTime;
+    lastQualitySampleTime = now;
+
+    if (delta > 28) {
+      slowFrameStreak += 1;
+    } else {
+      slowFrameStreak = Math.max(0, slowFrameStreak - 2);
+    }
+
+    if (slowFrameStreak < 8 || qualityLevel >= QUALITY_PROFILES.length - 1) {
+      return;
+    }
+
+    slowFrameStreak = 0;
+    applyQuality(qualityLevel + 1);
+    resize();
+    resetScene();
+  }
 
   // =====================================================================
   //  Velocity field: multi-octave curl + vortex tangential flow
@@ -186,10 +264,11 @@
     }
   }
 
-  function updateVortices() {
+  function updateVortices(step) {
     for (var i = 0; i < vortices.length; i++) {
       var v = vortices[i];
-      v.x += v.vx; v.y += v.vy;
+      v.x += v.vx * step;
+      v.y += v.vy * step;
       if (v.x < W * 0.05 || v.x > W * 0.95) v.vx *= -1;
       if (v.y < H * 0.05 || v.y > H * 0.95) v.vy *= -1;
     }
@@ -235,14 +314,14 @@
   //  Diffusion phase controller
   // =====================================================================
   function updateDiffusionPhase() {
-    diffPhase = 0.5 + 0.5 * Math.sin(frameCount * Math.PI * 2 / PHASE_PERIOD);
+    diffPhase = 0.5 + 0.5 * Math.sin(elapsedMs * Math.PI * 2 / PHASE_PERIOD);
   }
 
   function fadeAlpha() {
     return 0.01 + diffPhase * 0.008;
   }
   function timeSpeed() {
-    return 0.00004 + diffPhase * 0.00006;
+    return 0.000075 + diffPhase * 0.00011;
   }
   function strokeAlphaMod() {
     return 1.0 + (1 - diffPhase) * 0.3;
@@ -340,14 +419,21 @@
     }
 
     // Schedule next dye drop
-    nextDyeFrame = frameCount + DYE_INTERVAL_MIN +
-      Math.floor(Math.random() * (DYE_INTERVAL_MAX - DYE_INTERVAL_MIN));
+    nextDyeTime = elapsedMs + DYE_INTERVAL_MIN +
+      Math.random() * (DYE_INTERVAL_MAX - DYE_INTERVAL_MIN);
   }
 
-  function updateAndDrawDye() {
+  function spawnRandomDyeDrop() {
+    spawnDyeDrop(
+      0.15 * W + Math.random() * 0.7 * W,
+      0.15 * H + Math.random() * 0.7 * H
+    );
+  }
+
+  function updateAndDrawDye(step) {
     for (var i = dyeParticles.length - 1; i >= 0; i--) {
       var d = dyeParticles[i];
-      d.life++;
+      d.life += step;
       if (d.life > d.maxLife) { dyeParticles.splice(i, 1); continue; }
 
       var progress = d.life / d.maxLife;
@@ -355,10 +441,11 @@
       // Follow the same flow field as sky particles
       var v = velocityAt(d.x, d.y, time, diffPhase);
       // Outward push decays, flow field takes over
-      d.vx *= 0.97;
-      d.vy *= 0.97;
-      d.x += d.vx + v.x * SKY_SPEED * 1.1;
-      d.y += d.vy + v.y * SKY_SPEED * 1.1;
+      var decay = Math.pow(0.97, step);
+      d.vx *= decay;
+      d.vy *= decay;
+      d.x += (d.vx + v.x * SKY_SPEED * 1.1) * step;
+      d.y += (d.vy + v.y * SKY_SPEED * 1.1) * step;
 
       // Wrap edges
       if (d.x < 0) d.x += W;
@@ -392,13 +479,13 @@
   // =====================================================================
   //  Hallucination events (dreamlike discontinuities)
   // =====================================================================
-  var lastHallucinationFrame = 0;
-  var HALLUC_INTERVAL = 1800;
+  var lastHallucinationTime = 0;
+  var HALLUC_INTERVAL = 1800 * FRAME_DURATION;
 
   function maybeHallucinate() {
-    if (frameCount - lastHallucinationFrame < HALLUC_INTERVAL) return;
+    if (elapsedMs - lastHallucinationTime < HALLUC_INTERVAL) return;
     if (Math.random() > 0.02) return;
-    lastHallucinationFrame = frameCount;
+    lastHallucinationTime = elapsedMs;
 
     var count = 1 + Math.floor(Math.random() * 2);
     for (var i = 0; i < count && i < vortices.length; i++) {
@@ -414,53 +501,60 @@
   //  Resize
   // =====================================================================
   function resize() {
-    var dpr = window.devicePixelRatio || 1;
     W = window.innerWidth;
     H = window.innerHeight;
+    applyQuality(qualityLevel);
+    var dpr = Math.min(window.devicePixelRatio || 1, renderDprCap);
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     canvas.style.width = W + 'px';
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = CREAM;
     ctx.fillRect(0, 0, W, H);
+    lastAnimationTime = 0;
   }
 
   // =====================================================================
-  //  Main loop
+  //  Rendering
   // =====================================================================
-  function animate() {
-    requestAnimationFrame(animate);
-    frameCount++;
+  function renderStep(deltaMs, overlayScale, allowHallucination) {
+    elapsedMs += deltaMs;
+    var step = deltaMs / FRAME_DURATION;
 
     updateDiffusionPhase();
-    maybeHallucinate();
+    if (allowHallucination) {
+      maybeHallucinate();
+    }
 
     // Fade overlay
     ctx.globalAlpha = 1;
-    ctx.fillStyle = 'rgba(255,255,248,' + fadeAlpha() + ')';
+    ctx.fillStyle = 'rgba(255,255,248,' + Math.min(0.08, fadeAlpha() * step * overlayScale) + ')';
     ctx.fillRect(0, 0, W, H);
 
-    time += timeSpeed();
-    updateVortices();
+    time += timeSpeed() * step;
+    updateVortices(step);
 
-    if (frameCount % 30 === 0) diffuseDensityGrid();
+    densityElapsedMs += deltaMs;
+    while (densityElapsedMs >= 30 * FRAME_DURATION) {
+      diffuseDensityGrid();
+      densityElapsedMs -= 30 * FRAME_DURATION;
+    }
 
     // Dye drop scheduling
-    if (frameCount >= nextDyeFrame) {
-      spawnDyeDrop(
-        0.15 * W + Math.random() * 0.7 * W,
-        0.15 * H + Math.random() * 0.7 * H);
+    if (elapsedMs >= nextDyeTime) {
+      spawnRandomDyeDrop();
     }
 
     // --- Sky paint particles ---
     ctx.globalCompositeOperation = 'source-over';
-    for (var i = 0; i < SKY_COUNT; i++) {
+    for (var i = 0; i < skyParticles.length; i++) {
       var p = skyParticles[i];
       var v = velocityAt(p.x, p.y, time, diffPhase);
 
-      p.x += v.x * SKY_SPEED;
-      p.y += v.y * SKY_SPEED;
+      p.x += v.x * SKY_SPEED * step;
+      p.y += v.y * SKY_SPEED * step;
 
       if (p.x < 0) p.x += W;
       if (p.x > W) p.x -= W;
@@ -475,19 +569,46 @@
     }
 
     // --- Dye particles (ink diffusing in water) ---
-    updateAndDrawDye();
+    updateAndDrawDye(step);
 
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
   }
 
+  function warmStartScene() {
+    var warmupSteps = qualityLevel === 2 ? 12 : qualityLevel === 1 ? 18 : 24;
+    var warmupDelta = FRAME_DURATION * (qualityLevel === 2 ? 3.5 : 3);
+
+    for (var i = 0; i < 3; i++) {
+      spawnRandomDyeDrop();
+    }
+
+    for (var stepIndex = 0; stepIndex < warmupSteps; stepIndex++) {
+      renderStep(warmupDelta, stepIndex < 4 ? 0.2 : 0.45, false);
+    }
+  }
+
+  // =====================================================================
+  //  Main loop
+  // =====================================================================
+  function animate(now) {
+    requestAnimationFrame(animate);
+    var currentTime = now || performance.now();
+    if (!lastAnimationTime) lastAnimationTime = currentTime;
+    var deltaMs = Math.min(96, Math.max(8, currentTime - lastAnimationTime || FRAME_DURATION));
+    lastAnimationTime = currentTime;
+    frameCount++;
+    maybeReduceQuality(currentTime);
+    renderStep(deltaMs, 1, true);
+  }
+
   // =====================================================================
   //  Init
   // =====================================================================
+  applyQuality(initialQualityLevel());
   resize();
-  initDensity();
-  initVortices();
-  initSkyParticles();
+  resetScene();
+  warmStartScene();
   animate();
 
   var resizeTimer;
@@ -495,10 +616,8 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
       resize();
-      initDensity();
-      initVortices();
-      initSkyParticles();
-      dyeParticles = [];
+      resetScene();
+      warmStartScene();
     }, 200);
   });
 })();
