@@ -68,13 +68,13 @@
 
   // Sky paint particles
   var SKY_COUNT = 1400;
-  var SKY_SPEED = 0.58;
+  var SKY_SPEED = 0.68;
   var ANGLE_QUANT = Math.PI / 12;
 
   // Multi-octave curl scales
   var S0 = 0.0005, S1 = 0.002, S2 = 0.007;
   var A0_BASE = 1.0, A1_BASE = 0.35, A2_BASE = 0.12;
-  var K0 = 1.35, K1 = 2.35, K2 = 4.4;
+  var K0 = 1.55, K1 = 2.65, K2 = 4.9;
 
   // Vortex attractors
   var VORTEX_COUNT = 4;
@@ -86,11 +86,11 @@
   var DENSITY_COLS = 160, DENSITY_ROWS = 100;
 
   // Diffusion phase (oscillation between noise and coherence)
-  var PHASE_PERIOD = 1200 * FRAME_DURATION;
+  var PHASE_PERIOD = 1000 * FRAME_DURATION;
 
   // Dye drop events (replaces explosions)
-  var DYE_INTERVAL_MIN = 420 * FRAME_DURATION;
-  var DYE_INTERVAL_MAX = 980 * FRAME_DURATION;
+  var DYE_INTERVAL_MIN = 300 * FRAME_DURATION;
+  var DYE_INTERVAL_MAX = 700 * FRAME_DURATION;
   var DYE_PARTICLE_COUNT = 50;
   var QUALITY_PROFILES = [
     { skyCount: 1400, dyeParticleCount: 50, densityCols: 160, densityRows: 100, dprCap: 1.5 },
@@ -182,7 +182,7 @@
     initSkyParticles();
     dyeParticles = [];
     densityElapsedMs = 0;
-    nextDyeTime = elapsedMs + (45 * FRAME_DURATION);
+    nextDyeTime = elapsedMs + (20 * FRAME_DURATION);
     lastHallucinationTime = elapsedMs;
   }
 
@@ -321,7 +321,7 @@
     return 0.01 + diffPhase * 0.008;
   }
   function timeSpeed() {
-    return 0.000075 + diffPhase * 0.00011;
+    return 0.000095 + diffPhase * 0.00014;
   }
   function strokeAlphaMod() {
     return 1.0 + (1 - diffPhase) * 0.3;
@@ -576,15 +576,15 @@
   }
 
   function warmStartScene() {
-    var warmupSteps = qualityLevel === 2 ? 12 : qualityLevel === 1 ? 18 : 24;
-    var warmupDelta = FRAME_DURATION * (qualityLevel === 2 ? 3.5 : 3);
+    var warmupSteps = qualityLevel === 2 ? 16 : qualityLevel === 1 ? 24 : 30;
+    var warmupDelta = FRAME_DURATION * (qualityLevel === 2 ? 4 : 3.5);
 
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 4; i++) {
       spawnRandomDyeDrop();
     }
 
     for (var stepIndex = 0; stepIndex < warmupSteps; stepIndex++) {
-      renderStep(warmupDelta, stepIndex < 4 ? 0.2 : 0.45, false);
+      renderStep(warmupDelta, stepIndex < 6 ? 0.12 : 0.3, false);
     }
   }
 

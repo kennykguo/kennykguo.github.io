@@ -40,6 +40,12 @@
   font-kerning: auto;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   font-family: sans-serif;
   -webkit-text-size-adjust: 100%;
@@ -1298,6 +1304,11 @@ pre {
 
 /* Tablet */
 @media (max-width: 850px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
   body {
     padding: 1rem 1rem 0;
     width: 100%;
@@ -1336,11 +1347,46 @@ pre {
   main {
     margin: 0;
     padding: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  article,
+  .home-stack,
+  .home-layer,
+  .layer-text,
+  .layer-media,
+  .image-layer .image-block {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .home-stack {
     gap: 2rem;
     padding: 0;
+  }
+
+  .home-stack.edge-blur::before,
+  .home-stack.edge-blur::after {
+    display: none;
+  }
+
+  .home-stack.edge-blur .home-layer,
+  .home-stack.edge-blur .layer-text,
+  .home-stack.edge-blur .layer-media img,
+  .home-stack.edge-blur .image-layer .image-block img {
+    opacity: 1;
+    filter: none;
+    -webkit-filter: none;
+    transform: none;
+    transition: none;
+  }
+
+  .home-stack.edge-blur .layer-text::after,
+  .home-stack.edge-blur .layer-media::after,
+  .home-stack.edge-blur .image-layer .image-block::after {
+    display: none;
   }
 
   .home-layer {
@@ -1404,21 +1450,58 @@ pre {
   }
   
   nav {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+
     .menu-icon {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.45rem 0.95rem;
+      border: 1px solid rgba(17, 17, 17, 0.14);
+      border-radius: 999px;
+      background: rgba(255, 255, 248, 0.92);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+    }
+
+    .menu-btn:checked ~ .site-nav {
+      display: flex;
     }
     
     ul.site-nav {
       display: none;
+      width: min(100%, 12rem);
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.35rem;
+      padding: 0.4rem;
+      background: rgba(255, 255, 248, 0.96);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      border-radius: 14px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
       
       li {
         display: block;
-        margin: 1rem 0;
+        margin: 0;
         width: 100%;
         
         a, a:visited {
           display: block;
           width: 100%;
+          padding: 0.7rem 0.85rem;
+          border-radius: 10px;
+          font-size: 1.05rem;
+          letter-spacing: 0.04em;
+        }
+
+        a:hover,
+        a:focus-visible {
+          background: rgba(17, 17, 17, 0.06);
+          outline: none;
         }
       }
     }

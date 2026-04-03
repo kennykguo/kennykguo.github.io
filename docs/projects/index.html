@@ -1,0 +1,29 @@
+---
+layout: default
+title: projects
+---
+
+{% assign sorted_projects = site.projects | sort: "start_date" | reverse %}
+{% for project in sorted_projects %}
+<div class="project">
+  <h4>
+    <strong>
+      {% if project.link %}
+      <a href="{{ project.link }}" target="_blank" rel="noopener noreferrer">{{ project.title }}</a>
+      {% else %}
+      {{ project.title }}
+      {% endif %}
+    </strong>
+  </h4>
+  {% if project.start_date or project.end_date %}
+  <p>
+    {% if project.start_date %}{{ project.start_date | date: "%m-%d-%Y" }}{% endif %}
+    {% if project.start_date and project.end_date %} -- {% endif %}
+    {% if project.end_date %}{{ project.end_date | date: "%m-%d-%Y" }}{% endif %}
+  </p>
+  {% endif %}
+  {% if project.technologies and project.technologies.size > 0 %}
+  <p><strong>Technologies:</strong> {{ project.technologies | join: ", " }}</p>
+  {% endif %}
+</div>
+{% endfor %}
