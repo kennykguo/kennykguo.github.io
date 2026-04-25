@@ -699,13 +699,14 @@ nav {
 }
 
 .intro-layer .layer-text {
-  align-items: center;
+  align-items: flex-start;
   align-self: center;
   display: flex;
   flex-direction: column;
-  grid-column: 1 / -1;
+  grid-column: 1;
   justify-content: center;
-  text-align: center;
+  max-width: 680px;
+  text-align: left;
   width: 100%;
 }
 
@@ -731,7 +732,7 @@ nav {
 .intro-copy {
   display: grid;
   gap: 0.45rem;
-  justify-items: center;
+  justify-items: start;
   margin-top: 1.45rem;
   max-width: none;
   width: 100%;
@@ -746,8 +747,31 @@ nav {
 }
 
 .intro-layer {
-  grid-template-areas: "text text";
-  padding-top: 1rem;
+  align-items: center;
+  gap: clamp(1.75rem, 4vw, 4.5rem);
+  grid-template-areas: "text media";
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  padding-top: 0.5rem;
+}
+
+.intro-layer .intro-art {
+  align-self: center;
+  aspect-ratio: auto;
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+  max-width: min(32vw, 360px);
+  overflow: visible;
+}
+
+.intro-layer .intro-art img {
+  aspect-ratio: auto;
+  box-shadow: none;
+  filter: drop-shadow(0 22px 34px rgba(0, 0, 0, 0.16));
+  height: auto;
+  object-fit: contain;
+  transform: rotate(-4deg);
+  transform-origin: center;
 }
 
 .top-section {
@@ -1568,11 +1592,16 @@ pre {
   }
 
   .home-layer.intro-layer {
-    grid-template-areas: "text";
+    grid-template-areas:
+      "text"
+      "media";
   }
 
   .intro-layer .layer-text {
     grid-column: 1;
+    align-items: center;
+    max-width: 100%;
+    text-align: center;
   }
 
   .intro-layer .layer-text h2 {
@@ -1584,12 +1613,17 @@ pre {
   }
 
   .intro-copy {
+    justify-items: center;
     margin-top: 1.25rem;
     max-width: 100%;
   }
 
   .intro-copy p {
     font-size: 1.06rem;
+  }
+
+  .intro-layer .intro-art {
+    max-width: min(72vw, 320px);
   }
 
   .layer-gallery {
