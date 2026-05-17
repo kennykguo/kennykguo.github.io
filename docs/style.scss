@@ -750,7 +750,7 @@ nav {
   align-items: center;
   gap: clamp(1.75rem, 4vw, 4.5rem);
   grid-template-areas: "text media";
-  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
   padding-top: 0.5rem;
 }
 
@@ -760,7 +760,7 @@ nav {
   display: flex;
   justify-content: center;
   justify-self: center;
-  max-width: min(32vw, 360px);
+  max-width: min(48vw, 540px);
   overflow: visible;
 }
 
@@ -1623,7 +1623,7 @@ pre {
   }
 
   .intro-layer .intro-art {
-    max-width: min(72vw, 320px);
+    max-width: min(88vw, 480px);
   }
 
   .layer-gallery {
