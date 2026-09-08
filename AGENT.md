@@ -8,7 +8,7 @@ Overview
 - Always consult this AGENT.md before changing layout, styles, or markup.
 
 Terminology
-- Section: a group of consecutive layers that make up one topic area (Intro, Hacker Fab, Meraki, Origami, Contact).
+- Section: a group of consecutive layers that make up one topic area (Intro, Hacker Fab, Meraki, Symposium, Origami, Entropy, Contact).
 - Spacer: a 1x1 layer used as a visual break between sections.
 
 Layer Formats
@@ -59,6 +59,7 @@ Homepage Layers (Current)
 - Hacker Fab layers: centered text block with a single image, followed by a 1x2 image layer.
 - Meraki layers: centered text block with a single image, followed by three 1x2 image layers.
 - Origami layers: text + single image, followed by a 1x2 image layer.
+- Entropy layers: centered text block with a single image, followed by a 1x2 image layer.
 - Contact layer: 1x1 full-width block at the bottom.
 - Spacer layers: 1x1 visual breaks between sections.
 

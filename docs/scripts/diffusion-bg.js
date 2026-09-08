@@ -18,7 +18,7 @@
   (function () {
     var p = new Uint8Array(256);
     for (var i = 0; i < 256; i++) p[i] = i;
-    var s = 42;
+    var s = 1729;
     for (var i = 255; i > 0; i--) {
       s = (s * 16807) % 2147483647;
       var j = s % (i + 1);
@@ -69,24 +69,24 @@
   // Sky paint particles
   var SKY_COUNT = 1400;
   var SKY_SPEED = 0.68;
-  var ANGLE_QUANT = Math.PI / 12;
+  var ANGLE_QUANT = Math.PI / 9;
 
   // Multi-octave curl scales
-  var S0 = 0.0005, S1 = 0.002, S2 = 0.007;
+  var S0 = 0.00042, S1 = 0.0024, S2 = 0.0085;
   var A0_BASE = 1.0, A1_BASE = 0.35, A2_BASE = 0.12;
   var K0 = 1.55, K1 = 2.65, K2 = 4.9;
 
   // Vortex attractors
-  var VORTEX_COUNT = 4;
+  var VORTEX_COUNT = 5;
   var VORTEX_TANGENT_K = 0.12;
   var VORTEX_RADIAL_K = 0.00005;
-  var VORTEX_FALLOFF = 120;
+  var VORTEX_FALLOFF = 150;
 
   // Density grid
   var DENSITY_COLS = 160, DENSITY_ROWS = 100;
 
   // Diffusion phase (oscillation between noise and coherence)
-  var PHASE_PERIOD = 1000 * FRAME_DURATION;
+  var PHASE_PERIOD = 1300 * FRAME_DURATION;
 
   // Dye drop events (replaces explosions)
   var DYE_INTERVAL_MIN = 300 * FRAME_DURATION;
@@ -108,9 +108,9 @@
     [120, 80, 60],   // rust
     [80, 100, 75],   // sage green
     [65, 85, 70],    // dark teal
-    [100, 75, 110],  // muted purple
+    [110, 70, 95],   // mulberry
     [85, 70, 100],   // dusty violet
-    [130, 110, 80],  // ochre
+    [125, 115, 70],  // olive ochre
     [110, 95, 120],  // lavender gray
   ];
 
@@ -124,6 +124,7 @@
     [55, 70, 120],   // steel blue
     [120, 50, 50],   // brick red
     [60, 95, 95],    // teal
+    [95, 60, 110],   // violet ink
   ];
 
   // =====================================================================
@@ -350,8 +351,8 @@
     var theta = Math.atan2(vy, vx);
     theta = Math.round(theta / ANGLE_QUANT) * ANGLE_QUANT;
 
-    var baseLen = 5;
-    var maxLen = 16;
+    var baseLen = 4 + (1 - diffPhase) * 3;
+    var maxLen = 18;
     var len = baseLen + Math.min(speed * 20, maxLen - baseLen);
 
     var density = readDensity(x, y);
