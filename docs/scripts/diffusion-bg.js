@@ -88,16 +88,25 @@
   // Diffusion phase (oscillation between noise and coherence)
   var PHASE_PERIOD = 1300 * FRAME_DURATION;
 
-  // Rigidity schedule (ms): waves -> crystallize -> hold rigid -> melt -> waves
-  var RIGID_WAVE_MS = 10000;      // pure waves at start
-  var RIGID_RISE_MS = 40000;      // waves -> polygons
-  var RIGID_HOLD_MS = 35000;      // hold rigid
-  var RIGID_FALL_MS = 30000;      // melt back to waves
-  var RIGID_REST_MS = 15000;      // waves before next cycle
+  // Rigidity schedule (ms): diffusion -> crystallize -> hold tiling -> melt -> diffusion
+  var RIGID_WAVE_MS = 12000;      // pure diffusion at start of each cycle
+  var RIGID_RISE_MS = 35000;      // diffusion -> tiling
+  var RIGID_HOLD_MS = 40000;      // hold the tiling
+  var RIGID_FALL_MS = 25000;      // melt back into diffusion
+  var RIGID_REST_MS = 15000;      // diffusion before the next cycle
   var RIGID_PERIOD = RIGID_WAVE_MS + RIGID_RISE_MS + RIGID_HOLD_MS + RIGID_FALL_MS + RIGID_REST_MS;
-  var RIGID_DIRECTIONS = 6;       // hexagonal snapping when fully rigid
-  var WAVE_K = 0.0055, WAVE_AMP = 0.32;
-  var POLYGON_EVERY_MS = 45 * FRAME_DURATION;
+
+  // Regular tilings the field crystallizes into, one per cycle
+  var TILINGS = ['hex', 'tri', 'square'];
+  var HEX_R = 46;        // hexagon circumradius (px)
+  var TRI_SIDE = 74;     // triangle side (px)
+  var SQUARE_SIDE = 66;  // square side (px)
+  var SQRT3 = Math.sqrt(3);
+  var LATTICE_PULL = 0.9;   // attraction toward nearest edge
+  var LATTICE_ALONG = 0.7;  // travel speed along the edge
+  var LATTICE_INK = [186, 188, 200];   // lattice line colour at full rigidity
+  var CREAM_RGB = [255, 255, 248];
+  var LIFT_PER_FRAME = 0.5;            // levels lifted toward cream per frame when fully rigid
 
   // Dye drop events (replaces explosions)
   var DYE_INTERVAL_MIN = 300 * FRAME_DURATION;
@@ -159,9 +168,10 @@
 
   // Diffusion phase: 0 = most coherent, 1 = most noisy
   var diffPhase = 0;
-  // Rigidity: 0 = flowing waves, 1 = polygons and rigid lines
+  // Rigidity: 0 = free diffusion, 1 = locked onto a regular tiling
   var rigidity = 0;
-  var nextPolygonTime = 0;
+  var tiling = 'hex';
+  var liftAcc = 0;
 
   function initialQualityLevel() {
     var cores = navigator.hardwareConcurrency || 4;
@@ -199,7 +209,6 @@
     densityElapsedMs = 0;
     nextDyeTime = elapsedMs + (20 * FRAME_DURATION);
     lastHallucinationTime = elapsedMs;
-    nextPolygonTime = elapsedMs;
   }
 
   function maybeReduceQuality(now) {
@@ -230,7 +239,7 @@
   // =====================================================================
   //  Velocity field: multi-octave curl + vortex tangential flow
   // =====================================================================
-  function velocityAt(px, py, t, phase) {
+  function velocityAt(px, py, t, phase, along) {
     // Base curl with phase-modulated octave weights
     var a0 = A0_BASE;
     var a1 = A1_BASE + phase * 0.15;
@@ -254,33 +263,25 @@
       vy -= dy * VORTEX_RADIAL_K * influence;
     }
 
-    // Traveling wave bands (fade out as things crystallize)
-    var waveW = 1 - rigidity;
-    if (waveW > 0) {
-      var w = Math.sin(px * WAVE_K + py * 0.0012 - t * 55);
-      vx += waveW * WAVE_AMP * 0.35 * Math.cos(py * WAVE_K * 0.6 + t * 30);
-      vy += waveW * WAVE_AMP * w;
-    }
-
-    // Brownian jitter during noisy phase (suppressed when rigid)
+    // Brownian jitter during noisy phase (suppressed as the lattice takes hold)
     if (phase > 0.3 && rigidity < 0.9) {
       var jitterAmt = (phase - 0.3) * 0.08 * (1 - rigidity);
       vx += (Math.random() - 0.5) * jitterAmt;
       vy += (Math.random() - 0.5) * jitterAmt;
     }
 
-    // Rigid regime: snap direction to a fixed set of headings so paths become polylines
+    // Rigid regime: pull onto the nearest tiling edge and travel along it
     if (rigidity > 0) {
-      var mag = Math.sqrt(vx * vx + vy * vy);
-      if (mag > 0.00001) {
-        var stepAng = Math.PI * 2 / RIGID_DIRECTIONS;
-        var ang = Math.atan2(vy, vx);
-        var snapped = Math.round(ang / stepAng) * stepAng;
-        var sx = Math.cos(snapped) * mag, sy = Math.sin(snapped) * mag;
-        var mix = rigidity * rigidity;
-        vx = vx + (sx - vx) * mix;
-        vy = vy + (sy - vy) * mix;
-      }
+      var L = nearestLatticeEdge(px, py);
+      var ax = L.x - px, ay = L.y - py;
+      var ad = Math.sqrt(ax * ax + ay * ay) + 0.0001;
+      var pull = Math.min(ad, 1.4) / ad;
+      var dir = along || 1;
+      var lx = ax * pull * LATTICE_PULL + L.tx * dir * LATTICE_ALONG;
+      var ly = ay * pull * LATTICE_PULL + L.ty * dir * LATTICE_ALONG;
+      var mix = rigidity * rigidity;
+      vx = vx * (1 - mix) + lx * mix;
+      vy = vy * (1 - mix) + ly * mix;
     }
 
     return { x: vx, y: vy };
@@ -354,6 +355,7 @@
   function updateDiffusionPhase() {
     diffPhase = 0.5 + 0.5 * Math.sin(elapsedMs * Math.PI * 2 / PHASE_PERIOD);
     rigidity = rigidityAt(elapsedMs);
+    tiling = TILINGS[Math.floor(elapsedMs / RIGID_PERIOD) % TILINGS.length];
   }
 
   function smoothstep(t) {
@@ -374,8 +376,8 @@
   }
 
   function fadeAlpha() {
-    // Fade a little faster once rigid so old wave trails give way to the lines
-    return 0.01 + diffPhase * 0.008 + rigidity * 0.006;
+    // Fade faster once rigid so the diffusion residue clears and the tiling reads clean
+    return 0.01 + diffPhase * 0.008 + rigidity * 0.012;
   }
   function timeSpeed() {
     return 0.000095 + diffPhase * 0.00014;
@@ -398,6 +400,7 @@
         baseAlpha: 0.02 + Math.random() * 0.02,
         baseWidth: 0.5 + Math.random() * 1.0,
         bristleOff: Math.random() * Math.PI * 2,
+        along: Math.random() < 0.5 ? 1 : -1,
       });
     }
   }
@@ -405,9 +408,9 @@
   function drawBrushStroke(x, y, vx, vy, rgb, baseAlpha, baseWidth, bristleOff) {
     var speed = Math.sqrt(vx * vx + vy * vy);
     var theta = Math.atan2(vy, vx);
-    // Waves: nearly free angles. Rigid: snap to the same hexagonal headings as the flow.
-    var quant = rigidity < 0.5 ? Math.PI / 24 : ANGLE_QUANT;
-    if (rigidity >= 0.85) quant = Math.PI * 2 / RIGID_DIRECTIONS;
+    // Diffusion: painterly quantization. Rigid: snap to the tiling's edge directions.
+    var quant = ANGLE_QUANT;
+    if (rigidity >= 0.5) quant = tiling === 'square' ? Math.PI / 2 : Math.PI / 3;
     theta = Math.round(theta / quant) * quant;
 
     var baseLen = 4 + (1 - diffPhase) * 3 + rigidity * 9;
@@ -417,7 +420,8 @@
     var density = readDensity(x, y);
     var df = Math.min(density / 50, 1);
     var width = baseWidth * (1 + df * 0.6);
-    var alpha = baseAlpha * strokeAlphaMod() * (1 + df * 0.3);
+    // Ink is lifted quickly while rigid, so strengthen strokes there to keep edges traced
+    var alpha = baseAlpha * strokeAlphaMod() * (1 + df * 0.3) * (1 + rigidity * 1.5);
 
     var cosT = Math.cos(theta), sinT = Math.sin(theta);
     var halfL = len * 0.5;
@@ -476,6 +480,7 @@
         baseAlpha: 0.04 + Math.random() * 0.04,
         baseWidth: 0.8 + Math.random() * 1.2,
         bristleOff: Math.random() * Math.PI * 2,
+        along: Math.random() < 0.5 ? 1 : -1,
       });
     }
 
@@ -500,7 +505,7 @@
       var progress = d.life / d.maxLife;
 
       // Follow the same flow field as sky particles
-      var v = velocityAt(d.x, d.y, time, diffPhase);
+      var v = velocityAt(d.x, d.y, time, diffPhase, d.along);
       // Outward push decays, flow field takes over
       var decay = Math.pow(0.97, step);
       d.vx *= decay;
@@ -538,52 +543,127 @@
   }
 
   // =====================================================================
-  //  Polygon outlines — appear as the field crystallizes
+  //  Regular tilings — nearest-edge lookup and lattice rendering
   // =====================================================================
-  function drawPolygon(cx, cy, radius, sides, rot, rgb, alpha) {
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
-    ctx.lineWidth = 0.7;
+  // Returns the nearest point on a tiling edge plus that edge's unit tangent.
+  function nearestLatticeEdge(x, y) {
+    if (tiling === 'square') {
+      var S = SQUARE_SIDE;
+      var gx = Math.round(x / S) * S, gy = Math.round(y / S) * S;
+      if (Math.abs(x - gx) < Math.abs(y - gy)) return { x: gx, y: y, tx: 0, ty: 1 };
+      return { x: x, y: gy, tx: 1, ty: 0 };
+    }
+    if (tiling === 'tri') {
+      // Three families of parallel lines at 0, 60 and 120 degrees
+      var h = TRI_SIDE * SQRT3 / 2;
+      var best = null;
+      for (var k = 0; k < 3; k++) {
+        var na = Math.PI / 2 + k * Math.PI / 3;
+        var nx = Math.cos(na), ny = Math.sin(na);
+        var d = x * nx + y * ny;
+        var off = d - Math.round(d / h) * h;
+        if (best === null || Math.abs(off) < Math.abs(best.off)) best = { off: off, nx: nx, ny: ny };
+      }
+      return { x: x - best.off * best.nx, y: y - best.off * best.ny, tx: -best.ny, ty: best.nx };
+    }
+    // Flat-top hexagons: find the containing cell, then its edge nearest the point
+    var R = HEX_R;
+    var q = (2 / 3 * x) / R, r = (-1 / 3 * x + SQRT3 / 3 * y) / R;
+    var cx = q, cz = r, cy = -cx - cz;
+    var rx = Math.round(cx), ry = Math.round(cy), rz = Math.round(cz);
+    var ddx = Math.abs(rx - cx), ddy = Math.abs(ry - cy), ddz = Math.abs(rz - cz);
+    if (ddx > ddy && ddx > ddz) rx = -ry - rz; else if (ddy > ddz) ry = -rx - rz; else rz = -rx - ry;
+    var centerX = R * 1.5 * rx, centerY = R * SQRT3 * (rz + rx / 2);
+    var lx = x - centerX, ly = y - centerY;
+    var a = Math.atan2(ly, lx);
+    var kk = Math.round((a - Math.PI / 6) / (Math.PI / 3));
+    var nrm = Math.PI / 6 + kk * Math.PI / 3;
+    var hx = Math.cos(nrm), hy = Math.sin(nrm);
+    var gap = R * SQRT3 / 2 - (lx * hx + ly * hy);
+    // Canonical tangent so a shared edge has the same direction from both cells
+    var tx = -hy, ty = hx;
+    if (tx < -0.001 || (Math.abs(tx) <= 0.001 && ty < 0)) { tx = -tx; ty = -ty; }
+    return { x: x + hx * gap, y: y + hy * gap, tx: tx, ty: ty };
+  }
+
+  // Alpha fades stall on 8-bit canvases (tiny differences round to zero), which leaves
+  // permanent ghosts. While rigid, lift every pixel by whole levels toward the cream
+  // background instead, so old diffusion residue clears and only the redrawn tiling remains.
+  function liftTowardCream(step) {
+    // Active from early in the rise until late in the melt, so the lattice ghost fully clears
+    var env = smoothstep((rigidity - 0.1) / 0.4);
+    if (env <= 0) { liftAcc = 0; return; }
+    liftAcc += env * LIFT_PER_FRAME * step;
+    var n = Math.floor(liftAcc);
+    if (n <= 0) return;
+    liftAcc -= n;
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgb(' + n + ',' + n + ',' + n + ')';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'darken';
+    ctx.fillStyle = CREAM;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  function drawLattice() {
+    if (rigidity < 0.25) return;
+    var strength = smoothstep((rigidity - 0.25) / 0.75);
+    // Draw with 'darken' at an exact target colour: lines settle to that colour and stay
+    // there frame after frame, independent of alpha rounding, while the lift keeps
+    // everything else drifting back to cream.
+    var tr = Math.round(CREAM_RGB[0] - (CREAM_RGB[0] - LATTICE_INK[0]) * strength);
+    var tg = Math.round(CREAM_RGB[1] - (CREAM_RGB[1] - LATTICE_INK[1]) * strength);
+    var tb = Math.round(CREAM_RGB[2] - (CREAM_RGB[2] - LATTICE_INK[2]) * strength);
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'darken';
+    ctx.strokeStyle = 'rgb(' + tr + ',' + tg + ',' + tb + ')';
+    ctx.lineWidth = 1;
     ctx.lineCap = 'butt';
     ctx.lineJoin = 'miter';
     ctx.beginPath();
-    for (var k = 0; k <= sides; k++) {
-      var a = rot + k * Math.PI * 2 / sides;
-      var px = cx + Math.cos(a) * radius, py = cy + Math.sin(a) * radius;
-      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
-  }
 
-  function maybeDrawPolygons() {
-    if (rigidity < 0.35 || elapsedMs < nextPolygonTime) return;
-    nextPolygonTime = elapsedMs + POLYGON_EVERY_MS * (1.6 - rigidity);
-
-    var strength = (rigidity - 0.35) / 0.65;
-    var count = 1 + Math.floor(strength * 2.5);
-    var hexRot = Math.PI / RIGID_DIRECTIONS;
-
-    for (var i = 0; i < count; i++) {
-      // Anchor on a random sky particle so polygons sit inside the flow
-      var p = skyParticles[Math.floor(Math.random() * skyParticles.length)];
-      if (!p) return;
-      var sides = Math.random() < 0.55 ? RIGID_DIRECTIONS : (Math.random() < 0.5 ? 3 : 4);
-      var radius = 14 + Math.random() * 46 * strength;
-      var alpha = (0.025 + Math.random() * 0.03) * strength;
-      drawPolygon(p.x, p.y, radius, sides, sides === 4 ? Math.PI / 4 : hexRot, p.rgb, alpha);
-
-      // Rigid line: a long straight segment along one of the snapped headings
-      if (Math.random() < 0.6 * strength) {
-        var ang = Math.floor(Math.random() * RIGID_DIRECTIONS) * Math.PI * 2 / RIGID_DIRECTIONS;
-        var half = 40 + Math.random() * 120 * strength;
-        ctx.globalAlpha = alpha * 0.8;
-        ctx.lineWidth = 0.6;
-        ctx.beginPath();
-        ctx.moveTo(p.x - Math.cos(ang) * half, p.y - Math.sin(ang) * half);
-        ctx.lineTo(p.x + Math.cos(ang) * half, p.y + Math.sin(ang) * half);
-        ctx.stroke();
+    if (tiling === 'square') {
+      var S = SQUARE_SIDE;
+      for (var gx = 0; gx <= W; gx += S) { ctx.moveTo(gx, 0); ctx.lineTo(gx, H); }
+      for (var gy = 0; gy <= H; gy += S) { ctx.moveTo(0, gy); ctx.lineTo(W, gy); }
+    } else if (tiling === 'tri') {
+      var h = TRI_SIDE * SQRT3 / 2;
+      var span = W + H;
+      for (var k = 0; k < 3; k++) {
+        var na = Math.PI / 2 + k * Math.PI / 3;
+        var nx = Math.cos(na), ny = Math.sin(na);
+        var tx = -ny, ty = nx;
+        var dMin = Math.floor(Math.min(0, W * nx, H * ny, W * nx + H * ny) / h) - 1;
+        var dMax = Math.ceil(Math.max(0, W * nx, H * ny, W * nx + H * ny) / h) + 1;
+        for (var m = dMin; m <= dMax; m++) {
+          var d = m * h;
+          ctx.moveTo(nx * d - tx * span, ny * d - ty * span);
+          ctx.lineTo(nx * d + tx * span, ny * d + ty * span);
+        }
+      }
+    } else {
+      // Each hexagon draws its three "upper" edges so every edge is drawn exactly once
+      var R = HEX_R;
+      var rxMin = Math.floor(-R / (1.5 * R)) - 1, rxMax = Math.ceil((W + R) / (1.5 * R)) + 1;
+      for (var rx = rxMin; rx <= rxMax; rx++) {
+        var cxp = R * 1.5 * rx;
+        var rzMin = Math.floor((-R) / (R * SQRT3) - rx / 2) - 1;
+        var rzMax = Math.ceil((H + R) / (R * SQRT3) - rx / 2) + 1;
+        for (var rz = rzMin; rz <= rzMax; rz++) {
+          var cyp = R * SQRT3 * (rz + rx / 2);
+          // vertices at angles 0..300 step 60; edges k=0,1,2 join v0-v1, v1-v2, v2-v3
+          for (var e = 0; e < 3; e++) {
+            var a0 = e * Math.PI / 3, a1 = (e + 1) * Math.PI / 3;
+            ctx.moveTo(cxp + R * Math.cos(a0), cyp + R * Math.sin(a0));
+            ctx.lineTo(cxp + R * Math.cos(a1), cyp + R * Math.sin(a1));
+          }
+        }
       }
     }
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   // =====================================================================
@@ -642,6 +722,7 @@
     ctx.globalAlpha = 1;
     ctx.fillStyle = 'rgba(255,255,248,' + Math.min(0.08, fadeAlpha() * step * overlayScale) + ')';
     ctx.fillRect(0, 0, W, H);
+    liftTowardCream(step);
 
     time += timeSpeed() * step;
     updateVortices(step);
@@ -661,7 +742,7 @@
     ctx.globalCompositeOperation = 'source-over';
     for (var i = 0; i < skyParticles.length; i++) {
       var p = skyParticles[i];
-      var v = velocityAt(p.x, p.y, time, diffPhase);
+      var v = velocityAt(p.x, p.y, time, diffPhase, p.along);
 
       p.x += v.x * SKY_SPEED * step;
       p.y += v.y * SKY_SPEED * step;
@@ -681,8 +762,8 @@
     // --- Dye particles (ink diffusing in water) ---
     updateAndDrawDye(step);
 
-    // --- Polygons and rigid lines (only once the field has crystallized) ---
-    maybeDrawPolygons();
+    // --- Crisp lattice lines (only once the field has crystallized) ---
+    drawLattice();
 
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
