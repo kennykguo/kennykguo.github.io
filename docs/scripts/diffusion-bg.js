@@ -88,6 +88,17 @@
   // Diffusion phase (oscillation between noise and coherence)
   var PHASE_PERIOD = 1300 * FRAME_DURATION;
 
+  // Rigidity schedule (ms): waves -> crystallize -> hold rigid -> melt -> waves
+  var RIGID_WAVE_MS = 10000;      // pure waves at start
+  var RIGID_RISE_MS = 40000;      // waves -> polygons
+  var RIGID_HOLD_MS = 35000;      // hold rigid
+  var RIGID_FALL_MS = 30000;      // melt back to waves
+  var RIGID_REST_MS = 15000;      // waves before next cycle
+  var RIGID_PERIOD = RIGID_WAVE_MS + RIGID_RISE_MS + RIGID_HOLD_MS + RIGID_FALL_MS + RIGID_REST_MS;
+  var RIGID_DIRECTIONS = 6;       // hexagonal snapping when fully rigid
+  var WAVE_K = 0.0055, WAVE_AMP = 0.32;
+  var POLYGON_EVERY_MS = 45 * FRAME_DURATION;
+
   // Dye drop events (replaces explosions)
   var DYE_INTERVAL_MIN = 300 * FRAME_DURATION;
   var DYE_INTERVAL_MAX = 700 * FRAME_DURATION;
@@ -148,6 +159,9 @@
 
   // Diffusion phase: 0 = most coherent, 1 = most noisy
   var diffPhase = 0;
+  // Rigidity: 0 = flowing waves, 1 = polygons and rigid lines
+  var rigidity = 0;
+  var nextPolygonTime = 0;
 
   function initialQualityLevel() {
     var cores = navigator.hardwareConcurrency || 4;
@@ -185,6 +199,7 @@
     densityElapsedMs = 0;
     nextDyeTime = elapsedMs + (20 * FRAME_DURATION);
     lastHallucinationTime = elapsedMs;
+    nextPolygonTime = elapsedMs;
   }
 
   function maybeReduceQuality(now) {
@@ -239,11 +254,33 @@
       vy -= dy * VORTEX_RADIAL_K * influence;
     }
 
-    // Brownian jitter during noisy phase
-    if (phase > 0.3) {
-      var jitterAmt = (phase - 0.3) * 0.08;
+    // Traveling wave bands (fade out as things crystallize)
+    var waveW = 1 - rigidity;
+    if (waveW > 0) {
+      var w = Math.sin(px * WAVE_K + py * 0.0012 - t * 55);
+      vx += waveW * WAVE_AMP * 0.35 * Math.cos(py * WAVE_K * 0.6 + t * 30);
+      vy += waveW * WAVE_AMP * w;
+    }
+
+    // Brownian jitter during noisy phase (suppressed when rigid)
+    if (phase > 0.3 && rigidity < 0.9) {
+      var jitterAmt = (phase - 0.3) * 0.08 * (1 - rigidity);
       vx += (Math.random() - 0.5) * jitterAmt;
       vy += (Math.random() - 0.5) * jitterAmt;
+    }
+
+    // Rigid regime: snap direction to a fixed set of headings so paths become polylines
+    if (rigidity > 0) {
+      var mag = Math.sqrt(vx * vx + vy * vy);
+      if (mag > 0.00001) {
+        var stepAng = Math.PI * 2 / RIGID_DIRECTIONS;
+        var ang = Math.atan2(vy, vx);
+        var snapped = Math.round(ang / stepAng) * stepAng;
+        var sx = Math.cos(snapped) * mag, sy = Math.sin(snapped) * mag;
+        var mix = rigidity * rigidity;
+        vx = vx + (sx - vx) * mix;
+        vy = vy + (sy - vy) * mix;
+      }
     }
 
     return { x: vx, y: vy };
@@ -316,10 +353,29 @@
   // =====================================================================
   function updateDiffusionPhase() {
     diffPhase = 0.5 + 0.5 * Math.sin(elapsedMs * Math.PI * 2 / PHASE_PERIOD);
+    rigidity = rigidityAt(elapsedMs);
+  }
+
+  function smoothstep(t) {
+    t = Math.max(0, Math.min(1, t));
+    return t * t * (3 - 2 * t);
+  }
+
+  function rigidityAt(ms) {
+    var u = ms % RIGID_PERIOD;
+    if (u < RIGID_WAVE_MS) return 0;
+    u -= RIGID_WAVE_MS;
+    if (u < RIGID_RISE_MS) return smoothstep(u / RIGID_RISE_MS);
+    u -= RIGID_RISE_MS;
+    if (u < RIGID_HOLD_MS) return 1;
+    u -= RIGID_HOLD_MS;
+    if (u < RIGID_FALL_MS) return 1 - smoothstep(u / RIGID_FALL_MS);
+    return 0;
   }
 
   function fadeAlpha() {
-    return 0.01 + diffPhase * 0.008;
+    // Fade a little faster once rigid so old wave trails give way to the lines
+    return 0.01 + diffPhase * 0.008 + rigidity * 0.006;
   }
   function timeSpeed() {
     return 0.000095 + diffPhase * 0.00014;
@@ -349,10 +405,13 @@
   function drawBrushStroke(x, y, vx, vy, rgb, baseAlpha, baseWidth, bristleOff) {
     var speed = Math.sqrt(vx * vx + vy * vy);
     var theta = Math.atan2(vy, vx);
-    theta = Math.round(theta / ANGLE_QUANT) * ANGLE_QUANT;
+    // Waves: nearly free angles. Rigid: snap to the same hexagonal headings as the flow.
+    var quant = rigidity < 0.5 ? Math.PI / 24 : ANGLE_QUANT;
+    if (rigidity >= 0.85) quant = Math.PI * 2 / RIGID_DIRECTIONS;
+    theta = Math.round(theta / quant) * quant;
 
-    var baseLen = 4 + (1 - diffPhase) * 3;
-    var maxLen = 18;
+    var baseLen = 4 + (1 - diffPhase) * 3 + rigidity * 9;
+    var maxLen = 18 + rigidity * 14;
     var len = baseLen + Math.min(speed * 20, maxLen - baseLen);
 
     var density = readDensity(x, y);
@@ -363,9 +422,10 @@
     var cosT = Math.cos(theta), sinT = Math.sin(theta);
     var halfL = len * 0.5;
 
-    var jitter = simplex2(x * 0.008 + bristleOff, y * 0.008) * 1.2;
+    var jitter = simplex2(x * 0.008 + bristleOff, y * 0.008) * 1.2 * (1 - rigidity);
+    width = width * (1 - rigidity * 0.45);
 
-    ctx.lineCap = 'round';
+    ctx.lineCap = rigidity > 0.6 ? 'butt' : 'round';
 
     // Main stroke
     ctx.globalAlpha = alpha;
@@ -478,6 +538,55 @@
   }
 
   // =====================================================================
+  //  Polygon outlines — appear as the field crystallizes
+  // =====================================================================
+  function drawPolygon(cx, cy, radius, sides, rot, rgb, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
+    ctx.lineWidth = 0.7;
+    ctx.lineCap = 'butt';
+    ctx.lineJoin = 'miter';
+    ctx.beginPath();
+    for (var k = 0; k <= sides; k++) {
+      var a = rot + k * Math.PI * 2 / sides;
+      var px = cx + Math.cos(a) * radius, py = cy + Math.sin(a) * radius;
+      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+
+  function maybeDrawPolygons() {
+    if (rigidity < 0.35 || elapsedMs < nextPolygonTime) return;
+    nextPolygonTime = elapsedMs + POLYGON_EVERY_MS * (1.6 - rigidity);
+
+    var strength = (rigidity - 0.35) / 0.65;
+    var count = 1 + Math.floor(strength * 2.5);
+    var hexRot = Math.PI / RIGID_DIRECTIONS;
+
+    for (var i = 0; i < count; i++) {
+      // Anchor on a random sky particle so polygons sit inside the flow
+      var p = skyParticles[Math.floor(Math.random() * skyParticles.length)];
+      if (!p) return;
+      var sides = Math.random() < 0.55 ? RIGID_DIRECTIONS : (Math.random() < 0.5 ? 3 : 4);
+      var radius = 14 + Math.random() * 46 * strength;
+      var alpha = (0.025 + Math.random() * 0.03) * strength;
+      drawPolygon(p.x, p.y, radius, sides, sides === 4 ? Math.PI / 4 : hexRot, p.rgb, alpha);
+
+      // Rigid line: a long straight segment along one of the snapped headings
+      if (Math.random() < 0.6 * strength) {
+        var ang = Math.floor(Math.random() * RIGID_DIRECTIONS) * Math.PI * 2 / RIGID_DIRECTIONS;
+        var half = 40 + Math.random() * 120 * strength;
+        ctx.globalAlpha = alpha * 0.8;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(p.x - Math.cos(ang) * half, p.y - Math.sin(ang) * half);
+        ctx.lineTo(p.x + Math.cos(ang) * half, p.y + Math.sin(ang) * half);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // =====================================================================
   //  Hallucination events (dreamlike discontinuities)
   // =====================================================================
   var lastHallucinationTime = 0;
@@ -571,6 +680,9 @@
 
     // --- Dye particles (ink diffusing in water) ---
     updateAndDrawDye(step);
+
+    // --- Polygons and rigid lines (only once the field has crystallized) ---
+    maybeDrawPolygons();
 
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
