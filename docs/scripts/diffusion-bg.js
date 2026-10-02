@@ -1,3 +1,18 @@
+/*
+ * Diffusion background: ink carried through a curl-noise flow with drifting vortices.
+ *
+ * Particles trace continuous trails through the flow, ink drops bloom and spread, and a
+ * steady fade lets old trails dissolve back into the paper, so the field reaches its full
+ * look within a few seconds and then stays balanced.
+ *
+ * Kept fast:
+ *  - The flow is the curl of simplex noise, computed with an exact gradient (one noise
+ *    evaluation per octave instead of four finite-difference samples).
+ *  - Trail segments are batched by colour, opacity and width, so the canvas gets a few
+ *    hundred draw calls a frame instead of thousands.
+ *  - The full-screen fade runs about 11 times a second, not every frame.
+ *  - Quality steps down automatically if frames run long.
+ */
 (function () {
   'use strict';
 
@@ -8,29 +23,31 @@
   if (!ctx) return;
 
   // =====================================================================
-  //  Simplex noise (2D)
+  //  Simplex noise (2D), plus an exact-gradient variant
   // =====================================================================
   var F2 = 0.5 * (Math.sqrt(3) - 1);
   var G2 = (3 - Math.sqrt(3)) / 6;
-  var grad3 = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+  var GX = new Float64Array([1, -1, 1, -1, 1, -1, 0, 0]);
+  var GY = new Float64Array([1, 1, -1, -1, 0, 0, 1, -1]);
   var perm = new Uint8Array(512);
   var permMod8 = new Uint8Array(512);
   (function () {
-    var p = new Uint8Array(256);
-    for (var i = 0; i < 256; i++) p[i] = i;
-    var s = 1729;
-    for (var i = 255; i > 0; i--) {
+    var p = new Uint8Array(256), i, s = 42;
+    for (i = 0; i < 256; i++) p[i] = i;
+    for (i = 255; i > 0; i--) {
       s = (s * 16807) % 2147483647;
       var j = s % (i + 1);
       var tmp = p[i]; p[i] = p[j]; p[j] = tmp;
     }
-    for (var i = 0; i < 512; i++) {
+    for (i = 0; i < 512; i++) {
       perm[i] = p[i & 255];
       permMod8[i] = perm[i] & 7;
     }
   })();
 
-  function simplex2(x, y) {
+  // Partial derivatives of the noise at (x, y), written into NDX / NDY.
+  var NDX = 0, NDY = 0;
+  function simplexGrad(x, y) {
     var s = (x + y) * F2;
     var i = Math.floor(x + s), j = Math.floor(y + s);
     var t = (i + j) * G2;
@@ -40,76 +57,86 @@
     var x1 = x0 - i1 + G2, y1 = y0 - j1 + G2;
     var x2 = x0 - 1 + 2 * G2, y2 = y0 - 1 + 2 * G2;
     var ii = i & 255, jj = j & 255;
-    var n0 = 0, n1 = 0, n2 = 0;
+    var dx = 0, dy = 0, g, gx, gy, gd, t2, t4, k;
     var t0 = 0.5 - x0 * x0 - y0 * y0;
-    if (t0 >= 0) { t0 *= t0; var g = grad3[permMod8[ii + perm[jj]]]; n0 = t0 * t0 * (g[0] * x0 + g[1] * y0); }
+    if (t0 > 0) {
+      g = permMod8[ii + perm[jj]]; gx = GX[g]; gy = GY[g];
+      gd = gx * x0 + gy * y0; t2 = t0 * t0; t4 = t2 * t2; k = -8 * t2 * t0 * gd;
+      dx += k * x0 + t4 * gx; dy += k * y0 + t4 * gy;
+    }
     var t1 = 0.5 - x1 * x1 - y1 * y1;
-    if (t1 >= 0) { t1 *= t1; var g = grad3[permMod8[ii + i1 + perm[jj + j1]]]; n1 = t1 * t1 * (g[0] * x1 + g[1] * y1); }
-    var t2 = 0.5 - x2 * x2 - y2 * y2;
-    if (t2 >= 0) { t2 *= t2; var g = grad3[permMod8[ii + 1 + perm[jj + 1]]]; n2 = t2 * t2 * (g[0] * x2 + g[1] * y2); }
-    return 70 * (n0 + n1 + n2);
-  }
-
-  // =====================================================================
-  //  Curl noise — single octave
-  // =====================================================================
-  var eps = 0.0001;
-  function curlAt(x, y, t) {
-    var dy = (simplex2(x, y + eps + t) - simplex2(x, y - eps + t)) / (2 * eps);
-    var dx = (simplex2(x + eps, y + t) - simplex2(x - eps, y + t)) / (2 * eps);
-    return { x: dy, y: -dx };
+    if (t1 > 0) {
+      g = permMod8[ii + i1 + perm[jj + j1]]; gx = GX[g]; gy = GY[g];
+      gd = gx * x1 + gy * y1; t2 = t1 * t1; t4 = t2 * t2; k = -8 * t2 * t1 * gd;
+      dx += k * x1 + t4 * gx; dy += k * y1 + t4 * gy;
+    }
+    var t3 = 0.5 - x2 * x2 - y2 * y2;
+    if (t3 > 0) {
+      g = permMod8[ii + 1 + perm[jj + 1]]; gx = GX[g]; gy = GY[g];
+      gd = gx * x2 + gy * y2; t2 = t3 * t3; t4 = t2 * t2; k = -8 * t2 * t3 * gd;
+      dx += k * x2 + t4 * gx; dy += k * y2 + t4 * gy;
+    }
+    NDX = 70 * dx;
+    NDY = 70 * dy;
   }
 
   // =====================================================================
   //  Config
   // =====================================================================
   var CREAM = '#fffff8';
-  var FRAME_DURATION = 1000 / 60;
+  var FRAME_MS = 1000 / 60;
 
-  // Sky paint particles
-  var SKY_COUNT = 1400;
-  var SKY_SPEED = 0.68;
-  var ANGLE_QUANT = Math.PI / 9;
+  // Motion
+  var SPEED = 0.5;                    // px per 60fps frame per unit of flow
+  var TIME_BASE = 0.00008, TIME_PHASE = 0.0001; // how fast the flow field itself evolves
 
-  // Multi-octave curl scales
-  var S0 = 0.00042, S1 = 0.0024, S2 = 0.0085;
-  var A0_BASE = 1.0, A1_BASE = 0.35, A2_BASE = 0.12;
+  // Flow field: three octaves of curl noise
+  var S0 = 0.0005, S1 = 0.002, S2 = 0.007;
+  var A0 = 1.0, A1_BASE = 0.35, A2_BASE = 0.12;
   var K0 = 1.55, K1 = 2.65, K2 = 4.9;
 
   // Vortex attractors
-  var VORTEX_COUNT = 5;
+  var VORTEX_COUNT = 4;
   var VORTEX_TANGENT_K = 0.12;
   var VORTEX_RADIAL_K = 0.00005;
-  var VORTEX_FALLOFF = 150;
+  var VORTEX_FALLOFF = 120;
 
-  // Density grid
+  // Alternates between coherent and noisy flow
+  var PHASE_PERIOD = 16000;
+
+  // Ink
+  var TRAIL_ALPHA_MIN = 0.02, TRAIL_ALPHA_MAX = 0.04;
+  var DYE_ALPHA_MIN = 0.07, DYE_ALPHA_MAX = 0.14;
+  // Long lives let particles gather along the flow's converging lines into currents;
+  // respawning keeps the rest of the page from emptying out
+  var LIFE_MIN = 14000, LIFE_MAX = 34000; // ms before a trail particle respawns elsewhere
+
+  // Fade: a stronger fade a few times a second clears old ink properly (tiny per-frame
+  // fades round to nothing on an 8-bit canvas and leave permanent residue)
+  var FADE_EVERY_MS = 90;
+  var FADE_ALPHA = 0.016;
+  // ...and whatever the fade can't reach is lifted one level back toward the paper
+  // this often, so the page never greys over
+  var LIFT_EVERY_MS = 260;
+
+  // Start-up: run the flow at triple speed for the first moments so the page fills fast
+  var BOOST_MS = 1800, BOOST_SUBSTEPS = 2, PRESIM_STEPS = 8;
+
+  // Dye drops
+  var DYE_EVERY_MIN = 4000, DYE_EVERY_MAX = 7500;
+  var DYE_LIFE_MIN = 4500, DYE_LIFE_MAX = 9000;
+
+  // Density grid widens trails where many particles converge
   var DENSITY_COLS = 160, DENSITY_ROWS = 100;
 
-  // Diffusion phase (oscillation between noise and coherence)
-  var PHASE_PERIOD = 1300 * FRAME_DURATION;
-
-  // Rigidity schedule (ms): waves -> crystallize -> hold rigid -> melt -> waves
-  var RIGID_WAVE_MS = 10000;      // pure waves at start
-  var RIGID_RISE_MS = 40000;      // waves -> polygons
-  var RIGID_HOLD_MS = 35000;      // hold rigid
-  var RIGID_FALL_MS = 30000;      // melt back to waves
-  var RIGID_REST_MS = 15000;      // waves before next cycle
-  var RIGID_PERIOD = RIGID_WAVE_MS + RIGID_RISE_MS + RIGID_HOLD_MS + RIGID_FALL_MS + RIGID_REST_MS;
-  var RIGID_DIRECTIONS = 6;       // hexagonal snapping when fully rigid
-  var WAVE_K = 0.0055, WAVE_AMP = 0.32;
-  var POLYGON_EVERY_MS = 45 * FRAME_DURATION;
-
-  // Dye drop events (replaces explosions)
-  var DYE_INTERVAL_MIN = 300 * FRAME_DURATION;
-  var DYE_INTERVAL_MAX = 700 * FRAME_DURATION;
-  var DYE_PARTICLE_COUNT = 50;
   var QUALITY_PROFILES = [
-    { skyCount: 1400, dyeParticleCount: 50, densityCols: 160, densityRows: 100, dprCap: 1.5 },
-    { skyCount: 950, dyeParticleCount: 36, densityCols: 120, densityRows: 76, dprCap: 1.25 },
-    { skyCount: 650, dyeParticleCount: 24, densityCols: 90, densityRows: 56, dprCap: 1 }
+    { trails: 1400, dyeParticles: 60, densityCols: 160, densityRows: 100, dprCap: 1.5 },
+    { trails: 950, dyeParticles: 44, densityCols: 120, densityRows: 76, dprCap: 1.25 },
+    { trails: 650, dyeParticles: 30, densityCols: 90, densityRows: 56, dprCap: 1 }
   ];
+  var TRAIL_COUNT = 1400, DYE_PARTICLE_COUNT = 60;
+  var trailInk = 1; // fewer particles on weaker devices draw a little darker to compensate
 
-  // Rich palette — blues, ambers, muted reds, greens, purples
   var SKY_PALETTE = [
     [60, 75, 130],   // deep blue
     [85, 95, 140],   // muted blue
@@ -119,13 +146,11 @@
     [120, 80, 60],   // rust
     [80, 100, 75],   // sage green
     [65, 85, 70],    // dark teal
-    [110, 70, 95],   // mulberry
+    [100, 75, 110],  // muted purple
     [85, 70, 100],   // dusty violet
-    [125, 115, 70],  // olive ochre
-    [110, 95, 120],  // lavender gray
+    [130, 110, 80],  // ochre
+    [110, 95, 120]   // lavender gray
   ];
-
-  // Dye drop color palette — more saturated/concentrated versions
   var DYE_PALETTE = [
     [40, 50, 120],   // deep indigo
     [130, 55, 30],   // burnt orange
@@ -134,161 +159,133 @@
     [150, 90, 25],   // golden amber
     [55, 70, 120],   // steel blue
     [120, 50, 50],   // brick red
-    [60, 95, 95],    // teal
-    [95, 60, 110],   // violet ink
+    [60, 95, 95]     // teal
   ];
+
+  // =====================================================================
+  //  Batched segment rendering: one path + one stroke() per
+  //  (colour, opacity step, width step)
+  // =====================================================================
+  var COLORS = SKY_PALETTE.concat(DYE_PALETTE);
+  var DYE_COLOR_OFFSET = SKY_PALETTE.length;
+  var COLOR_STYLES = COLORS.map(function (c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; });
+
+  var ALPHA_MIN = 0.001, ALPHA_RATIO = 1.07, ALPHA_STEPS = 80; // 0.001 .. ~0.2
+  var LOG_ALPHA_MIN = Math.log(ALPHA_MIN), LOG_ALPHA_RATIO = Math.log(ALPHA_RATIO);
+  var WIDTH_STEP = 0.1, WIDTH_STEPS = 40;
+  var BIN_COUNT = COLORS.length * ALPHA_STEPS * WIDTH_STEPS;
+  var bins = [];
+  var usedBins = [];
+  var binUsed = new Uint8Array(BIN_COUNT);
+
+  function addSegment(colorIdx, alpha, width, x1, y1, x2, y2) {
+    if (alpha < ALPHA_MIN) return;
+    var a = Math.round((Math.log(alpha) - LOG_ALPHA_MIN) / LOG_ALPHA_RATIO);
+    if (a >= ALPHA_STEPS) a = ALPHA_STEPS - 1;
+    var w = Math.round(width / WIDTH_STEP);
+    if (w < 1) w = 1; else if (w >= WIDTH_STEPS) w = WIDTH_STEPS - 1;
+    var key = (colorIdx * ALPHA_STEPS + a) * WIDTH_STEPS + w;
+    var bin = bins[key];
+    if (!bin) bin = bins[key] = [];
+    if (!binUsed[key]) { binUsed[key] = 1; usedBins.push(key); }
+    bin.push(x1, y1, x2, y2);
+  }
+
+  function flushSegments() {
+    ctx.lineCap = 'butt';
+    for (var u = 0; u < usedBins.length; u++) {
+      var key = usedBins[u];
+      var bin = bins[key];
+      var w = key % WIDTH_STEPS;
+      var rest = (key - w) / WIDTH_STEPS;
+      var a = rest % ALPHA_STEPS;
+      var colorIdx = (rest - a) / ALPHA_STEPS;
+      ctx.globalAlpha = Math.exp(LOG_ALPHA_MIN + a * LOG_ALPHA_RATIO);
+      ctx.strokeStyle = COLOR_STYLES[colorIdx];
+      ctx.lineWidth = w * WIDTH_STEP;
+      ctx.beginPath();
+      for (var k = 0; k < bin.length; k += 4) {
+        ctx.moveTo(bin[k], bin[k + 1]);
+        ctx.lineTo(bin[k + 2], bin[k + 3]);
+      }
+      ctx.stroke();
+      bin.length = 0;
+      binUsed[key] = 0;
+    }
+    usedBins.length = 0;
+    ctx.globalAlpha = 1;
+  }
 
   // =====================================================================
   //  State
   // =====================================================================
-  var W, H;
-  var skyParticles = [];
+  var W = 0, H = 0;
+  var trails = [];
+  var dye = [];
   var vortices = [];
-  var dyeParticles = [];
   var time = 0;
-  var frameCount = 0;
-  var elapsedMs = 0;
-  var densityElapsedMs = 0;
-  var nextDyeTime = 250 * FRAME_DURATION;
-  var densityGrid, densityCellW, densityCellH;
-  var qualityLevel = 0;
-  var renderDprCap = QUALITY_PROFILES[0].dprCap;
-  var lastQualitySampleTime = 0;
-  var lastAnimationTime = 0;
-  var slowFrameStreak = 0;
-
-  // Diffusion phase: 0 = most coherent, 1 = most noisy
-  var diffPhase = 0;
-  // Rigidity: 0 = flowing waves, 1 = polygons and rigid lines
-  var rigidity = 0;
-  var nextPolygonTime = 0;
+  var clock = 0;          // simulated ms since start
+  var phase = 0;          // 0 = coherent flow, 1 = noisy flow
+  var fadeAcc = 0, liftAcc = 0;
+  var nextDyeAt = 0;
+  var qualityLevel = 0, dprCap = 1.5;
+  var densityGrid, densityNext, densityCellW, densityCellH, densityAcc = 0;
+  var lastFrame = 0, slowStreak = 0, startedAt = 0;
 
   function initialQualityLevel() {
     var cores = navigator.hardwareConcurrency || 4;
-    var memory = navigator.deviceMemory || 4;
-    if (cores <= 4 || memory <= 4) return 2;
-    if (cores >= 8 && memory >= 8) return 0;
+    var memory = navigator.deviceMemory; // Chromium only
+    if (cores <= 4 || (memory !== undefined && memory <= 4)) return 2;
+    if (cores >= 8 && (memory === undefined || memory >= 8)) return 0;
     return 1;
   }
 
-  function viewportScale() {
-    var width = W || window.innerWidth || 1440;
-    var height = H || window.innerHeight || 900;
-    var area = Math.max(1, width * height);
-    return Math.max(0.65, Math.min(1, Math.sqrt(area / (1440 * 900))));
-  }
-
   function applyQuality(level) {
-    var clamped = Math.max(0, Math.min(level, QUALITY_PROFILES.length - 1));
-    var profile = QUALITY_PROFILES[clamped];
-    var scale = viewportScale();
-
-    qualityLevel = clamped;
-    SKY_COUNT = Math.max(360, Math.round(profile.skyCount * scale));
-    DYE_PARTICLE_COUNT = Math.max(14, Math.round(profile.dyeParticleCount * scale));
-    DENSITY_COLS = Math.max(72, Math.round(profile.densityCols * scale));
-    DENSITY_ROWS = Math.max(44, Math.round(profile.densityRows * scale));
-    renderDprCap = profile.dprCap;
-  }
-
-  function resetScene() {
-    initDensity();
-    initVortices();
-    initSkyParticles();
-    dyeParticles = [];
-    densityElapsedMs = 0;
-    nextDyeTime = elapsedMs + (20 * FRAME_DURATION);
-    lastHallucinationTime = elapsedMs;
-    nextPolygonTime = elapsedMs;
-  }
-
-  function maybeReduceQuality(now) {
-    if (!lastQualitySampleTime) {
-      lastQualitySampleTime = now;
-      return;
-    }
-
-    var delta = now - lastQualitySampleTime;
-    lastQualitySampleTime = now;
-
-    if (delta > 28) {
-      slowFrameStreak += 1;
-    } else {
-      slowFrameStreak = Math.max(0, slowFrameStreak - 2);
-    }
-
-    if (slowFrameStreak < 8 || qualityLevel >= QUALITY_PROFILES.length - 1) {
-      return;
-    }
-
-    slowFrameStreak = 0;
-    applyQuality(qualityLevel + 1);
-    resize();
-    resetScene();
+    qualityLevel = Math.max(0, Math.min(level, QUALITY_PROFILES.length - 1));
+    var q = QUALITY_PROFILES[qualityLevel];
+    var area = Math.max(1, (W || window.innerWidth || 1440) * (H || window.innerHeight || 900));
+    var scale = Math.max(0.65, Math.min(1, Math.sqrt(area / (1440 * 900))));
+    TRAIL_COUNT = Math.max(360, Math.round(q.trails * scale));
+    trailInk = Math.min(1.8, Math.pow(QUALITY_PROFILES[0].trails / q.trails, 0.6));
+    DYE_PARTICLE_COUNT = Math.max(18, Math.round(q.dyeParticles * scale));
+    DENSITY_COLS = Math.max(72, Math.round(q.densityCols * scale));
+    DENSITY_ROWS = Math.max(44, Math.round(q.densityRows * scale));
+    dprCap = q.dprCap;
   }
 
   // =====================================================================
-  //  Velocity field: multi-octave curl + vortex tangential flow
+  //  Flow field: curl noise + vortex swirls. Writes VX / VY.
   // =====================================================================
-  function velocityAt(px, py, t, phase) {
-    // Base curl with phase-modulated octave weights
-    var a0 = A0_BASE;
-    var a1 = A1_BASE + phase * 0.15;
-    var a2 = A2_BASE + phase * 0.4;
-    var c0 = curlAt(px * S0, py * S0, t * K0);
-    var c1 = curlAt(px * S1, py * S1, t * K1);
-    var c2 = curlAt(px * S2, py * S2, t * K2);
-    var vx = a0 * c0.x + a1 * c1.x + a2 * c2.x;
-    var vy = a0 * c0.y + a1 * c1.y + a2 * c2.y;
+  var VX = 0, VY = 0;
+  var tK0 = 0, tK1 = 0, tK2 = 0, octA1 = A1_BASE, octA2 = A2_BASE, jitter = 0;
 
-    // Vortex attractors: tangential orbit + mild radial pull
+  function velocityAt(px, py) {
+    simplexGrad(px * S0, py * S0 + tK0);
+    var vx = A0 * NDY, vy = -A0 * NDX;
+    simplexGrad(px * S1, py * S1 + tK1);
+    vx += octA1 * NDY; vy -= octA1 * NDX;
+    simplexGrad(px * S2, py * S2 + tK2);
+    vx += octA2 * NDY; vy -= octA2 * NDX;
+
     for (var i = 0; i < vortices.length; i++) {
       var v = vortices[i];
       var dx = px - v.x, dy = py - v.y;
       var dist = Math.sqrt(dx * dx + dy * dy) + 1;
       var influence = 1 / (1 + dist / VORTEX_FALLOFF);
-      var tx = -dy / dist, ty = dx / dist;
-      vx += tx * VORTEX_TANGENT_K * influence * v.dir;
-      vy += ty * VORTEX_TANGENT_K * influence * v.dir;
-      vx -= dx * VORTEX_RADIAL_K * influence;
-      vy -= dy * VORTEX_RADIAL_K * influence;
+      var tang = VORTEX_TANGENT_K * influence * v.dir / dist;
+      var rad = VORTEX_RADIAL_K * influence;
+      vx += -dy * tang - dx * rad;
+      vy += dx * tang - dy * rad;
     }
 
-    // Traveling wave bands (fade out as things crystallize)
-    var waveW = 1 - rigidity;
-    if (waveW > 0) {
-      var w = Math.sin(px * WAVE_K + py * 0.0012 - t * 55);
-      vx += waveW * WAVE_AMP * 0.35 * Math.cos(py * WAVE_K * 0.6 + t * 30);
-      vy += waveW * WAVE_AMP * w;
+    if (jitter > 0) {
+      vx += (Math.random() - 0.5) * jitter;
+      vy += (Math.random() - 0.5) * jitter;
     }
-
-    // Brownian jitter during noisy phase (suppressed when rigid)
-    if (phase > 0.3 && rigidity < 0.9) {
-      var jitterAmt = (phase - 0.3) * 0.08 * (1 - rigidity);
-      vx += (Math.random() - 0.5) * jitterAmt;
-      vy += (Math.random() - 0.5) * jitterAmt;
-    }
-
-    // Rigid regime: snap direction to a fixed set of headings so paths become polylines
-    if (rigidity > 0) {
-      var mag = Math.sqrt(vx * vx + vy * vy);
-      if (mag > 0.00001) {
-        var stepAng = Math.PI * 2 / RIGID_DIRECTIONS;
-        var ang = Math.atan2(vy, vx);
-        var snapped = Math.round(ang / stepAng) * stepAng;
-        var sx = Math.cos(snapped) * mag, sy = Math.sin(snapped) * mag;
-        var mix = rigidity * rigidity;
-        vx = vx + (sx - vx) * mix;
-        vy = vy + (sy - vy) * mix;
-      }
-    }
-
-    return { x: vx, y: vy };
+    VX = vx;
+    VY = vy;
   }
 
-  // =====================================================================
-  //  Vortex attractors
-  // =====================================================================
   function initVortices() {
     vortices = [];
     for (var i = 0; i < VORTEX_COUNT; i++) {
@@ -297,7 +294,7 @@
         y: 0.1 * H + Math.random() * 0.8 * H,
         vx: (Math.random() - 0.5) * 0.03,
         vy: (Math.random() - 0.5) * 0.03,
-        dir: Math.random() > 0.5 ? 1 : -1,
+        dir: Math.random() > 0.5 ? 1 : -1
       });
     }
   }
@@ -312,425 +309,280 @@
     }
   }
 
+  // Now and then a vortex jumps and flips direction, reshaping the flow
+  var lastShiftAt = 0;
+  function maybeShiftVortex() {
+    if (clock - lastShiftAt < 20000 || Math.random() > 0.01) return;
+    lastShiftAt = clock;
+    var v = vortices[Math.floor(Math.random() * vortices.length)];
+    v.x = 0.15 * W + Math.random() * 0.7 * W;
+    v.y = 0.15 * H + Math.random() * 0.7 * H;
+    v.dir *= -1;
+  }
+
   // =====================================================================
-  //  Density grid (feedback: paint affects future paint)
+  //  Density grid: where trails converge, they thicken into bands
   // =====================================================================
   function initDensity() {
     densityCellW = W / DENSITY_COLS;
     densityCellH = H / DENSITY_ROWS;
     densityGrid = new Float32Array(DENSITY_COLS * DENSITY_ROWS);
+    densityNext = new Float32Array(DENSITY_COLS * DENSITY_ROWS);
   }
 
-  function depositDensity(px, py) {
-    var c = Math.floor(px / densityCellW), r = Math.floor(py / densityCellH);
-    if (c >= 0 && c < DENSITY_COLS && r >= 0 && r < DENSITY_ROWS)
-      densityGrid[r * DENSITY_COLS + c] += 1;
+  function densityIndex(px, py) {
+    var c = (px / densityCellW) | 0, r = (py / densityCellH) | 0;
+    if (c >= 0 && c < DENSITY_COLS && r >= 0 && r < DENSITY_ROWS) return r * DENSITY_COLS + c;
+    return -1;
   }
 
-  function readDensity(px, py) {
-    var c = Math.floor(px / densityCellW), r = Math.floor(py / densityCellH);
-    if (c >= 0 && c < DENSITY_COLS && r >= 0 && r < DENSITY_ROWS)
-      return densityGrid[r * DENSITY_COLS + c];
-    return 0;
-  }
-
-  function diffuseDensityGrid() {
-    var next = new Float32Array(DENSITY_COLS * DENSITY_ROWS);
+  function diffuseDensity() {
+    var src = densityGrid, next = densityNext, cols = DENSITY_COLS;
     for (var r = 1; r < DENSITY_ROWS - 1; r++) {
-      for (var c = 1; c < DENSITY_COLS - 1; c++) {
-        var idx = r * DENSITY_COLS + c;
-        next[idx] = (densityGrid[idx] * 4
-          + densityGrid[idx - 1] + densityGrid[idx + 1]
-          + densityGrid[idx - DENSITY_COLS] + densityGrid[idx + DENSITY_COLS]
-        ) / 8 * 0.97;
+      for (var c = 1; c < cols - 1; c++) {
+        var idx = r * cols + c;
+        next[idx] = (src[idx] * 4 + src[idx - 1] + src[idx + 1] + src[idx - cols] + src[idx + cols]) / 8 * 0.97;
       }
     }
     densityGrid = next;
+    densityNext = src;
   }
 
   // =====================================================================
-  //  Diffusion phase controller
+  //  Particles
   // =====================================================================
-  function updateDiffusionPhase() {
-    diffPhase = 0.5 + 0.5 * Math.sin(elapsedMs * Math.PI * 2 / PHASE_PERIOD);
-    rigidity = rigidityAt(elapsedMs);
+  function spawnTrail(p, initial) {
+    p.x = Math.random() * W;
+    p.y = Math.random() * H;
+    p.ci = Math.floor(Math.random() * SKY_PALETTE.length);
+    p.alpha = (TRAIL_ALPHA_MIN + Math.random() * (TRAIL_ALPHA_MAX - TRAIL_ALPHA_MIN)) * trailInk;
+    p.width = 0.55 + Math.random() * 0.95;
+    p.life = LIFE_MIN + Math.random() * (LIFE_MAX - LIFE_MIN);
+    // Stagger the first generation so they don't all respawn at once
+    p.age = initial ? Math.random() * p.life : 0;
+    p.fresh = true;
+    return p;
   }
 
-  function smoothstep(t) {
-    t = Math.max(0, Math.min(1, t));
-    return t * t * (3 - 2 * t);
+  function initTrails() {
+    trails = [];
+    for (var i = 0; i < TRAIL_COUNT; i++) trails.push(spawnTrail({}, true));
   }
 
-  function rigidityAt(ms) {
-    var u = ms % RIGID_PERIOD;
-    if (u < RIGID_WAVE_MS) return 0;
-    u -= RIGID_WAVE_MS;
-    if (u < RIGID_RISE_MS) return smoothstep(u / RIGID_RISE_MS);
-    u -= RIGID_RISE_MS;
-    if (u < RIGID_HOLD_MS) return 1;
-    u -= RIGID_HOLD_MS;
-    if (u < RIGID_FALL_MS) return 1 - smoothstep(u / RIGID_FALL_MS);
-    return 0;
-  }
-
-  function fadeAlpha() {
-    // Fade a little faster once rigid so old wave trails give way to the lines
-    return 0.01 + diffPhase * 0.008 + rigidity * 0.006;
-  }
-  function timeSpeed() {
-    return 0.000095 + diffPhase * 0.00014;
-  }
-  function strokeAlphaMod() {
-    return 1.0 + (1 - diffPhase) * 0.3;
-  }
-
-  // =====================================================================
-  //  Sky paint particles + brush-stroke deposition
-  // =====================================================================
-  function initSkyParticles() {
-    skyParticles = [];
-    for (var i = 0; i < SKY_COUNT; i++) {
-      var ci = Math.floor(Math.random() * SKY_PALETTE.length);
-      skyParticles.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        rgb: SKY_PALETTE[ci],
-        baseAlpha: 0.02 + Math.random() * 0.02,
-        baseWidth: 0.5 + Math.random() * 1.0,
-        bristleOff: Math.random() * Math.PI * 2,
-      });
-    }
-  }
-
-  function drawBrushStroke(x, y, vx, vy, rgb, baseAlpha, baseWidth, bristleOff) {
-    var speed = Math.sqrt(vx * vx + vy * vy);
-    var theta = Math.atan2(vy, vx);
-    // Waves: nearly free angles. Rigid: snap to the same hexagonal headings as the flow.
-    var quant = rigidity < 0.5 ? Math.PI / 24 : ANGLE_QUANT;
-    if (rigidity >= 0.85) quant = Math.PI * 2 / RIGID_DIRECTIONS;
-    theta = Math.round(theta / quant) * quant;
-
-    var baseLen = 4 + (1 - diffPhase) * 3 + rigidity * 9;
-    var maxLen = 18 + rigidity * 14;
-    var len = baseLen + Math.min(speed * 20, maxLen - baseLen);
-
-    var density = readDensity(x, y);
-    var df = Math.min(density / 50, 1);
-    var width = baseWidth * (1 + df * 0.6);
-    var alpha = baseAlpha * strokeAlphaMod() * (1 + df * 0.3);
-
-    var cosT = Math.cos(theta), sinT = Math.sin(theta);
-    var halfL = len * 0.5;
-
-    var jitter = simplex2(x * 0.008 + bristleOff, y * 0.008) * 1.2 * (1 - rigidity);
-    width = width * (1 - rigidity * 0.45);
-
-    ctx.lineCap = rigidity > 0.6 ? 'butt' : 'round';
-
-    // Main stroke
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
-    ctx.lineWidth = width;
-    ctx.beginPath();
-    ctx.moveTo(x - cosT * halfL + sinT * jitter, y - sinT * halfL - cosT * jitter);
-    ctx.lineTo(x + cosT * halfL - sinT * jitter * 0.5, y + sinT * halfL + cosT * jitter * 0.5);
-    ctx.stroke();
-
-    // Side strand
-    var sideOff = width * 0.7;
-    var sideAlpha = alpha * 0.3;
-    var sideLen = halfL * (0.5 + Math.random() * 0.3);
-    ctx.globalAlpha = sideAlpha;
-    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + sideAlpha + ')';
-    ctx.lineWidth = width * 0.3;
-    ctx.beginPath();
-    ctx.moveTo(x - cosT * sideLen + sinT * sideOff, y - sinT * sideLen - cosT * sideOff);
-    ctx.lineTo(x + cosT * sideLen + sinT * sideOff, y + sinT * sideLen - cosT * sideOff);
-    ctx.stroke();
-  }
-
-  // =====================================================================
-  //  Dye drop system — concentrated color diffusing through the flow
-  //  Like a drop of ink in swirling water
-  // =====================================================================
-  function spawnDyeDrop(x, y) {
-    // Pick one color for the whole drop (coherent dye)
-    var ci = Math.floor(Math.random() * DYE_PALETTE.length);
-    var rgb = DYE_PALETTE[ci];
-
+  function spawnDyeDrop() {
+    var x = 0.12 * W + Math.random() * 0.76 * W;
+    var y = 0.12 * H + Math.random() * 0.76 * H;
+    var ci = DYE_COLOR_OFFSET + Math.floor(Math.random() * DYE_PALETTE.length);
     for (var i = 0; i < DYE_PARTICLE_COUNT; i++) {
-      // Start clustered tightly at drop point with small random offset
       var ang = Math.random() * Math.PI * 2;
-      var dist = Math.random() * 8; // tight initial cluster
-      var pushSpd = 0.15 + Math.random() * 0.35; // mild outward push
-
-      dyeParticles.push({
-        x: x + Math.cos(ang) * dist,
-        y: y + Math.sin(ang) * dist,
-        // Small outward velocity — the flow field does most of the spreading
-        vx: Math.cos(ang) * pushSpd,
-        vy: Math.sin(ang) * pushSpd,
-        rgb: rgb,
-        life: 0,
-        maxLife: 200 + Math.floor(Math.random() * 250),
-        baseAlpha: 0.04 + Math.random() * 0.04,
-        baseWidth: 0.8 + Math.random() * 1.2,
-        bristleOff: Math.random() * Math.PI * 2,
+      var dist = Math.random() * 10;
+      var push = 0.18 + Math.random() * 0.4;
+      dye.push({
+        x: x + Math.cos(ang) * dist, y: y + Math.sin(ang) * dist,
+        vx: Math.cos(ang) * push, vy: Math.sin(ang) * push,
+        ci: ci, age: 0,
+        life: DYE_LIFE_MIN + Math.random() * (DYE_LIFE_MAX - DYE_LIFE_MIN),
+        alpha: DYE_ALPHA_MIN + Math.random() * (DYE_ALPHA_MAX - DYE_ALPHA_MIN),
+        width: 0.9 + Math.random() * 1.3
       });
     }
-
-    // Schedule next dye drop
-    nextDyeTime = elapsedMs + DYE_INTERVAL_MIN +
-      Math.random() * (DYE_INTERVAL_MAX - DYE_INTERVAL_MIN);
+    nextDyeAt = clock + DYE_EVERY_MIN + Math.random() * (DYE_EVERY_MAX - DYE_EVERY_MIN);
   }
 
-  function spawnRandomDyeDrop() {
-    spawnDyeDrop(
-      0.15 * W + Math.random() * 0.7 * W,
-      0.15 * H + Math.random() * 0.7 * H
-    );
+  // A trail segment from the previous to the current position, plus a fainter
+  // side strand for a brushy, bristled edge.
+  function queueTrail(ci, alpha, width, x0, y0, x1, y1, di) {
+    // Where many trails crowd together they thicken and darken into currents
+    var df = di >= 0 ? Math.min(densityGrid[di] / 30, 1) : 0;
+    var w = width * (1 + df * 2.4);
+    var a = alpha * (1 + df * 1.3);
+    addSegment(ci, a, w, x0, y0, x1, y1);
+    var dx = x1 - x0, dy = y1 - y0, len = Math.sqrt(dx * dx + dy * dy) + 1e-6;
+    var off = w * 0.9 + 0.4, nx = -dy / len * off, ny = dx / len * off;
+    addSegment(ci, a * 0.32, w * 0.35, x0 + nx, y0 + ny, x1 + nx, y1 + ny);
   }
 
-  function updateAndDrawDye(step) {
-    for (var i = dyeParticles.length - 1; i >= 0; i--) {
-      var d = dyeParticles[i];
-      d.life += step;
-      if (d.life > d.maxLife) { dyeParticles.splice(i, 1); continue; }
+  // =====================================================================
+  //  Simulation step (dt in ms)
+  // =====================================================================
+  var EDGE = 18;
 
-      var progress = d.life / d.maxLife;
+  function step(dt) {
+    var s = dt / FRAME_MS;
+    clock += dt;
+    phase = 0.5 + 0.5 * Math.sin(clock * Math.PI * 2 / PHASE_PERIOD);
+    time += (TIME_BASE + phase * TIME_PHASE) * s;
+    tK0 = time * K0; tK1 = time * K1; tK2 = time * K2;
+    octA1 = A1_BASE + phase * 0.15;
+    octA2 = A2_BASE + phase * 0.4;
+    jitter = phase > 0.3 ? (phase - 0.3) * 0.12 : 0;
+    var phaseInk = 1 + (1 - phase) * 0.25; // a touch richer when the flow is coherent
 
-      // Follow the same flow field as sky particles
-      var v = velocityAt(d.x, d.y, time, diffPhase);
-      // Outward push decays, flow field takes over
-      var decay = Math.pow(0.97, step);
-      d.vx *= decay;
-      d.vy *= decay;
-      d.x += (d.vx + v.x * SKY_SPEED * 1.1) * step;
-      d.y += (d.vy + v.y * SKY_SPEED * 1.1) * step;
+    updateVortices(s);
+    maybeShiftVortex();
 
-      // Wrap edges
-      if (d.x < 0) d.x += W;
-      if (d.x > W) d.x -= W;
-      if (d.y < 0) d.y += H;
-      if (d.y > H) d.y -= H;
+    densityAcc += dt;
+    while (densityAcc >= 400) { diffuseDensity(); densityAcc -= 400; }
 
-      // Alpha envelope: concentrated early, fading as it diffuses
-      // Quick ramp up, then long smooth fade out
-      var alpha;
-      if (progress < 0.05) {
-        alpha = d.baseAlpha * (progress / 0.05);
-      } else {
-        // Smooth cubic fade — dye diluting into the water
-        var fadeT = (progress - 0.05) / 0.95;
-        alpha = d.baseAlpha * (1 - fadeT) * (1 - fadeT);
-      }
+    if (clock >= nextDyeAt) spawnDyeDrop();
 
-      if (alpha < 0.001) continue;
+    var move = SPEED * s, i, p, x0, y0, di;
+    for (i = 0; i < trails.length; i++) {
+      p = trails[i];
+      p.age += dt;
+      if (p.age >= p.life) { spawnTrail(p, false); continue; }
+      velocityAt(p.x, p.y);
+      x0 = p.x; y0 = p.y;
+      p.x += VX * move;
+      p.y += VY * move;
+      if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) { spawnTrail(p, false); continue; }
+      di = densityIndex(p.x, p.y);
+      if (di >= 0) densityGrid[di] += 1;
+      if (p.fresh) { p.fresh = false; continue; } // no segment on the first step
+      if (p.x < EDGE || p.x > W - EDGE || p.y < EDGE || p.y > H - EDGE) continue;
+      // Fade in and out over the particle's life so trails taper instead of popping
+      var lifeT = p.age / p.life;
+      var env = lifeT < 0.1 ? lifeT / 0.1 : lifeT > 0.8 ? (1 - lifeT) / 0.2 : 1;
+      queueTrail(p.ci, p.alpha * env * phaseInk, p.width, x0, y0, p.x, p.y, di);
+    }
 
-      // Skip drawing near edges to avoid wrap artifacts
-      var edgeM = 20;
-      if (d.x < edgeM || d.x > W - edgeM || d.y < edgeM || d.y > H - edgeM) continue;
-
-      // Draw as brush stroke, same as sky particles — organic, not circular
-      depositDensity(d.x, d.y);
-      drawBrushStroke(d.x, d.y, v.x, v.y, d.rgb, alpha, d.baseWidth, d.bristleOff);
+    var decay = Math.pow(0.965, s);
+    for (i = dye.length - 1; i >= 0; i--) {
+      p = dye[i];
+      p.age += dt;
+      if (p.age >= p.life) { dye[i] = dye[dye.length - 1]; dye.pop(); continue; }
+      velocityAt(p.x, p.y);
+      x0 = p.x; y0 = p.y;
+      p.vx *= decay; p.vy *= decay;
+      p.x += (p.vx + VX * SPEED * 1.1) * s;
+      p.y += (p.vy + VY * SPEED * 1.1) * s;
+      if (p.x < EDGE || p.x > W - EDGE || p.y < EDGE || p.y > H - EDGE) continue;
+      // Concentrated at first, diluting as it spreads
+      var t = p.age / p.life;
+      var a = p.alpha * (t < 0.06 ? t / 0.06 : (1 - t) * (1 - t));
+      di = densityIndex(p.x, p.y);
+      if (di >= 0) densityGrid[di] += 1;
+      queueTrail(p.ci, a, p.width, x0, y0, p.x, p.y, di);
     }
   }
 
-  // =====================================================================
-  //  Polygon outlines — appear as the field crystallizes
-  // =====================================================================
-  function drawPolygon(cx, cy, radius, sides, rot, rgb, alpha) {
-    ctx.globalAlpha = alpha;
-    ctx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')';
-    ctx.lineWidth = 0.7;
-    ctx.lineCap = 'butt';
-    ctx.lineJoin = 'miter';
-    ctx.beginPath();
-    for (var k = 0; k <= sides; k++) {
-      var a = rot + k * Math.PI * 2 / sides;
-      var px = cx + Math.cos(a) * radius, py = cy + Math.sin(a) * radius;
-      if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
+  function fade(dt) {
+    fadeAcc += dt;
+    var n = 0;
+    while (fadeAcc >= FADE_EVERY_MS && n < 4) { fadeAcc -= FADE_EVERY_MS; n++; }
+    if (fadeAcc > FADE_EVERY_MS) fadeAcc = 0; // long stall (tab switch): don't catch up
+    if (!n) return;
+    // Equivalent to n separate fades, in one fill
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(255,255,248,' + (1 - Math.pow(1 - FADE_ALPHA, n)).toFixed(4) + ')';
+    ctx.fillRect(0, 0, W, H);
   }
 
-  function maybeDrawPolygons() {
-    if (rigidity < 0.35 || elapsedMs < nextPolygonTime) return;
-    nextPolygonTime = elapsedMs + POLYGON_EVERY_MS * (1.6 - rigidity);
-
-    var strength = (rigidity - 0.35) / 0.65;
-    var count = 1 + Math.floor(strength * 2.5);
-    var hexRot = Math.PI / RIGID_DIRECTIONS;
-
-    for (var i = 0; i < count; i++) {
-      // Anchor on a random sky particle so polygons sit inside the flow
-      var p = skyParticles[Math.floor(Math.random() * skyParticles.length)];
-      if (!p) return;
-      var sides = Math.random() < 0.55 ? RIGID_DIRECTIONS : (Math.random() < 0.5 ? 3 : 4);
-      var radius = 14 + Math.random() * 46 * strength;
-      var alpha = (0.025 + Math.random() * 0.03) * strength;
-      drawPolygon(p.x, p.y, radius, sides, sides === 4 ? Math.PI / 4 : hexRot, p.rgb, alpha);
-
-      // Rigid line: a long straight segment along one of the snapped headings
-      if (Math.random() < 0.6 * strength) {
-        var ang = Math.floor(Math.random() * RIGID_DIRECTIONS) * Math.PI * 2 / RIGID_DIRECTIONS;
-        var half = 40 + Math.random() * 120 * strength;
-        ctx.globalAlpha = alpha * 0.8;
-        ctx.lineWidth = 0.6;
-        ctx.beginPath();
-        ctx.moveTo(p.x - Math.cos(ang) * half, p.y - Math.sin(ang) * half);
-        ctx.lineTo(p.x + Math.cos(ang) * half, p.y + Math.sin(ang) * half);
-        ctx.stroke();
-      }
-    }
+  function lift(dt) {
+    liftAcc += dt;
+    if (liftAcc < LIFT_EVERY_MS) return;
+    liftAcc = 0;
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = 'rgb(1,1,1)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'darken';
+    ctx.fillStyle = CREAM;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
   }
 
   // =====================================================================
-  //  Hallucination events (dreamlike discontinuities)
+  //  Frame loop
   // =====================================================================
-  var lastHallucinationTime = 0;
-  var HALLUC_INTERVAL = 1800 * FRAME_DURATION;
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (!lastFrame) { lastFrame = now; return; }
+    var dt = Math.min(50, Math.max(4, now - lastFrame));
+    var real = now - lastFrame;
+    lastFrame = now;
 
-  function maybeHallucinate() {
-    if (elapsedMs - lastHallucinationTime < HALLUC_INTERVAL) return;
-    if (Math.random() > 0.02) return;
-    lastHallucinationTime = elapsedMs;
-
-    var count = 1 + Math.floor(Math.random() * 2);
-    for (var i = 0; i < count && i < vortices.length; i++) {
-      var idx = Math.floor(Math.random() * vortices.length);
-      var v = vortices[idx];
-      v.x = 0.15 * W + Math.random() * 0.7 * W;
-      v.y = 0.15 * H + Math.random() * 0.7 * H;
-      v.dir *= -1;
+    // Step down quality if frames keep running long
+    if (real > 28 && now - startedAt > 2000) slowStreak++; else slowStreak = Math.max(0, slowStreak - 2);
+    if (slowStreak >= 10 && qualityLevel < QUALITY_PROFILES.length - 1) {
+      slowStreak = 0;
+      applyQuality(qualityLevel + 1);
+      resize();
+      reset(false);
+      return;
     }
+
+    // Start-up boost: several simulation steps per frame so the field fills quickly
+    var sub = now - startedAt < BOOST_MS ? BOOST_SUBSTEPS : 1;
+    for (var i = 0; i < sub; i++) {
+      fade(dt);
+      step(dt);
+    }
+    lift(dt * sub);
+    flushSegments(); // one batched draw per frame, even while boosting
   }
 
   // =====================================================================
-  //  Resize
+  //  Setup
   // =====================================================================
   function resize() {
     W = window.innerWidth;
     H = window.innerHeight;
+    if (!W || !H) return false;
     applyQuality(qualityLevel);
-    var dpr = Math.min(window.devicePixelRatio || 1, renderDprCap);
-    canvas.width = W * dpr;
-    canvas.height = H * dpr;
+    var dpr = Math.min(window.devicePixelRatio || 1, dprCap);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
     canvas.style.width = W + 'px';
     canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = CREAM;
     ctx.fillRect(0, 0, W, H);
-    lastAnimationTime = 0;
+    return true;
   }
 
-  // =====================================================================
-  //  Rendering
-  // =====================================================================
-  function renderStep(deltaMs, overlayScale, allowHallucination) {
-    elapsedMs += deltaMs;
-    var step = deltaMs / FRAME_DURATION;
-
-    updateDiffusionPhase();
-    if (allowHallucination) {
-      maybeHallucinate();
+  function reset(presim) {
+    initDensity();
+    initVortices();
+    initTrails();
+    dye = [];
+    fadeAcc = 0;
+    nextDyeAt = clock;
+    // Open with a few drops already spreading
+    for (var i = 0; i < 4; i++) spawnDyeDrop();
+    nextDyeAt = clock + 1500;
+    if (presim) {
+      for (var k = 0; k < PRESIM_STEPS; k++) { fade(FRAME_MS * 2); step(FRAME_MS * 2); flushSegments(); }
     }
+    startedAt = performance.now();
+  }
 
-    // Fade overlay
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = 'rgba(255,255,248,' + Math.min(0.08, fadeAlpha() * step * overlayScale) + ')';
-    ctx.fillRect(0, 0, W, H);
+  function start() {
+    applyQuality(initialQualityLevel());
+    if (!resize()) return false;
+    reset(true);
+    lastFrame = 0;
+    requestAnimationFrame(frame);
+    return true;
+  }
 
-    time += timeSpeed() * step;
-    updateVortices(step);
-
-    densityElapsedMs += deltaMs;
-    while (densityElapsedMs >= 30 * FRAME_DURATION) {
-      diffuseDensityGrid();
-      densityElapsedMs -= 30 * FRAME_DURATION;
-    }
-
-    // Dye drop scheduling
-    if (elapsedMs >= nextDyeTime) {
-      spawnRandomDyeDrop();
-    }
-
-    // --- Sky paint particles ---
-    ctx.globalCompositeOperation = 'source-over';
-    for (var i = 0; i < skyParticles.length; i++) {
-      var p = skyParticles[i];
-      var v = velocityAt(p.x, p.y, time, diffPhase);
-
-      p.x += v.x * SKY_SPEED * step;
-      p.y += v.y * SKY_SPEED * step;
-
-      if (p.x < 0) p.x += W;
-      if (p.x > W) p.x -= W;
-      if (p.y < 0) p.y += H;
-      if (p.y > H) p.y -= H;
-
-      depositDensity(p.x, p.y);
-      var edgeM = 20;
-      if (p.x > edgeM && p.x < W - edgeM && p.y > edgeM && p.y < H - edgeM) {
-        drawBrushStroke(p.x, p.y, v.x, v.y, p.rgb, p.baseAlpha, p.baseWidth, p.bristleOff);
+  if (!start()) {
+    // Not laid out yet (hidden tab or iframe): start on the first real size
+    var waitForSize = function () {
+      if (window.innerWidth && window.innerHeight) {
+        window.removeEventListener('resize', waitForSize);
+        start();
       }
-    }
-
-    // --- Dye particles (ink diffusing in water) ---
-    updateAndDrawDye(step);
-
-    // --- Polygons and rigid lines (only once the field has crystallized) ---
-    maybeDrawPolygons();
-
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
+    };
+    window.addEventListener('resize', waitForSize);
   }
-
-  function warmStartScene() {
-    var warmupSteps = qualityLevel === 2 ? 16 : qualityLevel === 1 ? 24 : 30;
-    var warmupDelta = FRAME_DURATION * (qualityLevel === 2 ? 4 : 3.5);
-
-    for (var i = 0; i < 4; i++) {
-      spawnRandomDyeDrop();
-    }
-
-    for (var stepIndex = 0; stepIndex < warmupSteps; stepIndex++) {
-      renderStep(warmupDelta, stepIndex < 6 ? 0.12 : 0.3, false);
-    }
-  }
-
-  // =====================================================================
-  //  Main loop
-  // =====================================================================
-  function animate(now) {
-    requestAnimationFrame(animate);
-    var currentTime = now || performance.now();
-    if (!lastAnimationTime) lastAnimationTime = currentTime;
-    var deltaMs = Math.min(96, Math.max(8, currentTime - lastAnimationTime || FRAME_DURATION));
-    lastAnimationTime = currentTime;
-    frameCount++;
-    maybeReduceQuality(currentTime);
-    renderStep(deltaMs, 1, true);
-  }
-
-  // =====================================================================
-  //  Init
-  // =====================================================================
-  applyQuality(initialQualityLevel());
-  resize();
-  resetScene();
-  warmStartScene();
-  animate();
 
   var resizeTimer;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
-      resize();
-      resetScene();
-      warmStartScene();
+      if (!W || !H) return;
+      if (resize()) reset(true);
     }, 200);
   });
 })();
