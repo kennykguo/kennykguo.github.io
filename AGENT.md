@@ -19,7 +19,7 @@ Layer Formats
 
 1x2
 - Structure: two blocks side-by-side in one row.
-- Usage: text + image, or image + text.
+- Usage: text + image, image + text, or text + text.
 - Alternation: adjacent layers flip sides to create rhythm.
 - Each block is a 1x1 block within the 1x2 layer. A layer never uses extra wrapper divs.
 
@@ -29,6 +29,12 @@ Text Block
 - Links are explicit and readable (full URLs when requested).
 - Text is left-aligned within the block while the block itself spans the column width.
 - Text blocks can be centered vertically/horizontally for callouts via the centered text style.
+
+Text Layer (1x2 text)
+- Structure: two text blocks side by side.
+- Markup: `section.home-layer.text-layer` with two `div.layer-text` blocks (no wrapper divs).
+- Uses the standard text block styles (heading + body copy); no special typography.
+- On narrow screens the blocks stack, left block first.
 
 Image Block
 - Contains a single image or a small image grid.
@@ -56,6 +62,8 @@ Alignment Rules
 
 Homepage Layers (Current)
 - Intro layer: text + profile photo at the top.
+- Intro text layer: 1x2 text layer directly under the intro, before the first spacer.
+- Scroll cue layer: 1x1 `section.home-layer.scroll-cue-layer` under the intro text layer. A subtle drifting down-arrow (inline SVG, pure CSS) that links to `#hacker-fab`; holds still for reduced motion.
 - Hacker Fab layers: centered text block with a single image, followed by a 1x2 image layer.
 - Meraki layers: centered text block with a single image, followed by three 1x2 image layers.
 - Origami layers: text + single image, followed by a 1x2 image layer.
@@ -90,6 +98,11 @@ Origami Side Page
 - Uses `site.baseurl` for image paths.
 - Gallery layout is a 2x2 grid with the third image spanning two rows.
 - Gallery modal uses `docs/scripts/gallery-modal.js` (origami gallery is included).
+
+Text Halos
+- Text blocks, the hero sketch (transparent PNG), page titles, the nav and the profound/writing lists sit on a soft halo that blurs and lightens the diffusion background behind them.
+- Implemented as a feathered `::before` (backdrop blur + paper tint, masked to fade out at the edges); no extra markup.
+- Tune per element with `--halo-out` (how far it extends) and `--halo-feather` (fade width). New text or transparent-image containers should be added to the halo selector list in `docs/style.scss`.
 
 Footer
 - Footer markup has been removed from the layouts for this site.

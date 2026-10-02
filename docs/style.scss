@@ -698,6 +698,119 @@ nav {
   text-align: left;
 }
 
+/* 1x2 text layer: two text blocks side by side, stacked on narrow screens */
+.home-layer.text-layer {
+  grid-template-areas: "text-a text-b";
+}
+
+.text-layer .layer-text:first-child {
+  grid-area: text-a;
+}
+
+.text-layer .layer-text:last-child {
+  grid-area: text-b;
+}
+
+@media (max-width: 850px) {
+  .home-layer.text-layer {
+    grid-template-areas:
+      "text-a"
+      "text-b";
+  }
+}
+
+/* Notes: simple, list-based copy for the text layer */
+.home-layer.text-layer {
+  align-items: start;
+  column-gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+.text-layer .note-label {
+  color: #111;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin: 0 0 1rem;
+}
+
+.text-layer .note-list {
+  display: grid;
+  gap: 0.65rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.text-layer .note-list li {
+  max-width: none; /* the base theme caps list items at 70% width */
+  color: #1d1d1d;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 1.15rem;
+  position: relative;
+}
+
+/* Small soft dot as the bullet */
+.text-layer .note-list li::before {
+  background: rgba(17, 17, 17, 0.45);
+  border-radius: 50%;
+  content: "";
+  height: 5px;
+  left: 0.15rem;
+  position: absolute;
+  top: 0.7em;
+  width: 5px;
+}
+
+/* Nested bullets: tighter, with small hollow dots */
+.text-layer .note-sublist {
+  display: grid;
+  gap: 0.3rem;
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+}
+
+.text-layer .note-sublist li::before {
+  background: transparent;
+  border: 1px solid rgba(17, 17, 17, 0.45);
+  height: 4px;
+  width: 4px;
+}
+
+.text-layer .note-role + .note-role {
+  margin-top: 1.75rem;
+}
+
+.text-layer .note-role h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  margin: 0 0 0.6rem;
+}
+
+/* The Groq backstory line: softer ink blue, slightly smaller than the bullets */
+.text-layer .note-lead {
+  color: #3d4f73;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+  max-width: 100%;
+}
+
+/* Intro: centre the remaining heading lines in their block */
+.home-stack .intro-layer .layer-text {
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+/* Hide the intro copy box when its lines are commented out, so it leaves no gap */
+.intro-copy:not(:has(p)) {
+  display: none;
+}
+
 .intro-layer .layer-text {
   align-items: flex-start;
   align-self: center;
@@ -1890,5 +2003,122 @@ pre {
   .home-stack .image-layer .image-block:hover img {
     scale: none;
     rotate: none;
+  }
+}
+
+/* ==========================================================================
+   Text halos
+   A soft, feathered patch behind text and transparent images that blurs and
+   lightens the diffusion background, so its strokes never cut into the content.
+   --halo-out: how far the halo extends past the element.
+   --halo-feather: how wide the fade to nothing is at each edge.
+   ========================================================================== */
+.home-stack .layer-text:not(.image-block),
+.home-stack .intro-art,
+.reads-shell,
+article > h1,
+ul.site-nav {
+  --halo-out: 2.25rem;
+  --halo-feather: 2.25rem;
+  position: relative;
+  isolation: isolate;
+}
+
+/* The sketch's frame clips overflow, so its halo feathers inward from the frame */
+.home-stack .intro-art {
+  --halo-out: 0px;
+  --halo-feather: 4rem;
+}
+
+ul.site-nav {
+  --halo-out: 1.25rem;
+  --halo-feather: 1.25rem;
+}
+
+/* Page titles are full-width blocks; size them to their text so the halo hugs the words */
+article > h1 {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.home-stack .layer-text:not(.image-block)::before,
+.home-stack .intro-art::before,
+.reads-shell::before,
+article > h1::before,
+ul.site-nav::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--halo-out));
+  z-index: -1;
+  pointer-events: none;
+  background: rgba(255, 255, 248, 0.45);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 var(--halo-feather), #000 calc(100% - var(--halo-feather)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--halo-feather), #000 calc(100% - var(--halo-feather)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 var(--halo-feather), #000 calc(100% - var(--halo-feather)), transparent),
+    linear-gradient(to bottom, transparent, #000 var(--halo-feather), #000 calc(100% - var(--halo-feather)), transparent);
+  mask-composite: intersect;
+}
+
+/* Without backdrop blur support, a slightly stronger paper tint does the job */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .home-stack .layer-text:not(.image-block)::before,
+  .home-stack .intro-art::before,
+  .reads-shell::before,
+  article > h1::before,
+  ul.site-nav::before {
+    background: rgba(255, 255, 248, 0.7);
+  }
+}
+
+/* ==========================================================================
+   Scroll cue: a subtle arrow that drifts gently, inviting the reader further
+   down. Holds still for reduced motion.
+   ========================================================================== */
+.home-layer.scroll-cue-layer {
+  grid-template-columns: 1fr;
+  grid-template-areas: "cue";
+  justify-items: center;
+  padding: 1.5rem 0 0.5rem;
+}
+
+.scroll-cue {
+  color: rgba(17, 17, 17, 0.38);
+  display: inline-flex;
+  grid-area: cue;
+  padding: 0.75rem;
+  text-decoration: none;
+  transition: color 300ms ease;
+}
+
+.scroll-cue:hover,
+.scroll-cue:focus-visible {
+  color: rgba(17, 17, 17, 0.75);
+}
+
+.scroll-cue-arrow {
+  animation: cue-drift 2.6s ease-in-out infinite;
+  display: block;
+}
+
+@keyframes cue-drift {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(5px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-arrow {
+    animation: none;
+  }
+}
+
+/* Clicking the cue glides down instead of jumping */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
   }
 }
