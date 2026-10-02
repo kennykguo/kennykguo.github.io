@@ -137,29 +137,27 @@
   var TRAIL_COUNT = 1400, DYE_PARTICLE_COUNT = 60;
   var trailInk = 1; // fewer particles on weaker devices draw a little darker to compensate
 
+  // Palette after Oppenheimer: fire (ember, amber, orange) against blue-white light
+  // (steel, ice and Cherenkov blues), with a little charcoal smoke for depth.
   var SKY_PALETTE = [
-    [60, 75, 130],   // deep blue
-    [85, 95, 140],   // muted blue
-    [50, 65, 110],   // navy
-    [100, 70, 50],   // burnt sienna
-    [140, 100, 45],  // amber
-    [120, 80, 60],   // rust
-    [80, 100, 75],   // sage green
-    [65, 85, 70],    // dark teal
-    [100, 75, 110],  // muted purple
-    [85, 70, 100],   // dusty violet
-    [130, 110, 80],  // ochre
-    [110, 95, 120]   // lavender gray
+    [196, 98, 40],   // ember orange
+    [214, 140, 58],  // amber
+    [160, 72, 36],   // burnt ember
+    [185, 110, 62],  // copper
+    [92, 128, 176],  // steel blue
+    [124, 160, 204], // ice blue
+    [70, 110, 170],  // cobalt
+    [150, 180, 214], // blue-white
+    [88, 92, 102],   // charcoal smoke
+    [205, 120, 48]   // flame
   ];
-  var DYE_PALETTE = [
-    [40, 50, 120],   // deep indigo
-    [130, 55, 30],   // burnt orange
-    [45, 80, 55],    // forest green
-    [90, 40, 90],    // plum
-    [150, 90, 25],   // golden amber
-    [55, 70, 120],   // steel blue
-    [120, 50, 50],   // brick red
-    [60, 95, 95]     // teal
+  var DYE_PALETTE = [ // concentrated ink drops
+    [222, 112, 30],  // ignition orange
+    [236, 152, 52],  // molten amber
+    [184, 66, 24],   // deep ember
+    [56, 124, 214],  // Cherenkov blue
+    [104, 156, 226], // blue-white flash
+    [40, 88, 168]    // deep cobalt
   ];
 
   // =====================================================================
