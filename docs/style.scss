@@ -1832,3 +1832,63 @@ pre {
     font-size: 1.12rem;
   }
 }
+
+/* ==========================================================================
+   Homepage image hover
+   Photos lift a few pixels and ease in slightly; the hero sketch gives a small
+   springy tilt. Uses the individual `scale` / `rotate` properties so it stacks
+   with the inline `transform` that home-layer-fade.js writes on each image.
+   Mouse/trackpad only, and off for reduced motion.
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  .home-stack .layer-media:not(.intro-art),
+  .home-stack .image-layer .image-block {
+    transition: opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-stack .layer-media:not(.intro-art) img,
+  .home-stack .image-layer .image-block img {
+    transition: filter 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      scale 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-stack .layer-media:not(.intro-art):hover,
+  .home-stack .image-layer .image-block:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.14);
+  }
+
+  .home-stack .layer-media:not(.intro-art):hover img,
+  .home-stack .image-layer .image-block:hover img {
+    scale: 1.035;
+  }
+
+  .home-stack .intro-art img {
+    transition: filter 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      rotate 520ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      scale 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .home-stack .intro-art:hover img {
+    rotate: 3deg;
+    scale: 1.02;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-stack .layer-media:hover,
+  .home-stack .image-layer .image-block:hover {
+    transform: none;
+  }
+
+  .home-stack .layer-media:hover img,
+  .home-stack .image-layer .image-block:hover img {
+    scale: none;
+    rotate: none;
+  }
+}
