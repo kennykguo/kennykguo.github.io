@@ -17,7 +17,7 @@ title: home
         alt="Sketch portrait of Kenny with cat ears and bright eyes" loading="eager" decoding="async">
     </div>
   </section>
-  <!-- 1x2 text layer: what I'm doing now / where I've been -->
+  <!-- 1x2 text layer: what I'm doing now, what I've done, and where I've been -->
   <section class="home-layer text-layer">
     <div class="layer-text">
       <h3 class="note-label">Currently:</h3>
@@ -31,28 +31,36 @@ title: home
             <li>Distributed systems</li>
           </ul>
         </li>
-        <li>I like working through problems carefully, breaking things, and hacking things.</li>
-        <li>Right now I'm working on photonics projects and building semiconductor fab equipment @ Hacker Fab.</li>
+        <li>I like working through things carefully, breaking things, and hacking things.</li>
+        <li>Right now I'm working on photonics projects and building semiconductor fab equipment @ <a href="https://hackerfab.ca" target="_blank" rel="noopener noreferrer">Hacker Fab</a>.</li>
+      </ul>
+
+      <h3 class="note-label">In the past, I've:</h3>
+      <ul class="note-list">
+        <li>Helped build an <a href="https://tinytpu.com" target="_blank" rel="noopener noreferrer">open source TPU</a>, wrote a detailed blog post, shared it on Twitter, met Groq's CEO.</li>
+        <li>Been funded by Tyler Cowen and the Thiel Foundation through <a href="https://www.mercatus.org/emergent-ventures" target="_blank" rel="noopener noreferrer">Emergent Ventures</a> (<a href="https://marginalrevolution.com/marginalrevolution/2026/05/emergent-ventures-winners-54th-cohort.html" target="_blank" rel="noopener noreferrer">54th cohort</a>).</li>
+        <li>Presented to a crowd of 2,000+ people at Socratica Symposium 2026 (<a href="https://www.youtube.com/watch?v=0FeiflPA4pg" target="_blank" rel="noopener noreferrer">watch</a>).</li>
+        <li>Trained an <a href="https://github.com/kennykguo/image-captioning" target="_blank" rel="noopener noreferrer">image captioning model</a> using Kaggle's free GPUs.</li>
+        <li>Built a <a href="https://github.com/kennykguo/veri-nn" target="_blank" rel="noopener noreferrer">generalizable neural network library for FPGAs</a>.</li>
+        <li>Folded some of the hardest <a href="#origami">origami</a> designs.</li>
+        <li>Built a high-voltage tube furnace that reached 1,000 °C.</li>
       </ul>
     </div>
     <div class="layer-text">
       <h3 class="note-label">Previously:</h3>
       <div class="note-role">
         <h4>Interned at Groq</h4>
-        <p class="note-lead">Helped build an open source TPU, wrote a detailed blog post, shared it on Twitter, eventually met Groq's CEO, and joined Groq.</p>
         <ul class="note-list">
           <li>Helped ship new load-balancing algorithms for Groq's datacenters.</li>
-          <li>Got my first real taste of serious production software, and shipping fast.</li>
+          <li>Brought up a Kimi model end to end, from Hugging Face to inference execution on LPUs.</li>
         </ul>
       </div>
       <div class="note-role">
         <h4>Interned at NVIDIA</h4>
         <ul class="note-list">
           <li>Won first place in the annual intern competition (software category), where I built a low-latency distributed inference engine for robotics models, running on multiple racks of LPU clusters.</li>
-          <li>Brought up a Kimi model end to end, from Hugging Face to inference execution.</li>
-          <li>Built my own performance engineering tools and shipped new compiler features for performance analysis. </li>
-          <li>Dove into compiler theory and wrote my own small compiler pass for loop optimizations.</li>
-          <li>Placed first in an internal DSL model-optimization challenge open to all engineers across the LPU organization.</li>
+          <li>Built my own performance engineering tools and shipped new compiler features for performance analysis.</li>
+          <li>Dove into compiler theory and wrote my own small compiler pass for loop optimizations for the LPU compiler.</li>
         </ul>
       </div>
     </div>
@@ -176,7 +184,7 @@ title: home
     <div class="spacer-block"></div>
   </section>
 
-  <section class="home-layer layer-right">
+  <section class="home-layer layer-right" id="origami">
     <div class="layer-media">
       <img src="{{ site.baseurl }}/media/images/origami-1.jpg" alt="Origami sculpture" loading="lazy">
     </div>

@@ -32,7 +32,7 @@
 }
 
 :root {
-  --hacker-font: "Hack Nerd Font Mono", "JetBrainsMono Nerd Font Mono", "JetBrains Mono",
+  --hacker-font: "Roboto Mono", "Hack Nerd Font Mono", "JetBrainsMono Nerd Font Mono", "JetBrains Mono",
     "FiraCode Nerd Font", "CaskaydiaCove Nerd Font", "Noto Sans Mono CJK SC",
     SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
@@ -790,13 +790,23 @@ nav {
   margin: 0 0 0.6rem;
 }
 
-/* The Groq backstory line: softer ink blue, slightly smaller than the bullets */
-.text-layer .note-lead {
-  color: #3d4f73;
-  font-size: 0.94rem;
-  line-height: 1.6;
-  margin: 0 0 0.75rem;
-  max-width: 100%;
+/* A second group in the same column gets room above its heading */
+.text-layer .note-list + .note-label {
+  margin-top: 1.9rem;
+}
+
+/* Links inside notes: same size as the text (the base theme forces 12px), soft underline */
+.text-layer .note-list a,
+.text-layer .note-list a:visited {
+  font-size: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(17, 17, 17, 0.3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.text-layer .note-list a:hover {
+  text-decoration-color: currentColor;
 }
 
 /* Intro: centre the remaining heading lines in their block */
