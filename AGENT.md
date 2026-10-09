@@ -93,6 +93,11 @@ Responsiveness
 - On narrow screens, stacks become single-column.
 - Text should appear above its paired image when stacked.
 
+List Pages (profound, writing, principles)
+- Paths: `/profound/`, `/writing/`, `/principles/` (sources in `docs/<name>/index.html`).
+- Markup: `div.reads-shell` > `ul.thought-list` > `li.thought-item` > `article.thought-entry` with an `a.thought-link` (or a plain `span.thought-link` when the entry isn't a link) and an optional `p.thought-source`.
+- Each page is linked from the nav in `docs/_includes/header.html`.
+
 Origami Side Page
 - Path: `/origami/` (source `docs/origami/index.md`).
 - Uses `site.baseurl` for image paths.

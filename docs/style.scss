@@ -1174,6 +1174,13 @@ nav {
 }
 
 
+/* List pages (profound, writing, principles) always use the full content width,
+   even when their entries are short; the article otherwise shrinks to its content */
+article:has(> .reads-shell) {
+  align-self: stretch;
+  width: 100%;
+}
+
 .reads-shell {
   display: flex;
   flex-direction: column;
