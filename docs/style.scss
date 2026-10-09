@@ -2139,3 +2139,10 @@ ul.site-nav::before {
     scroll-behavior: smooth;
   }
 }
+
+/* Principles: each one stays on a single line. On narrow screens the text scales
+   down so the longest principle (~40 characters of Roboto Mono) still fits. */
+.principles-shell .thought-link {
+  font-size: unquote("min(clamp(1.15rem, 1.8vw, 1.6rem), calc((100vw - 2.5rem) / 24.5))"); /* plain CSS min(), not Sass */
+  white-space: nowrap;
+}
