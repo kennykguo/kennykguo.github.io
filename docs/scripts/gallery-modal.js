@@ -1,3 +1,40 @@
+// Latent page: tiles are shuffled into a new random order on every load, then fade in
+// one by one in a random order as they scroll into view.
+// Runs straight away (the script sits after the grid) so this happens before first paint.
+(function () {
+  const grid = document.querySelector('.gallery-fullwidth');
+  if (!grid) return;
+
+  // Shuffle, retrying a few times to avoid two videos side by side
+  const tiles = [...grid.querySelectorAll('.gallery-item')];
+  const isVideo = tile => tile.hasAttribute('data-video');
+  let order = tiles;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    order = tiles.slice();
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    if (!order.some((tile, i) => i > 0 && isVideo(tile) && isVideo(order[i - 1]))) break;
+  }
+  order.forEach(tile => grid.appendChild(tile));
+
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  grid.classList.add('is-revealing');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const tile = entry.target;
+      tile.style.setProperty('--reveal-delay', `${Math.round(Math.random() * 900)}ms`);
+      tile.classList.add('is-in');
+      observer.unobserve(tile);
+    });
+  }, { rootMargin: '0px 0px -5% 0px' });
+  grid.querySelectorAll('.gallery-item').forEach(tile => observer.observe(tile));
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Setting up gallery modal...');
   
@@ -5,6 +42,16 @@ document.addEventListener('DOMContentLoaded', function() {
   const allVideos = document.querySelectorAll('video');
   allVideos.forEach(video => {
     video.playbackRate = 0.5;
+  });
+
+  // Hover-to-play tiles: paused until the pointer is over them
+  document.querySelectorAll('.gallery-item.hover-play video').forEach(video => {
+    const tile = video.closest('.gallery-item');
+    tile.addEventListener('mouseenter', () => {
+      video.playbackRate = 0.5;
+      video.play().catch(() => {});
+    });
+    tile.addEventListener('mouseleave', () => video.pause());
   });
   
   // Add click listeners to all gallery items using event delegation

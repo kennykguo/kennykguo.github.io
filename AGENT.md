@@ -62,7 +62,7 @@ Alignment Rules
 
 Homepage Layers (Current)
 - Intro layer: text + profile photo at the top.
-- Intro text layer: 1x2 text layer directly under the intro, before the first spacer.
+- Intro text layer: 1x2 text layer directly under the intro ("Currently" left, "In the past" right), followed by a spacer.
 - Scroll cue layer: 1x1 `section.home-layer.scroll-cue-layer` under the intro text layer. A subtle drifting down-arrow (inline SVG, pure CSS) that links to `#hacker-fab`; holds still for reduced motion.
 - Hacker Fab layers: centered text block with a single image, followed by a 1x2 image layer.
 - Meraki layers: centered text block with a single image, followed by three 1x2 image layers.
@@ -93,19 +93,22 @@ Responsiveness
 - On narrow screens, stacks become single-column.
 - Text should appear above its paired image when stacked.
 
-List Pages (profound, writing, principles)
-- Paths: `/profound/`, `/writing/`, `/principles/` (sources in `docs/<name>/index.html`).
-- Markup: `div.reads-shell` > `ul.thought-list` > `li.thought-item` > `article.thought-entry` with an `a.thought-link` (or a plain `span.thought-link` when the entry isn't a link) and an optional `p.thought-source`.
+List Pages (pretrain, distilled, reasoning) and Latent
+- Paths: `/pretrain/` (work history), `/distilled/` (favourite writing/content), `/reasoning/` (writing) and `/latent/` (photo gallery); sources in `docs/<name>/index.html`. Nav labels and page titles match the paths.
+- The old addresses `/work/`, `/profound/`, `/writing/` and `/gallery/` redirect to the new ones via `redirect_from` in each page's front matter (`jekyll-redirect-from`, enabled in `_config.yml`).
+- Pretrain and reasoning share one style via `div.reads-shell.list-shell`: numbered rows, title plus muted `p.thought-source`, optional `ul.thought-points` (used on pretrain for each role's bullets), and `li.is-thought` for your own thoughts (ink blue).
+- Distilled uses `div.reads-shell.profound-board` instead: entries are scattered across a 12-column grid at random on every load by `docs/scripts/profound-scatter.js` (desktop only; a repeating `:nth-child(5n + k)` pattern in `style.scss` is the no-JS fallback), right-hand entries align right, images sit as slightly turned clippings, entries tilt slightly on hover, and there are no numbers. Adding or reordering entries reflows the pattern automatically.
+- Markup: `div.reads-shell` > `ul.thought-list` > `li.thought-item` > `article.thought-entry` with an `a.thought-link` (or a plain `span.thought-link` when the entry isn't a link) an optional `p.thought-source`, and an optional `img.thought-image` (images blend into the paper).
 - Each page is linked from the nav in `docs/_includes/header.html`.
 
 Origami Side Page
 - Path: `/origami/` (source `docs/origami/index.md`).
 - Uses `site.baseurl` for image paths.
 - Gallery layout is a 2x2 grid with the third image spanning two rows.
-- Gallery modal uses `docs/scripts/gallery-modal.js` (origami gallery is included).
+- Gallery modal uses `docs/scripts/gallery-modal.js` (origami gallery is included). On latent it also fades tiles in one by one in a random order as they scroll into view.
 
 Text Halos
-- Text blocks, the hero sketch (transparent PNG), page titles, the nav and the profound/writing lists sit on a soft halo that blurs and lightens the diffusion background behind them.
+- Text blocks, the hero sketch (transparent PNG), page titles, the nav and the distilled/reasoning lists sit on a soft halo that blurs and lightens the diffusion background behind them.
 - Implemented as a feathered `::before` (backdrop blur + paper tint, masked to fade out at the edges); no extra markup.
 - Tune per element with `--halo-out` (how far it extends) and `--halo-feather` (fade width). New text or transparent-image containers should be added to the halo selector list in `docs/style.scss`.
 

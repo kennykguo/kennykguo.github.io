@@ -43,3 +43,7 @@ collections:
     output: false  # No individual pages for project entries
 
 highlighter: rouge
+
+# Old page addresses (e.g. /gallery/) redirect to the renamed pages
+plugins:
+  - jekyll-redirect-from
