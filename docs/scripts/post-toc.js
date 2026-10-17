@@ -1,6 +1,8 @@
 // Blog posts: a contents list built from the post's headings (h2 and h3), with the section
-// you're reading highlighted as you scroll. On narrow screens it's a bar stuck to the top of
-// the screen that shows the current section and opens into the full list.
+// you're reading highlighted as you scroll.
+// Wide screens: the list sits in the left margin. Narrower screens: a bar near the top of the
+// post opens the list as a dropdown, and once that bar has scrolled away a small floating
+// "contents" button appears in the corner, opening the same list as a sheet from the bottom.
 (function () {
   const toc = document.querySelector('.post-toc');
   const body = document.querySelector('.post-body');
@@ -26,6 +28,15 @@
   chevron.setAttribute('aria-hidden', 'true');
   toggle.append(toggleLabel, currentLabel, chevron);
 
+  const fab = document.createElement('button');
+  fab.type = 'button';
+  fab.className = 'post-toc-fab';
+  fab.setAttribute('aria-label', 'Open contents');
+  const fabIcon = document.createElement('span');
+  fabIcon.className = 'post-toc-fab-icon';
+  fabIcon.setAttribute('aria-hidden', 'true');
+  fab.append(fabIcon, document.createTextNode('contents'));
+
   const list = document.createElement('ol');
   const links = headings.map(heading => {
     const item = document.createElement('li');
@@ -38,14 +49,27 @@
     return link;
   });
 
-  toc.append(label, toggle, list);
+  toc.append(label, toggle, list, fab);
   toc.hidden = false;
 
-  const setOpen = open => {
+  // Open as a dropdown under the bar, or as a sheet from the bottom (from the floating button).
+  // The sheet class stays on until the closing fade ends, so the list doesn't jump mid-fade.
+  let sheetTimer = null;
+  function setOpen(open, sheet = false) {
+    clearTimeout(sheetTimer);
     toc.classList.toggle('is-open', open);
-    toggle.setAttribute('aria-expanded', String(open));
-  };
+    if (open) {
+      toc.classList.toggle('is-sheet', sheet);
+      const active = list.querySelector('.is-active');
+      if (sheet && active) list.scrollTop = active.offsetTop - list.clientHeight / 2;
+    } else {
+      sheetTimer = setTimeout(() => toc.classList.remove('is-sheet'), 200);
+    }
+    toggle.setAttribute('aria-expanded', String(open && !sheet));
+    fab.setAttribute('aria-expanded', String(open && sheet));
+  }
   toggle.addEventListener('click', () => setOpen(!toc.classList.contains('is-open')));
+  fab.addEventListener('click', () => setOpen(!toc.classList.contains('is-open'), true));
   list.addEventListener('click', event => {
     if (event.target.closest('a')) setOpen(false);
   });
@@ -53,6 +77,13 @@
   document.addEventListener('click', event => {
     if (!toc.contains(event.target)) setOpen(false);
   });
+
+  // The floating button shows once the bar near the top has scrolled out of view
+  new IntersectionObserver(([entry]) => {
+    const past = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+    toc.classList.toggle('is-past', past);
+    if (!past && toc.classList.contains('is-sheet')) setOpen(false);
+  }).observe(toggle);
 
   // On wide screens the list sits in the left margin, starting below the post's title and then
   // staying put once the title has scrolled away

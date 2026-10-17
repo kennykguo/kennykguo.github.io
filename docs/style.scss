@@ -3034,7 +3034,8 @@ body.post-page main {
   content: "\2192\00a0";
 }
 
-.post-toc-toggle {
+.post-toc-toggle,
+.post-toc-fab {
   display: none;
 }
 
@@ -3058,19 +3059,14 @@ body.post-page main {
 }
 
 @media (max-width: 1239px) {
-  /* A bar stuck to the top of the screen (paper behind it, so text scrolls underneath
-     cleanly), showing the current section, that opens into a floating panel */
+  /* A bar near the top of the post showing the current section, which opens into a
+     floating panel. It scrolls away with the page; after that, a small floating button in
+     the corner opens the same list as a sheet from the bottom. */
   .post-toc {
-    background: #fffff8;
-    /* on phones <body> scrolls and has top padding, so a stuck bar sits a little below the
-       top edge; paint paper above it so text doesn't show through the gap */
-    box-shadow: 0 -1.2rem 0 0 #fffff8;
     margin: 0 auto 2rem !important;
     max-width: 46rem;
-    padding: 0.4rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 5;
+    position: relative;
+    z-index: 15;
   }
 
   .post-toc-label {
@@ -3173,12 +3169,73 @@ body.post-page main {
   .post-toc a.is-active::before {
     content: none;
   }
+
+  /* opened from the floating button: a sheet rising from the bottom of the screen */
+  .post-toc.is-sheet ol {
+    bottom: 12px;
+    left: 12px;
+    max-height: 70vh;
+    position: fixed;
+    right: 12px;
+    top: auto;
+    transform: translateY(12px);
+  }
+
+  .post-toc.is-sheet.is-open ol {
+    transform: translateY(0);
+  }
+
+  .post-toc-fab {
+    align-items: center;
+    appearance: none;
+    background: #111;
+    border: 0;
+    border-radius: 999px;
+    bottom: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    color: #fffff8;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: var(--hacker-font);
+    font-size: 0.8rem;
+    gap: 0.55rem;
+    letter-spacing: 0.04em;
+    opacity: 0;
+    padding: 0.65rem 1rem;
+    pointer-events: none;
+    position: fixed;
+    right: 16px;
+    transform: translateY(8px);
+    transition: opacity 200ms ease, transform 200ms ease;
+    z-index: 30;
+  }
+
+  .post-toc.is-past .post-toc-fab {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .post-toc.is-sheet.is-open .post-toc-fab {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* a small list icon: three 2px lines, on whole pixels so it stays crisp */
+  .post-toc-fab-icon {
+    background: currentColor;
+    box-shadow: 0 -5px 0 currentColor, 0 5px 0 currentColor;
+    flex: none;
+    height: 2px;
+    margin: 5px 0;
+    width: 12px;
+  }
 }
 
-/* Headings land below the sticky contents bar when jumped to */
+/* Headings land with a little room above them when jumped to */
 .post-body h2,
 .post-body h3 {
-  scroll-margin-top: 4rem;
+  scroll-margin-top: 1.5rem;
 }
 
 /* Labels drawn over figure canvases, so maths in figures is typeset by KaTeX like the text */
