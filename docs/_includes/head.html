@@ -1,3 +1,4 @@
+{% if page.layout == "post" %}<!DOCTYPE html>{% endif %}
 <html lang="en" dir="ltr">
 
 <head>
@@ -12,9 +13,16 @@
     <link rel="canonical" href="{{ site.baseurl }}{{ page.url }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400..700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400..700;1,400..700&display=swap">
     <link rel="stylesheet" href="{{ site.baseurl }}/style.css?v={{ site.time | date: "%Y%m%d%H%M%S" }}">
+    {% if page.layout == "post" %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    {% endif %}
 </head>
 
+{% if page.layout == "post" %}
+<body class="post-page">
+{% else %}
 <body>
 <canvas id="diffusion-bg" aria-hidden="true"></canvas>
+{% endif %}

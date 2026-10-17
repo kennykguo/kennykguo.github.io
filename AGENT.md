@@ -101,6 +101,17 @@ List Pages (pretrain, distilled, reasoning) and Latent
 - Markup: `div.reads-shell` > `ul.thought-list` > `li.thought-item` > `article.thought-entry` with an `a.thought-link` (or a plain `span.thought-link` when the entry isn't a link) an optional `p.thought-source`, and an optional `img.thought-image` (images blend into the paper).
 - Each page is linked from the nav in `docs/_includes/header.html`.
 
+Blog Posts
+- Each post written on the site has its own folder: `docs/reasoning/<slug>/index.md` (front matter `layout: post`, `title`, `date`), served at `/reasoning/<slug>/`, with its scripts and images in the same folder. Posts hosted elsewhere (e.g. Substack) have no folder; they're only a link on `docs/reasoning/index.html`, where every post is listed by hand.
+- `docs/reasoning/README.md` is the writing guide: folder layout, math, images, captions, code, figures. It's excluded from the build in `_config.yml`.
+- Math uses KaTeX (loaded from jsdelivr only on posts) and is rendered by `docs/scripts/post-math.js`. Write all math as `$$...$$` (kramdown turns it into `\(...\)` inline or `\[...\]` on its own lines); single `$` is plain text.
+- Posts get a contents list built from their h2/h3 headings by `docs/scripts/post-toc.js`: fixed in the left margin on wide screens (≥1240px), a sticky bar that opens into the list on narrower ones, with the current section highlighted. On phones `<body>` (not window) is the scrolling element, so scroll listeners must use the capture phase on `document`.
+- Math uses KaTeX's own fonts on purpose: forcing the site's monospace font onto KaTeX made equations look warped. Figures typeset their maths with KaTeX too, in an HTML label layer over each canvas (`makeOverlay` in the post's `viz.js`).
+- Posts have a plain paper background (`#fffff8`): no diffusion canvas and no colour gradient (`body.post-page`, set in `head.html`).
+- Only post pages send `<!DOCTYPE html>` (KaTeX refuses to run in quirks mode). The rest of the site still renders in quirks mode, and its styles were tuned that way, so adding the doctype site-wide needs a visual check of every page.
+- Interactive figures: a post lists its own scripts in front matter (`scripts:` for classic scripts, `modules:` for ES modules) and the post layout loads them. Script names are relative to the post's folder. The photonics post uses `docs/reasoning/deep-dive-into-photonics/viz.js` (2D canvas figures plus shared controls, exposed as `window.PhotonicsViz`) and `em-wave-3d.js` (Three.js from jsdelivr). Each figure is `<figure class="viz" data-viz="name" data-label="...">` with a `.viz-stage` div and a `figcaption`; animations only run while on screen and start paused for reduced motion.
+- The HTML compressor (`compress` layout) collapses newlines outside `<pre>`, so any page JavaScript must live in a file under `docs/scripts/`, not inline (a `//` comment would swallow the rest of the script).
+
 Origami Side Page
 - Path: `/origami/` (source `docs/origami/index.md`).
 - Uses `site.baseurl` for image paths.
