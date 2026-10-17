@@ -889,7 +889,7 @@
     });
     bar.append(label, group);
     legend(bar, [[INK, 'data $m(t)$'], [MUTED, 'laser'], [E_COLOR, 'sent signal and its spectrum']]);
-    const view = makeCanvas(figure, { aspect: 0.82, minHeight: 460, maxHeight: 620 }, () => draw());
+    const view = makeCanvas(figure, { aspect: 0.82, minHeight: 560, maxHeight: 620 }, () => draw());
     const overlay = makeOverlay(figure);
 
     function draw() {
@@ -902,8 +902,16 @@
       const bitW = plotW / bits.length;
       const m = x => bits[Math.min(bits.length - 1, Math.floor((x - left) / bitW))];
       const carrier = x => Math.cos(2 * Math.PI * cyclesPerBit * (x - left) / bitW);
-      const rowAmp = h * 0.055;
-      const rows = [h * 0.12, h * 0.31, h * 0.5];
+      // Each row: a label line, then the trace. Row 1 also has the bit values under it.
+      const rowAmp = Math.min(32, h * 0.05);
+      const labelGap = 18;
+      const rows = [];
+      let y = 18 + labelGap + rowAmp;
+      rows.push(y);
+      y += rowAmp + 22 + labelGap + 14 + rowAmp;  // bit values, then the next label
+      rows.push(y);
+      y += rowAmp + labelGap + 14 + rowAmp;
+      rows.push(y);
 
       // bit slots, shaded only around the traces so the row labels sit on plain paper
       ctx.fillStyle = 'rgba(17, 17, 17, 0.035)';
@@ -916,35 +924,37 @@
       ctx.strokeStyle = INK;
       ctx.lineWidth = 2;
       plot(ctx, left, right, x => rows[0] + rowAmp - 2 * rowAmp * m(x), 1);
-      overlay.label('row0', 'data $m(t)$: slow, one value per bit', left + 4, rows[0] - rowAmp - 14);
+      overlay.label('row0', 'data $m(t)$: slow, one value per bit', left + 4, rows[0] - rowAmp - labelGap);
       bits.forEach((bit, i) => overlay.label(`b${i}`, String(bit), left + (i + 0.5) * bitW, rows[0] + rowAmp + 12, { align: 'center', color: INK }));
 
       // 2. the laser
       ctx.strokeStyle = 'rgba(17, 17, 17, 0.5)';
       ctx.lineWidth = 1.2;
       plot(ctx, left, right, x => rows[1] - rowAmp * carrier(x), 1);
-      overlay.label('row1', 'laser $\\cos(2\\pi f_c t)$: fast, the carrier', left + 4, rows[1] - rowAmp - 14);
+      overlay.label('row1', 'laser $\\cos(2\\pi f_c t)$: fast, the carrier', left + 4, rows[1] - rowAmp - labelGap);
 
       // 3. what's sent: the product
       ctx.strokeStyle = E_COLOR;
       ctx.lineWidth = 1.4;
       plot(ctx, left, right, x => rows[2] - rowAmp * m(x) * carrier(x), 1);
-      overlay.label('row2', 'sent: $m(t)\\cos(2\\pi f_c t)$', left + 4, rows[2] - rowAmp - 14);
+      overlay.label('row2', 'sent: $m(t)\\cos(2\\pi f_c t)$', left + 4, rows[2] - rowAmp - labelGap);
       overlay.label('time', 'time $t$ →', right, rows[2] + rowAmp + 12, { align: 'right' });
 
       // 4. spectrum around fc: |S1(f)| times |sum of phases|, with u = (f - fc) T
       const baseF = h - 26;
-      const topF = h * 0.66;
+      const topF = rows[2] + rowAmp + 32 + labelGap + 10;
       const span = 4;                                 // show fc ± 4/T
       const ux = x => ((x - left) / plotW) * 2 * span - span;
       const ones = bits.reduce((a, b) => a + b, 0);
       ctx.strokeStyle = FAINT;
       ctx.lineWidth = 1;
       line(ctx, left, baseF, right, baseF);
-      overlay.label('row3', 'spectrum $\\lvert S(f) \\rvert$ around $f_c$', left + 4, topF - 14);
+      overlay.label('row3', 'spectrum $\\lvert S(f) \\rvert$ around $f_c$', left + 4, topF - labelGap);
       [-2, -1, 1, 2].forEach(u => {
         const x = left + ((u + span) / (2 * span)) * plotW;
-        overlay.label(`u${u}`, `$f_c ${u > 0 ? '+' : '-'} ${Math.abs(u)}/T$`, x, baseF + 14, { align: 'center' });
+        // on narrow screens, short labels relative to f_c so neighbours don't collide
+        const tick = w < 560 ? `$${u > 0 ? '+' : '-'}${Math.abs(u)}/T$` : `$f_c ${u > 0 ? '+' : '-'} ${Math.abs(u)}/T$`;
+        overlay.label(`u${u}`, tick, x, baseF + 14, { align: 'center' });
       });
       overlay.label('fc', '$f_c$', left + plotW / 2, baseF + 14, { align: 'center', color: INK });
 
@@ -1192,7 +1202,7 @@
       const left = 56;
       const right = w - 16;
       const top = 30;
-      const bottom = h - 40;
+      const bottom = h - 52;
       const X = l => left + ((l - lMin) / (lMax - lMin)) * (right - left);
       const Y = d => bottom - ((d - dMin) / (dMax - dMin)) * (bottom - top);
 
@@ -1200,7 +1210,7 @@
       const band = (from, to, name) => {
         ctx.fillStyle = 'rgba(46, 111, 216, 0.1)';
         ctx.fillRect(X(from), top, X(to) - X(from), bottom - top);
-        overlay.label(`band-${name}`, name, (X(from) + X(to)) / 2, top + 10, { align: 'center', color: B_COLOR });
+        overlay.label(`band-${name}`, name, (X(from) + X(to)) / 2, bottom - 12, { align: 'center', color: B_COLOR });
       };
       band(1260, 1360, 'O-band');
       band(1530, 1565, 'C-band');
@@ -1215,7 +1225,7 @@
       }
       ctx.setLineDash([]);
       for (let l = 1200; l <= 1600; l += 100) overlay.label(`x${l}`, `$${l}$`, X(l), bottom + 14, { align: 'center' });
-      overlay.label('xlabel', 'wavelength $\\lambda$ (nm)', right, bottom + 30, { align: 'right' });
+      overlay.label('xlabel', 'wavelength $\\lambda$ (nm)', right, bottom + 38, { align: 'right' });
       overlay.label('ylabel', '$D$ (ps/(nm·km))', left - 8, top - 16);
 
       // the curve
@@ -1228,7 +1238,7 @@
       overlay.label('m1310', '$D = 0$ at $1310$ nm', X(1310) + 8, Y(0) + 14, { color: INK });
       const d1550 = fibreD(1550);
       dot(ctx, X(1550), Y(d1550), 5, INK);
-      overlay.label('m1550', `$D \\approx ${d1550.toFixed(0)}$ at $1550$ nm`, X(1550) - 8, Y(d1550) - 14, { align: 'right', color: INK });
+      overlay.label('m1550', `$D \\approx ${d1550.toFixed(0)}$ at $1550$ nm`, X(1550) - 14, Y(d1550) - 22, { align: 'right', color: INK });
       overlay.end();
     }
   }
@@ -1255,9 +1265,10 @@
       const { ctx, w, h } = view;
       ctx.clearRect(0, 0, w, h);
       overlay.begin();
+      const narrow = w < 560;
       const left = 52;             // room for the "sent" and "read" labels
       const right = w - 14;
-      const top = 76;
+      const top = narrow ? 96 : 76;
       const bottom = h - 34;
       const span = bits.length * slot;
       const X = t => left + (t / span) * (right - left);
@@ -1309,7 +1320,8 @@
       });
       overlay.label('sentLabel', 'sent', 8, top - 28);
       overlay.label('readLabel', 'read', 8, bottom + 14);
-      overlay.label('spread', `$\\Delta\\tau = D\\,L\\,\\Delta\\lambda \\approx ${spread.toFixed(1)}$ ps (a bit is $20$ ps)`, right, 14, { align: 'right', color: INK });
+      overlay.label('spread', `$\\Delta\\tau = D\\,L\\,\\Delta\\lambda \\approx ${spread.toFixed(1)}$ ps (a bit is $20$ ps)`,
+        narrow ? 8 : right, narrow ? 36 : 14, { align: narrow ? 'left' : 'right', color: INK });
       overlay.label('errors', errors ? `${errors} bit${errors > 1 ? 's' : ''} read wrong` : 'every bit read correctly', 8, 14, { color: errors ? E_COLOR : INK });
       overlay.end();
     }
