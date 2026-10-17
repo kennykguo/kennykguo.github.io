@@ -33,7 +33,7 @@ A disturbance needs something to disturb. For something like sound, it would be 
 
 ### From a charge to a disturbance to a wave
 
-Imagine a charge, creating an unchanging electric field around it. If I physically move the charge back and forth, what happens? What I do know is that a positive charge produces an electric field throughout space
+Imagine a charge, creating an unchanging electric field around it. If I physically move the charge back and forth, what happens? What I do know is that a positive charge produces an electric field throughout space:
 
 $$
 \vec{E} = \frac{q}{4\pi\varepsilon_0 r^2}\,\hat{r}
@@ -47,7 +47,7 @@ So a changing $$\vec{E}$$ creates a $$\vec{B}$$, the changing $$\vec{B}$$ create
 
 ### Maxwell's equations
 
-A bit of theory. In empty space, with no charges or currents around, those rules are
+A bit of theory. In empty space, with no charges or currents around, those rules are:
 
 $$
 \begin{aligned}
@@ -58,14 +58,14 @@ $$
 \end{aligned}
 $$
 
-Intuitively,
+Intuitively:
 
 - $$\nabla \cdot \vec{E} = 0$$ means with no charges around, electric field lines don't start or end anywhere.
 - $$\nabla \cdot \vec{B} = 0$$ means magnetic field lines never start or end, anywhere. There are no magnetic charges.
 - $$\nabla \times \vec{E} = -\partial \vec{B} / \partial t$$ means a changing $$\vec{B}$$ makes an $$\vec{E}$$ that curls around it.
 - $$\nabla \times \vec{B} = \mu_0 \varepsilon_0 \, \partial \vec{E} / \partial t$$ means a changing $$\vec{E}$$ makes a $$\vec{B}$$ that curls around it.
 
-From these equations, I can get something interesting
+From these equations, I can get something interesting:
 
 $$
 \nabla^2 \vec{E} = \mu_0 \varepsilon_0 \frac{\partial^2 \vec{E}}{\partial t^2}
@@ -80,7 +80,7 @@ What if I move the charge very slowly, or very fast? The equation still holds ei
   <figcaption>One sharp jerk sends out one pulse and steady wiggling sends out a wave, both moving away at \(c\).</figcaption>
 </figure>
 
-Let's look at the simplest solution to the wave equation, a **plane wave** travelling along $$z$$. The electric field points along $$x$$, the magnetic field along $$y$$, and both oscillate in step, at right angles to each other and to the direction of travel
+Let's look at the simplest solution to the wave equation, a **plane wave** travelling along $$z$$. The electric field points along $$x$$, the magnetic field along $$y$$, and both oscillate in step, at right angles to each other and to the direction of travel:
 
 $$
 \vec{E} = E_0 \cos(kz - \omega t) \, \hat{x}, \qquad \vec{B} = \frac{E_0}{c} \cos(kz - \omega t) \, \hat{y}
@@ -95,7 +95,7 @@ The arrows only show the field direction and magnitude along one line. To get a 
 
 ### What does a moving wave look like?
 
-Back to the wave from above, with just the electric field
+Back to the wave from above, with just the electric field:
 
 $$
 \vec{E}(z, t) = E_0 \cos(kz - \omega t)\, \hat{x}
@@ -106,7 +106,7 @@ $$
 - $$\omega$$ is the **angular frequency**.
 - $$\hat{x}$$ is the direction the field points.
 
-The expression inside the cosine, $$\phi = kz - \omega t$$, is the **phase**. Wherever $$\phi = 0$$ there's a crest, and wherever $$\phi = \pi$$ there's a trough. There are a few ways to look at this equation.
+The expression inside the cosine, $$\phi = kz - \omega t$$, is the **phase**. Wherever $$\phi = 0$$ there's a crest, and wherever $$\phi = \pi$$ there's a trough. There are a few ways to look at this equation:
 
 - **Hold $$t$$ fixed.** The phase changes across $$z$$, and you get a snapshot of the wave across space. It repeats every wavelength, $$\lambda = 2\pi / k$$.
 - **Hold $$z$$ fixed.** Stand at one spot. The phase changes as time passes, and the field magnitude changes. It repeats every period, $$T = 2\pi / \omega$$.
@@ -121,7 +121,7 @@ A real wave can't go on forever. Switch a laser on and then off again, and what 
 
 ### Phase velocity
 
-To follow one crest, follow one value of the phase
+To follow one crest, follow one value of the phase:
 
 $$
 kz - \omega t = \text{constant}
@@ -129,25 +129,25 @@ $$
 
 **Why a constant?** The height of the wave at any point depends only on the phase. Two places, or two moments, with the same phase have the same height and the same slope, so they're the same feature of the wave (look at the short pulse in the figure above with **phase fixed**, where the red dot stays on the same crest).
 
-Suppose we track the crest with phase $$0$$
+Suppose we track the crest with phase $$0$$:
 
 $$
 \underbrace{kz - \omega t}_{\text{phase}} = 0
 $$
 
-At $$t = 0$$
+At $$t = 0$$:
 
 $$
 kz = 0 \implies z = 0
 $$
 
-At a later time
+At a later time:
 
 $$
 kz - \omega t = 0 \implies \boxed{z = \frac{\omega}{k}\, t}
 $$
 
-The crest moves to the right with speed
+The crest moves to the right with speed:
 
 $$
 \boxed{v_p = \frac{dz}{dt} = \frac{\omega}{k}}
@@ -155,7 +155,7 @@ $$
 
 Any other crest, $$kz - \omega t = C$$, gives $$z = (\omega t + C)/k$$ and the same speed.
 
-That's the **phase velocity**, the speed of the crests. In vacuum $$\omega / k = c$$. Since $$\omega = 2\pi f$$ and $$k = 2\pi / \lambda$$, this gives the familiar equation
+That's the **phase velocity**, the speed of the crests. In vacuum $$\omega / k = c$$. Since $$\omega = 2\pi f$$ and $$k = 2\pi / \lambda$$, this gives the familiar equation:
 
 $$
 v_p = f \lambda
@@ -167,7 +167,7 @@ The minus sign in $$kz - \omega t$$ is what makes the wave travel toward $$+z$$.
 
 Here's the chain of thought, starting off with an oscillating EM field.
 
-**1. Bound electrons move like masses on springs.** The electrons in glass are bound to their atoms, and because they carry charge, the light's electric field pushes them back and forth. A good way to picture it is a mass on a spring.
+**1. Bound electrons move like masses on springs.** The electrons in glass are bound to their atoms, and because they carry charge, the light's electric field pushes them back and forth. A good way to picture it is a mass on a spring:
 
 $$
 m \frac{d^2 x}{dt^2} = \underbrace{-\kappa x}_{\text{spring pulls back}} + \underbrace{q E_0 \cos\omega t}_{\text{light pushes}}
@@ -177,7 +177,7 @@ $$
 
 **3. Susceptibility and permittivity.** The **susceptibility** $$\chi$$, a plain number, says how easily the material polarizes, $$\vec{P} = \varepsilon_0 \chi \vec{E}$$, and the **permittivity** $$\varepsilon = \varepsilon_0 (1 + \chi)$$ says how strongly the vacuum and the material's electrons together respond to an electric field. The constants $$\varepsilon_0$$ and $$\mu_0$$ are measured in the lab, and $$\chi$$ is measured for each material (for glass, $$\chi \approx 1.3$$).
 
-**4. Relative permittivity.** It's defined as
+**4. Relative permittivity.** It's defined as:
 
 $$
 \varepsilon_r = \frac{\varepsilon}{\varepsilon_0} = 1 + \chi
@@ -185,19 +185,19 @@ $$
 
 It represents how many times more strongly the material responds to an electric field than empty space does. For vacuum $$\varepsilon_r = 1$$, and for glass it's about $$2.3$$.
 
-**5. Refractive index.** The refractive index $$n$$ is defined as how many times slower the crests move in a material than in vacuum
+**5. Refractive index.** The refractive index $$n$$ is defined as how many times slower the crests move in a material than in vacuum:
 
 $$
 n = \frac{c}{v_p}
 $$
 
-We can get it from the wave equation. Inside a non-magnetic material, Maxwell's equations look the same as in vacuum, except $$\varepsilon_0$$ becomes $$\varepsilon = \varepsilon_0 \varepsilon_r$$. So the wave equation becomes
+We can get it from the wave equation. Inside a non-magnetic material, Maxwell's equations look the same as in vacuum, except $$\varepsilon_0$$ becomes $$\varepsilon = \varepsilon_0 \varepsilon_r$$. So the wave equation becomes:
 
 $$
 \nabla^2 \vec{E} = \mu_0 \varepsilon_0 \varepsilon_r \frac{\partial^2 \vec{E}}{\partial t^2}
 $$
 
-Compared with vacuum, the right side is $$\varepsilon_r$$ times bigger, and the wave now moves at $$v_p = 1/\sqrt{\mu_0 \varepsilon_0 \varepsilon_r} = c/\sqrt{\varepsilon_r}$$. So the wave is slower by a factor of $$\sqrt{\varepsilon_r}$$, and that factor is exactly what we defined as the refractive index
+Compared with vacuum, the right side is $$\varepsilon_r$$ times bigger, and the wave now moves at $$v_p = 1/\sqrt{\mu_0 \varepsilon_0 \varepsilon_r} = c/\sqrt{\varepsilon_r}$$. So the wave is slower by a factor of $$\sqrt{\varepsilon_r}$$, and that factor is exactly what we defined as the refractive index:
 
 $$
 n = \frac{c}{v_p} = \sqrt{\varepsilon_r} = \sqrt{1 + \chi}
@@ -213,13 +213,13 @@ First, the **wave vector**. $$k$$ is really a vector, $$\vec{k}$$, pointing in t
 
 Second, Maxwell's equations say something important at a boundary. The part of $$\vec{E}$$ running along the surface has to be the same on both sides.
 
-From there, light hitting the surface makes three waves (incident, reflected and transmitted). The matching has to hold at every point along the surface, at every moment. That only works if all three waves have the same frequency and the same spacing of crests along the surface, which means the same component of $$\vec{k}$$ along the surface
+From there, light hitting the surface makes three waves (incident, reflected and transmitted). The matching has to hold at every point along the surface, at every moment. That only works if all three waves have the same frequency and the same spacing of crests along the surface, which means the same component of $$\vec{k}$$ along the surface:
 
 $$
 k_1 \sin\theta_1 = k_1 \sin\theta_r = k_2 \sin\theta_2
 $$
 
-The first equality says the angle of reflection equals the angle of incidence. With $$k = n k_0$$, the second is Snell's law
+The first equality says the angle of reflection equals the angle of incidence. With $$k = n k_0$$, the second is Snell's law:
 
 $$
 n_1 \sin\theta_1 = n_2 \sin\theta_2
@@ -232,7 +232,7 @@ $$
 
 ### The critical angle
 
-Going from a high index to a low one (glass into air, silicon into silica), light bends away from the normal, so tilting the incoming ray eventually makes the outgoing ray skim along the surface at $$90^\circ$$. That incoming angle is the **critical angle**
+Going from a high index to a low one (glass into air, silicon into silica), light bends away from the normal, so tilting the incoming ray eventually makes the outgoing ray skim along the surface at $$90^\circ$$. That incoming angle is the **critical angle**:
 
 $$
 \sin\theta_c = \frac{n_2}{n_1}
@@ -254,7 +254,7 @@ And Snell's law shows how dispersion will come in. The amount of bending depends
 
 ### Chromatic dispersion - a cool unlock
 
-Have you seen this before? Shine white light into a glass prism, and a rainbow fans out of the other side. That happens because the refractive index depends on wavelength, $$n = n(\lambda)$$, so waves with different wavelengths (crest spacings) bend by different amounts. Dispersion has two visible consequences.
+Have you seen this before? Shine white light into a glass prism, and a rainbow fans out of the other side. That happens because the refractive index depends on wavelength, $$n = n(\lambda)$$, so waves with different wavelengths (crest spacings) bend by different amounts. Dispersion has two visible consequences:
 
 - **Colours bend by different amounts.** That's the prism.
 - **Colours travel at different speeds.** That spreads out pulses of light.
@@ -272,13 +272,13 @@ Shine a laser pointer through a prism and you won't get a rainbow. A laser emits
 
 Information travels as pulses of light. A short burst is built from a band of frequencies added together, and each of them has its own phase velocity. Here's how, step by step.
 
-A laser left on is a single, pure frequency $$f_c$$, called the **carrier**. At $$1310 \text{ nm}$$ that's about $$229 \text{ THz}$$. At one point in space, its field is
+A laser left on is a single, pure frequency $$f_c$$, called the **carrier**. At $$1310 \text{ nm}$$ that's about $$229 \text{ THz}$$. At one point in space, its field is:
 
 $$
 E(t) = \cos(2\pi f_c t)
 $$
 
-To send data, we multiply it by a **data signal** $$m(t)$$, which is $$1$$ while the bit is a one and $$0$$ while it's a zero
+To send data, we multiply it by a **data signal** $$m(t)$$, which is $$1$$ while the bit is a one and $$0$$ while it's a zero:
 
 $$
 E(t) = m(t) \cos(2\pi f_c t)
@@ -286,7 +286,7 @@ $$
 
 The data is much slower than the light. At $$50 \text{ Gb/s}$$ each bit lasts $$20 \text{ ps}$$.
 
-One bit, a square pulse lasting $$T$$, contains a whole band of frequencies around $$f_c$$. Its spectrum (the Fourier transform of a square pulse) is a sinc shape centred on the carrier
+One bit, a square pulse lasting $$T$$, contains a whole band of frequencies around $$f_c$$. Its spectrum (the Fourier transform of a square pulse) is a sinc shape centred on the carrier:
 
 $$
 S_1(f) \propto \frac{\sin\big(\pi (f - f_c) T\big)}{\pi (f - f_c) T}
@@ -297,7 +297,7 @@ $$
   <figcaption>The top shows the light's field over time, and the bottom shows its spectrum (how much of each frequency it contains). A laser left on is one line at \(f_c\). Chop it into a square pulse and the line spreads into a sinc, and the shorter the pulse, the wider the sinc.</figcaption>
 </figure>
 
-A stream of bits is a sum of these pulses, each switched on at a different time $$t_k$$. Shifting a pulse in time doesn't change the size of its sinc, only its phase. So the spectrum of the whole stream is one sinc multiplied by a sum of phases, one for each bit that's a one
+A stream of bits is a sum of these pulses, each switched on at a different time $$t_k$$. Shifting a pulse in time doesn't change the size of its sinc, only its phase. So the spectrum of the whole stream is one sinc multiplied by a sum of phases, one for each bit that's a one:
 
 $$
 S(f) = S_1(f) \sum_{k \,:\, \text{bit } k = 1} e^{-i 2\pi (f - f_c) t_k}
@@ -321,19 +321,19 @@ The data doesn't travel at the speed of the crests, but at the speed of the puls
 
 The pulse sits wherever those components line up and add in step. That location moves at the **group velocity**.
 
-The simplest case is two waves with slightly different frequencies. Added together, they make **beats**, a fast wave inside a slowly varying envelope
+The simplest case is two waves with slightly different frequencies. Added together, they make **beats**, a fast wave inside a slowly varying envelope:
 
 $$
 \cos(k_1 z - \omega_1 t) + \cos(k_2 z - \omega_2 t) = 2 \cos\!\left(\frac{\Delta k}{2} z - \frac{\Delta \omega}{2} t\right) \cos(\bar{k} z - \bar{\omega} t)
 $$
 
-The fast wave inside moves at $$\bar{\omega} / \bar{k}$$, the phase velocity. The envelope moves at $$\Delta\omega / \Delta k$$. For a smooth band of frequencies, that becomes a derivative
+The fast wave inside moves at $$\bar{\omega} / \bar{k}$$, the phase velocity. The envelope moves at $$\Delta\omega / \Delta k$$. For a smooth band of frequencies, that becomes a derivative:
 
 $$
 v_g = \frac{d\omega}{dk}
 $$
 
-Inside a material, $$k = n(\omega) \, \omega / c$$. Differentiating gives
+Inside a material, $$k = n(\omega) \, \omega / c$$. Differentiating gives:
 
 $$
 v_g = \frac{c}{n_g}, \qquad n_g = n + \omega \frac{dn}{d\omega} = n - \lambda \frac{dn}{d\lambda}
