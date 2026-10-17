@@ -1777,61 +1777,123 @@ pre {
     clear: both;
   }
   
+  /* Phone menu: a quiet "menu" label with two bars that turn into a cross, opening a
+     panel that floats over the page (instead of pushing it down) with the current page marked */
   nav {
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.75rem;
+    position: relative;
+    z-index: 20;
 
     .menu-icon {
-      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      padding: 0.45rem 0.95rem;
-      border: 1px solid rgba(17, 17, 17, 0.14);
-      border-radius: 999px;
-      background: rgba(255, 255, 248, 0.92);
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-      font-size: 1rem;
+      color: #111;
+      display: inline-flex;
+      font-size: 0.95rem;
+      gap: 0.55rem;
       letter-spacing: 0.04em;
+      padding: 0.5rem 0.1rem;
       text-decoration: none;
+      user-select: none;
     }
 
-    .menu-btn:checked ~ .site-nav {
-      display: flex;
+    .menu-bars {
+      display: inline-block;
+      height: 10px;
+      position: relative;
+      width: 16px;
     }
-    
+
+    .menu-bars::before,
+    .menu-bars::after {
+      background: #111;
+      border-radius: 1px;
+      content: "";
+      height: 1.5px;
+      left: 0;
+      position: absolute;
+      transition: transform 250ms ease, top 250ms ease;
+      width: 100%;
+    }
+
+    .menu-bars::before {
+      top: 1px;
+    }
+
+    .menu-bars::after {
+      top: 7.5px;
+    }
+
+    .menu-btn:checked + .menu-icon .menu-bars::before {
+      top: 4.25px;
+      transform: rotate(45deg);
+    }
+
+    .menu-btn:checked + .menu-icon .menu-bars::after {
+      top: 4.25px;
+      transform: rotate(-45deg);
+    }
+
+    .menu-btn:focus-visible + .menu-icon {
+      outline: 2px solid rgba(17, 17, 17, 0.3);
+      outline-offset: 4px;
+    }
+
     ul.site-nav {
-      display: none;
-      width: min(100%, 12rem);
-      flex-direction: column;
       align-items: stretch;
-      gap: 0.35rem;
-      padding: 0.4rem;
-      background: rgba(255, 255, 248, 0.96);
-      border: 1px solid rgba(17, 17, 17, 0.12);
+      background: #fffff8;
       border-radius: 14px;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.08);
-      
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 16px 40px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 11.5rem;
+      opacity: 0;
+      padding: 0.5rem;
+      pointer-events: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 0.25rem);
+      transform: translateY(-6px);
+      transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+      visibility: hidden;
+
       li {
         display: block;
         margin: 0;
         width: 100%;
-        
+
         a, a:visited {
+          border-radius: 9px;
+          color: rgba(17, 17, 17, 0.6);
           display: block;
+          font-size: 1rem;
+          letter-spacing: 0.03em;
+          padding: 0.65rem 0.85rem;
+          text-align: right;
           width: 100%;
-          padding: 0.7rem 0.85rem;
-          border-radius: 10px;
-          font-size: 1.05rem;
-          letter-spacing: 0.04em;
+        }
+
+        a[aria-current="page"] {
+          color: #111;
+          font-weight: 600;
         }
 
         a:hover,
         a:focus-visible {
-          background: rgba(17, 17, 17, 0.06);
+          background: rgba(17, 17, 17, 0.05);
+          color: #111;
           outline: none;
         }
       }
+    }
+
+    .menu-btn:checked ~ .site-nav {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      transition: opacity 180ms ease, transform 180ms ease, visibility 0s;
+      visibility: visible;
     }
   }
   
@@ -2994,10 +3056,16 @@ body.post-page main {
 }
 
 @media (max-width: 1239px) {
+  /* A bar stuck to the top of the screen (paper behind it, so text scrolls underneath
+     cleanly), showing the current section, that opens into a floating panel */
   .post-toc {
     background: #fffff8;
+    /* on phones <body> scrolls and has top padding, so a stuck bar sits a little below the
+       top edge; paint paper above it so text doesn't show through the gap */
+    box-shadow: 0 -1.2rem 0 0 #fffff8;
     margin: 0 auto 2rem !important;
     max-width: 46rem;
+    padding: 0.4rem 0;
     position: sticky;
     top: 0;
     z-index: 5;
@@ -3008,33 +3076,100 @@ body.post-page main {
   }
 
   .post-toc-toggle {
+    align-items: center;
     appearance: none;
-    background: rgba(17, 17, 17, 0.05);
+    background: rgba(17, 17, 17, 0.045);
     border: 0;
-    border-radius: 6px;
+    border-radius: 10px;
     color: #111;
     cursor: pointer;
-    display: block;
+    display: flex;
     font-family: var(--hacker-font);
-    font-size: 0.78rem;
-    overflow: hidden;
-    padding: 0.55rem 0.8rem;
+    font-size: 0.8rem;
+    gap: 0.6rem;
+    padding: 0.6rem 0.85rem;
     text-align: left;
+    width: 100%;
+  }
+
+  .post-toc-toggle-label {
+    color: rgba(17, 17, 17, 0.45);
+    flex: none;
+    letter-spacing: 0.06em;
+  }
+
+  .post-toc-current {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 100%;
+  }
+
+  /* a small chevron that flips when the list is open */
+  .post-toc-chevron {
+    border-bottom: 1.5px solid rgba(17, 17, 17, 0.55);
+    border-right: 1.5px solid rgba(17, 17, 17, 0.55);
+    flex: none;
+    height: 7px;
+    margin: 0 0.15rem 3px 0;
+    transform: rotate(45deg);
+    transition: transform 200ms ease, margin 200ms ease;
+    width: 7px;
+  }
+
+  .post-toc.is-open .post-toc-chevron {
+    margin-bottom: -3px;
+    transform: rotate(-135deg);
   }
 
   .post-toc ol {
     background: #fffff8;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-    max-height: 60vh;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 16px 40px rgba(0, 0, 0, 0.12);
+    left: 0;
+    max-height: 65vh;
+    opacity: 0;
     overflow-y: auto;
-    padding: 0.5rem 0.8rem;
+    padding: 0.45rem;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.1rem);
+    transform: translateY(-6px);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+    visibility: hidden;
   }
 
-  .post-toc:not(.is-open) ol {
-    display: none;
+  .post-toc.is-open ol {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 0s;
+    visibility: visible;
+  }
+
+  .post-toc a,
+  .post-toc a:visited {
+    border-radius: 8px;
+    font-size: 0.82rem;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .post-toc li.toc-sub a {
+    padding-left: 1.4rem;
+  }
+
+  .post-toc li.toc-sub {
+    padding-left: 0;
+  }
+
+  .post-toc a.is-active {
+    background: rgba(17, 17, 17, 0.05);
+  }
+
+  .post-toc a.is-active::before {
+    content: none;
   }
 }
 

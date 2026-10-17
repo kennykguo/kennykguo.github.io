@@ -16,6 +16,15 @@
   toggle.type = 'button';
   toggle.className = 'post-toc-toggle';
   toggle.setAttribute('aria-expanded', 'false');
+  const toggleLabel = document.createElement('span');
+  toggleLabel.className = 'post-toc-toggle-label';
+  toggleLabel.textContent = 'contents';
+  const currentLabel = document.createElement('span');
+  currentLabel.className = 'post-toc-current';
+  const chevron = document.createElement('span');
+  chevron.className = 'post-toc-chevron';
+  chevron.setAttribute('aria-hidden', 'true');
+  toggle.append(toggleLabel, currentLabel, chevron);
 
   const list = document.createElement('ol');
   const links = headings.map(heading => {
@@ -39,6 +48,10 @@
   toggle.addEventListener('click', () => setOpen(!toc.classList.contains('is-open')));
   list.addEventListener('click', event => {
     if (event.target.closest('a')) setOpen(false);
+  });
+  // tapping anywhere else closes the list
+  document.addEventListener('click', event => {
+    if (!toc.contains(event.target)) setOpen(false);
   });
 
   // On wide screens the list sits in the left margin, starting below the post's title and then
@@ -66,7 +79,7 @@
       if (i === current) link.setAttribute('aria-current', 'location');
       else link.removeAttribute('aria-current');
     });
-    toggle.textContent = `Contents: ${headings[current].textContent}`;
+    currentLabel.textContent = headings[current].textContent;
   }
 
   // Listen in the capture phase: on phones the site's styles make <body> the element that

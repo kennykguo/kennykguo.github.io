@@ -1,16 +1,16 @@
 <!-- <h2 class="title">{{site.title}}</h2> -->
 <nav role="navigation" aria-label="Main navigation">
   <input class="menu-btn" type="checkbox" id="menu-btn" aria-label="Toggle navigation menu" />
-  <label class="menu-icon" for="menu-btn">menu</label>
+  <label class="menu-icon" for="menu-btn"><span class="menu-bars" aria-hidden="true"></span>menu</label>
   <ul class="site-nav">
-    <li><a href="{{ site.baseurl }}/" aria-label="Go to homepage">home</a></li>
-    <li><a href="{{ site.baseurl }}/pretrain/" aria-label="View pretrain">pretrain</a></li>
-    <li><a href="{{ site.baseurl }}/distilled/" aria-label="View distilled">distilled</a></li>
-    <li><a href="{{ site.baseurl }}/reasoning/" aria-label="View reasoning">reasoning</a></li>
+    <li><a href="{{ site.baseurl }}/" aria-label="Go to homepage"{% if page.url == "/" %} aria-current="page"{% endif %}>home</a></li>
+    <li><a href="{{ site.baseurl }}/pretrain/" aria-label="View pretrain"{% if page.url contains "/pretrain/" %} aria-current="page"{% endif %}>pretrain</a></li>
+    <li><a href="{{ site.baseurl }}/distilled/" aria-label="View distilled"{% if page.url contains "/distilled/" %} aria-current="page"{% endif %}>distilled</a></li>
+    <li><a href="{{ site.baseurl }}/reasoning/" aria-label="View reasoning"{% if page.url contains "/reasoning/" %} aria-current="page"{% endif %}>reasoning</a></li>
     <!-- <li><a href="/articles" aria-label="View articles">jmp articles</a></li> -->
     <!-- <li><a href="/experience" aria-label="View experience">jmp experience</a></li> -->
     <!-- <li><a href="/projects" aria-label="View projects">jmp projects</a></li> -->
-    <li><a href="{{ site.baseurl }}/latent/" aria-label="View latent">latent</a></li>
+    <li><a href="{{ site.baseurl }}/latent/" aria-label="View latent"{% if page.url contains "/latent/" %} aria-current="page"{% endif %}>latent</a></li>
   </ul>
   <br>
 </nav>
