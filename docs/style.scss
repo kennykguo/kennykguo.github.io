@@ -2848,6 +2848,33 @@ body.post-page main {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.25rem 0;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.post-body .katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+
+.post-body .katex-display::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.2);
+  border-radius: 2px;
+}
+
+/* A soft fade on whichever side still has equation hidden (set by scripts/post-math.js) */
+.post-body .katex-display.more-right {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
+}
+
+.post-body .katex-display.more-left {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to left, #000 calc(100% - 2.5rem), transparent);
+}
+
+.post-body .katex-display.more-left.more-right {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent);
 }
 
 /* Footnotes ([^1] in markdown) */
