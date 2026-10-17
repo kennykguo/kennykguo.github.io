@@ -1797,11 +1797,13 @@ pre {
       user-select: none;
     }
 
+    /* whole-pixel sizes and positions, so the bars render crisply at any screen density */
     .menu-bars {
       display: inline-block;
-      height: 10px;
+      flex: none;
+      height: 12px;
       position: relative;
-      width: 16px;
+      width: 18px;
     }
 
     .menu-bars::before,
@@ -1809,7 +1811,7 @@ pre {
       background: #111;
       border-radius: 1px;
       content: "";
-      height: 1.5px;
+      height: 2px;
       left: 0;
       position: absolute;
       transition: transform 250ms ease, top 250ms ease;
@@ -1817,20 +1819,20 @@ pre {
     }
 
     .menu-bars::before {
-      top: 1px;
+      top: 2px;
     }
 
     .menu-bars::after {
-      top: 7.5px;
+      top: 8px;
     }
 
     .menu-btn:checked + .menu-icon .menu-bars::before {
-      top: 4.25px;
+      top: 5px;
       transform: rotate(45deg);
     }
 
     .menu-btn:checked + .menu-icon .menu-bars::after {
-      top: 4.25px;
+      top: 5px;
       transform: rotate(-45deg);
     }
 
