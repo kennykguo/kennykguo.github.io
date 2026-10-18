@@ -725,6 +725,13 @@ nav {
   column-gap: clamp(2rem, 4vw, 3.5rem);
 }
 
+/* Wider than the rest of the stack: reaches up to 7rem past each side so both columns get more room */
+@media (min-width: 851px) {
+  .home-layer.text-layer {
+    margin-inline: unquote("calc(-1 * min(6vw, 7rem))");
+  }
+}
+
 .text-layer .note-label {
   color: #111;
   font-size: 1.15rem;
