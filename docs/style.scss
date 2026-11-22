@@ -370,7 +370,7 @@ figure {
   justify-self: center;
   width: 100vw;
   max-width: 1440px;
-  padding: 20px calc(6vw + 40px) 0;
+  padding: 20px calc(6vw + 40px) 0 6vw;
   position: relative;
   z-index: 2;
 }
@@ -382,11 +382,11 @@ figure {
 }
 
 @media (max-width: 850px) {
-  .site-header { padding: 0 2rem; }
+  .site-header { padding: 0 2rem 0 1.5rem; }
 }
 
 @media (max-width: 480px) {
-  .site-header { padding-inline: 1.5rem; }
+  .site-header { padding-inline: 1.25rem 1.5rem; }
 }
 
 nav {

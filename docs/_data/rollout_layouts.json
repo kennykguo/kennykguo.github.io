@@ -509,7 +509,7 @@
       }
     }
   },
-  "Image captioning using vision transformers, coded by hand": {
+  "Image captioning using vision transformers": {
     "signature": "74d2c9cb672ed93e5c86d25a856c6ebac248e3bcfc9062e95a1781e8a01a0ed1",
     "count": 4,
     "desktop": {
@@ -575,7 +575,7 @@
       }
     }
   },
-  "dope interactive shell (dish) - a Unix shell": {
+  "Dope interactive shell (dish) - a Unix shell": {
     "signature": "69a77b39f13d469e330849b88be9f726bad3dd05b0373de35af1d5743def6530",
     "count": 1,
     "desktop": {

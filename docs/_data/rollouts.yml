@@ -215,7 +215,7 @@
     - label: Twitter
       url: https://x.com/kennykgguo/status/1941628011691831359
 
-- title: Image captioning using vision transformers, coded by hand
+- title: Image captioning using vision transformers
   start_date: 2024-07-01
   media_rows: [3, 1]
   description: A friend challenged me to build an image captioner when I had no deep learning experience. Speedran the history of deep learning in my first year summer and built the entire thing by hand (back when LLMs were just as good as autocomplete).
@@ -244,7 +244,7 @@
     - label: GitHub
       url: https://github.com/kennykguo/image-captioning
 
-- title: dope interactive shell (dish) - a Unix shell
+- title: Dope interactive shell (dish) - a Unix shell
   start_date: 2024-05-28
   description: Wrote a shell by hand in C during a small research gig for ECE344. Dove deep into xv6, got systems-pilled, and started developing a taste for operating systems.
   images:
