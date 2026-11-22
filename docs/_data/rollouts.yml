@@ -246,7 +246,7 @@
 
 - title: Dope interactive shell (dish) - a Unix shell
   start_date: 2024-05-28
-  description: Wrote a shell by hand in C during a small research gig for ECE344. Dove deep into xv6, got systems-pilled, and started developing a taste for operating systems.
+  description: Wrote a shell by hand in C during a small research gig in first year, for a course called ECE344 at the University of Toronto. Dove deep into xv6, got systems-pilled, and started developing a taste for operating systems.
   images:
     - src: /media/images/dish/terminal.gif
       width: 1280
