@@ -1,0 +1,25 @@
+---
+layout: default
+title: rollouts
+description: A gallery of Kenny's projects
+---
+
+{% assign rollout_projects = site.data.rollouts | sort: "start_date" | reverse %}
+<div class="rollouts-shell">
+  {% if rollout_projects.size > 0 %}
+  <ul class="rollouts-list" aria-label="Projects">
+    {% for project in rollout_projects %}
+      {% if project.video or project.videos.size > 0 %}
+      {% include rollouts/card.html project=project %}
+      {% endif %}
+    {% endfor %}
+    {% for project in rollout_projects %}
+      {% unless project.video or project.videos.size > 0 %}
+      {% include rollouts/card.html project=project %}
+      {% endunless %}
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="rollouts-empty">Projects coming soon.</p>
+  {% endif %}
+</div>

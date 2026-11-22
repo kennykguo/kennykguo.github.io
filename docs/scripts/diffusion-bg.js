@@ -403,8 +403,6 @@
   // =====================================================================
   //  Simulation step (dt in ms)
   // =====================================================================
-  var EDGE = 18;
-
   function step(dt) {
     var s = dt / FRAME_MS;
     clock += dt;
@@ -433,15 +431,15 @@
       x0 = p.x; y0 = p.y;
       p.x += VX * move;
       p.y += VY * move;
-      if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) { spawnTrail(p, false); continue; }
       di = densityIndex(p.x, p.y);
       if (di >= 0) densityGrid[di] += 1;
       if (p.fresh) { p.fresh = false; continue; } // no segment on the first step
-      if (p.x < EDGE || p.x > W - EDGE || p.y < EDGE || p.y > H - EDGE) continue;
       // Fade in and out over the particle's life so trails taper instead of popping
       var lifeT = p.age / p.life;
       var env = lifeT < 0.1 ? lifeT / 0.1 : lifeT > 0.8 ? (1 - lifeT) / 0.2 : 1;
       queueTrail(p.ci, p.alpha * env * phaseInk, p.width, x0, y0, p.x, p.y, di);
+      // Draw through the viewport edge before respawning; the canvas clips the ink.
+      if (p.x < 0 || p.x > W || p.y < 0 || p.y > H) spawnTrail(p, false);
     }
 
     var decay = Math.pow(0.965, s);
@@ -454,7 +452,6 @@
       p.vx *= decay; p.vy *= decay;
       p.x += (p.vx + VX * SPEED * 1.1) * s;
       p.y += (p.vy + VY * SPEED * 1.1) * s;
-      if (p.x < EDGE || p.x > W - EDGE || p.y < EDGE || p.y > H - EDGE) continue;
       // Concentrated at first, diluting as it spreads
       var t = p.age / p.life;
       var a = p.alpha * (t < 0.06 ? t / 0.06 : (1 - t) * (1 - t));

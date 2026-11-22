@@ -1,0 +1,38 @@
+{% assign project = include.project %}
+{% assign media_plan = site.data.rollout_layouts[project.title] %}
+<li class="rollout-item">
+  <article class="rollout-card">
+    <h2 class="rollout-title">{{ project.title | escape }}</h2>
+    {% if project.description %}
+    <div class="rollout-details">
+      <div class="rollout-description">{{ project.description | markdownify }}</div>
+    </div>
+    {% endif %}
+    {% if project.images.size > 0 or project.videos.size > 0 or project.video %}
+    <div class="rollout-images{% if media_plan %} is-planned{% endif %}{% if project.media_layout == 'intrinsic-row' %} is-intrinsic-row{% endif %}{% if project.media_rows %} has-explicit-rows{% endif %}"{% if media_plan %} style="--gallery-aspect: {{ media_plan.desktop.aspect }}; --compact-gallery-aspect: {{ media_plan.compact.aspect }};"{% endif %} role="group" aria-label="{{ project.title | escape }} images">
+      {% for video in project.videos %}
+      <video class="rollout-media rollout-video" {% include rollouts/media-style.html plan=media_plan src=video.src %}{% if video.width and video.height %} width="{{ video.width }}" height="{{ video.height }}"{% endif %} data-priority="{{ video.priority | default: 1 }}" controls autoplay muted loop playsinline preload="metadata"{% if video.poster %} poster="{{ video.poster | relative_url }}"{% endif %} aria-label="{{ video.alt | default: project.title | escape }}">
+        <source src="{{ video.src | relative_url }}" type="video/mp4">
+        <a href="{{ video.src | relative_url }}">Watch the {{ project.title | escape }} demo</a>.
+      </video>
+      {% endfor %}
+      {% for image in project.images %}
+      <img class="rollout-media rollout-image" {% include rollouts/media-style.html plan=media_plan src=image.src %} {% if image.width and image.height %}width="{{ image.width }}" height="{{ image.height }}"{% endif %} data-priority="{{ image.priority | default: 1 }}" src="{{ image.src | relative_url }}" alt="{{ image.alt | default: project.title | escape }}" loading="lazy" decoding="async">
+      {% endfor %}
+      {% if project.video %}
+      <video class="rollout-media rollout-video" {% include rollouts/media-style.html plan=media_plan src=project.video %} width="{{ project.video_width }}" height="{{ project.video_height }}" data-priority="{{ project.video_priority | default: 1 }}" controls autoplay muted loop playsinline preload="metadata" aria-label="{{ project.title | escape }} demonstration">
+        <source src="{{ project.video | relative_url }}" type="video/mp4">
+        <a href="{{ project.video | relative_url }}">Watch the {{ project.title | escape }} demo</a>.
+      </video>
+      {% endif %}
+    </div>
+    {% endif %}
+      {% if project.links.size > 0 %}
+      <ul class="rollout-links" aria-label="{{ project.title | escape }} links">
+        {% for link in project.links %}
+        <li><a href="{{ link.url | escape }}">{{ link.label | escape }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+  </article>
+</li>

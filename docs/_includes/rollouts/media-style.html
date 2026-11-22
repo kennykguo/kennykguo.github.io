@@ -1,0 +1,5 @@
+{% if include.plan %}
+{% assign desktop_tile = include.plan.desktop.tiles[include.src] %}
+{% assign compact_tile = include.plan.compact.tiles[include.src] %}
+style="--media-left: {{ desktop_tile.left }}%; --media-top: {{ desktop_tile.top }}%; --media-width: {{ desktop_tile.width }}%; --media-height: {{ desktop_tile.height }}%; --compact-media-left: {{ compact_tile.left }}%; --compact-media-top: {{ compact_tile.top }}%; --compact-media-width: {{ compact_tile.width }}%; --compact-media-height: {{ compact_tile.height }}%;"
+{% endif %}

@@ -1,0 +1,185 @@
+body:has(.rollouts-shell) {
+  max-width: none;
+  padding-inline: clamp(1rem, calc(26vw - 6rem), 20%);
+}
+
+main:has(.rollouts-shell) {
+  margin-inline: 0;
+  padding-inline: 0;
+  min-width: 0;
+}
+
+.rollouts-shell {
+  width: 100%;
+  margin: 2rem auto 5rem;
+}
+
+article:has(> .rollouts-shell) {
+  align-self: stretch;
+  width: 100%;
+}
+
+.rollouts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rollout-item,
+.rollout-card {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.rollout-card {
+  display: block;
+  isolation: isolate;
+}
+
+/* Share one stacking context so adjacent halos stay behind all project text. */
+.rollout-title,
+.rollout-details {
+  isolation: auto;
+}
+
+.rollout-title {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+  overflow-wrap: anywhere;
+}
+
+/* A responsive fallback before media dimensions are available. */
+.rollout-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  align-items: start;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.rollout-media {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  object-fit: contain;
+  object-position: left top;
+}
+
+/* The generated plan scales with CSS. No browser-side packing or resize loop. */
+.rollout-images.is-planned {
+  display: block;
+  position: relative;
+  width: min(100%, calc(40vw * var(--gallery-aspect)));
+  aspect-ratio: var(--gallery-aspect);
+  height: auto;
+}
+
+.rollout-images.is-planned > .rollout-media {
+  position: absolute;
+  left: var(--media-left);
+  top: var(--media-top);
+  width: var(--media-width);
+  height: var(--media-height);
+  max-width: none;
+}
+
+@media (max-width: 60em) {
+  .rollout-images.is-planned {
+    width: min(100%, calc(40vw * var(--compact-gallery-aspect)));
+    aspect-ratio: var(--compact-gallery-aspect);
+  }
+
+  .rollout-images.is-planned > .rollout-media {
+    left: var(--compact-media-left);
+    top: var(--compact-media-top);
+    width: var(--compact-media-width);
+    height: var(--compact-media-height);
+  }
+}
+
+/* Explicit rows fill the content width, growing vertically to keep text readable. */
+.rollout-images.is-planned.has-explicit-rows {
+  width: 100%;
+}
+
+/* Caption composites size themselves: no fixed-height tile can cut off text. */
+.rollout-images.is-intrinsic-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  aspect-ratio: auto;
+}
+
+.rollout-images.is-intrinsic-row > .rollout-media {
+  position: static;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: none;
+}
+
+.rollout-details {
+  margin: 0 0 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.rollout-description,
+.rollout-description p,
+.rollout-links li,
+.rollouts-empty {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.rollout-description p + p {
+  margin-top: 1.25rem;
+}
+
+.rollouts-shell a,
+.rollouts-shell a:visited {
+  color: #2255b5;
+  font-size: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.rollouts-shell a:hover,
+.rollouts-shell a:focus-visible {
+  color: #163b80;
+}
+
+.rollout-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rollout-links li {
+  width: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 40em) {
+  .rollouts-list {
+    gap: 2.5rem;
+  }
+}

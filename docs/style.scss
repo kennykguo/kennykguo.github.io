@@ -54,6 +54,7 @@
 
 html {
   font-family: var(--hacker-font);
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   height: 100%;
   background: transparent;
@@ -100,7 +101,8 @@ body {
   counter-reset: sidenote-counter;
   font-family: var(--hacker-font);
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100%;
   min-height: 100vh;
   margin: 0 auto;
@@ -110,6 +112,7 @@ body {
   position: relative;
   z-index: 0;
   isolation: isolate;
+  scrollbar-gutter: stable;
 }
 
 body::before {
@@ -361,6 +364,30 @@ figure {
 /* ==========================================================================
    navigation
    ========================================================================== */
+
+/* Keep navigation and page titles independent of each page's content width. */
+.site-header {
+  justify-self: center;
+  width: 100vw;
+  max-width: 1440px;
+  padding: 20px calc(6vw + 40px) 0;
+  position: relative;
+  z-index: 2;
+}
+
+.site-header > h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+@media (max-width: 850px) {
+  .site-header { padding: 0 2rem; }
+}
+
+@media (max-width: 480px) {
+  .site-header { padding-inline: 1.5rem; }
+}
 
 nav {
   margin-bottom: 1rem;
@@ -1465,7 +1492,7 @@ article:has(> .gallery-fullwidth) {
 }
 
 /* ==========================================================================
-   project layouts
+   page layouts
    ========================================================================== */
 
 main {
@@ -1481,18 +1508,6 @@ main {
   width: 100%;
   position: relative;
   z-index: 1;
-}
-
-.project {
-  width: 70%;
-  text-align: left;
-  margin-bottom: 30px;
-  
-  ul {
-    width: 100%;
-    padding-left: 20px;
-    margin: 20px 0;
-  }
 }
 
 .grid-container {
@@ -1949,10 +1964,6 @@ pre {
     }
   }
   
-  .project {
-    width: 100%;
-  }
-
   .grid-container,
   .build-gallery {
     grid-template-columns: 1fr;
@@ -2091,6 +2102,10 @@ pre {
 .home-stack .layer-text:not(.image-block),
 .home-stack .intro-art,
 .reads-shell,
+.rollout-title,
+.rollout-details,
+.rollouts-empty,
+.site-header > h1,
 article > h1,
 ul.site-nav {
   --halo-out: 2.25rem;
@@ -2111,6 +2126,7 @@ ul.site-nav {
 }
 
 /* Page titles are full-width blocks; size them to their text so the halo hugs the words */
+.site-header > h1,
 article > h1 {
   width: fit-content;
   max-width: 100%;
@@ -2119,6 +2135,10 @@ article > h1 {
 .home-stack .layer-text:not(.image-block)::before,
 .home-stack .intro-art::before,
 .reads-shell::before,
+.rollout-title::before,
+.rollout-details::before,
+.rollouts-empty::before,
+.site-header > h1::before,
 article > h1::before,
 ul.site-nav::before {
   content: "";
@@ -2144,6 +2164,10 @@ ul.site-nav::before {
   .home-stack .layer-text:not(.image-block)::before,
   .home-stack .intro-art::before,
   .reads-shell::before,
+  .rollout-title::before,
+  .rollout-details::before,
+  .rollouts-empty::before,
+  .site-header > h1::before,
   article > h1::before,
   ul.site-nav::before {
     background: rgba(255, 255, 248, 0.7);
@@ -3328,3 +3352,5 @@ body.post-page main {
   background: #111;
   color: #fffff8;
 }
+
+@import "rollouts";

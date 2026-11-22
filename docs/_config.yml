@@ -33,15 +33,12 @@ future: false
 exclude:
 - README.md
 - reasoning/README.md
+- rollouts/README.md
 - LICENSE.md
 - Gemfile
 - Gemfile.lock
 - vendor
 - .bundle
-
-collections:
-  projects:
-    output: false  # No individual pages for project entries
 
 highlighter: rouge
 

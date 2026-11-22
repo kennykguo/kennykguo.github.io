@@ -1,1 +1,0 @@
-Stores projects in markdown files

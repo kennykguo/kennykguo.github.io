@@ -3,10 +3,12 @@ layout: compress
 ---
 
 {% include head.html %}
-    <main>
+    <header class="site-header">
         {% include header.html %}
+        <h1>{{ page.title }}</h1>
+    </header>
+    <main>
         <article>
-            <h1>{{ page.title }}</h1>
             {{ content }}
         </article>
     </main>

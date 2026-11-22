@@ -1,0 +1,674 @@
+{
+  "400 Gb/s optical transmitter - simulation and wavelength control": {
+    "signature": "4ead3000c29d44659f18f32997035f0ec9d802cd635c25b2fb2d9ce6d4fd700f",
+    "count": 3,
+    "desktop": {
+      "aspect": 1.920769,
+      "width": 1000,
+      "height": 520.624785,
+      "tiles": {
+        "/media/images/optical-transmitter/ring-model.png": {
+          "left": 0,
+          "top": 0,
+          "width": 42.389814,
+          "height": 60.93332
+        },
+        "/media/images/optical-transmitter/eight-ring-cad.png": {
+          "left": 43.189814,
+          "top": 0,
+          "width": 56.810186,
+          "height": 45.466354
+        },
+        "/media/images/optical-transmitter/eight-ring-simulation.png": {
+          "left": 0,
+          "top": 62.469935,
+          "width": 68.823543,
+          "height": 37.530065
+        }
+      }
+    },
+    "compact": {
+      "aspect": 2.243838,
+      "width": 942.411839,
+      "height": 420,
+      "tiles": {
+        "/media/images/optical-transmitter/ring-model.png": {
+          "left": 0,
+          "top": 0,
+          "width": 33.45437,
+          "height": 56.177508
+        },
+        "/media/images/optical-transmitter/eight-ring-cad.png": {
+          "left": 0,
+          "top": 58.082269,
+          "width": 44.83504,
+          "height": 41.917731
+        },
+        "/media/images/optical-transmitter/eight-ring-simulation.png": {
+          "left": 45.683926,
+          "top": 58.082269,
+          "width": 54.316074,
+          "height": 34.600864
+        }
+      }
+    }
+  },
+  "Maskless lithography stepper - 3D CAD, optical simulation & mechanical design": {
+    "signature": "b3a93003f65ff813e2edb1894bcbe8c92dfda13e9a3fe449858d40b26dd4c0e6",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.99171,
+      "width": 1000,
+      "height": 502.081107,
+      "tiles": {
+        "/media/images/lithography-stepper/optics_3d.png": {
+          "left": 0,
+          "top": 0,
+          "width": 28.358607,
+          "height": 71.544024
+        },
+        "/media/images/lithography-stepper/optics_3d_chip.png": {
+          "left": 29.158607,
+          "top": 0,
+          "width": 32.27721,
+          "height": 47.143686
+        },
+        "/media/images/lithography-stepper/stepper-studio.jpg": {
+          "left": 62.235817,
+          "top": 0,
+          "width": 37.764183,
+          "height": 47.009564
+        },
+        "/media/images/lithography-stepper/cad-parts-7x2.png": {
+          "left": 0,
+          "top": 73.137392,
+          "width": 47.205228,
+          "height": 26.862608
+        }
+      }
+    },
+    "compact": {
+      "aspect": 4.153172,
+      "width": 1000,
+      "height": 240.779822,
+      "tiles": {
+        "/media/images/lithography-stepper/optics_3d.png": {
+          "left": 0,
+          "top": 0,
+          "width": 19.008933,
+          "height": 100
+        },
+        "/media/images/lithography-stepper/optics_3d_chip.png": {
+          "left": 19.808933,
+          "top": 0,
+          "width": 21.635595,
+          "height": 65.894653
+        },
+        "/media/images/lithography-stepper/stepper-studio.jpg": {
+          "left": 42.244528,
+          "top": 0,
+          "width": 25.313543,
+          "height": 65.707185
+        },
+        "/media/images/lithography-stepper/cad-parts-7x2.png": {
+          "left": 68.358071,
+          "top": 0,
+          "width": 31.641929,
+          "height": 37.546963
+        }
+      }
+    }
+  },
+  "Diffusion models from scratch": {
+    "signature": "fb5c8f256c8dc5dec4591045557cdb30bf9197827264b7fbc6f004cd1480a2c3",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.705319,
+      "width": 1000,
+      "height": 586.400448,
+      "tiles": {
+        "/media/images/diffuse/generated-digits.png": {
+          "left": 0,
+          "top": 0,
+          "width": 28.844615,
+          "height": 61.580472
+        },
+        "/media/images/diffuse/denoising.png": {
+          "left": 29.644615,
+          "top": 0,
+          "width": 39.577512,
+          "height": 44.880664
+        },
+        "/media/images/diffuse/sampling-grid.png": {
+          "left": 0,
+          "top": 62.944727,
+          "width": 47.935553,
+          "height": 37.055273
+        },
+        "/media/images/diffuse/generated-samples.png": {
+          "left": 48.735553,
+          "top": 62.944727,
+          "width": 51.264447,
+          "height": 34.649063
+        }
+      }
+    },
+    "compact": {
+      "aspect": 4.756026,
+      "width": 1000,
+      "height": 210.25957,
+      "tiles": {
+        "/media/images/diffuse/generated-digits.png": {
+          "left": 0,
+          "top": 0,
+          "width": 16.795124,
+          "height": 100
+        },
+        "/media/images/diffuse/denoising.png": {
+          "left": 17.595124,
+          "top": 0,
+          "width": 23.044483,
+          "height": 72.881325
+        },
+        "/media/images/diffuse/sampling-grid.png": {
+          "left": 41.439607,
+          "top": 0,
+          "width": 27.911053,
+          "height": 60.17374
+        },
+        "/media/images/diffuse/generated-samples.png": {
+          "left": 70.150659,
+          "top": 0,
+          "width": 29.849341,
+          "height": 56.266316
+        }
+      }
+    }
+  },
+  "Shady - GLSL to SPIR-V compiler": {
+    "signature": "40e9df3bbcdcf3bbbbbe6f7bc55229899efc0a036fd7fcd6ad921d9c04b46a5e",
+    "count": 1,
+    "desktop": {
+      "aspect": 3.588785,
+      "width": 1000,
+      "height": 278.645833,
+      "tiles": {
+        "/media/images/shady/teapot-workspace-8x16.webp": {
+          "left": 0,
+          "top": 0,
+          "width": 100,
+          "height": 100
+        }
+      }
+    },
+    "compact": {
+      "aspect": 3.588785,
+      "width": 1000,
+      "height": 278.645833,
+      "tiles": {
+        "/media/images/shady/teapot-workspace-8x16.webp": {
+          "left": 0,
+          "top": 0,
+          "width": 100,
+          "height": 100
+        }
+      }
+    }
+  },
+  "1,000 °C tube furnace": {
+    "signature": "38ed2d6a187490f855b6694a325f7f7d8187e837fd760531323a29eec601563e",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.507353,
+      "width": 1000,
+      "height": 663.414722,
+      "tiles": {
+        "/media/images/tube-furnace/controller-wiring.jpg": {
+          "left": 0,
+          "top": 0,
+          "width": 44.133881,
+          "height": 49.893995
+        },
+        "/media/images/tube-furnace/furnace.gif": {
+          "left": 44.933881,
+          "top": 0,
+          "width": 55.066119,
+          "height": 46.653339
+        },
+        "/media/images/tube-furnace/wiring-diagram.png": {
+          "left": 0,
+          "top": 51.099877,
+          "width": 37.525735,
+          "height": 48.900123
+        },
+        "/media/images/tube-furnace-bimage.png": {
+          "left": 38.325735,
+          "top": 51.099877,
+          "width": 55.066119,
+          "height": 46.653339
+        }
+      }
+    },
+    "compact": {
+      "aspect": 2.34698,
+      "width": 985.731663,
+      "height": 420,
+      "tiles": {
+        "/media/images/tube-furnace/controller-wiring.jpg": {
+          "left": 0,
+          "top": 0,
+          "width": 28.144558,
+          "height": 49.54104
+        },
+        "/media/images/tube-furnace/furnace.gif": {
+          "left": 28.956138,
+          "top": 0,
+          "width": 35.116141,
+          "height": 46.323308
+        },
+        "/media/images/tube-furnace-bimage.png": {
+          "left": 64.883859,
+          "top": 0,
+          "width": 35.116141,
+          "height": 46.323308
+        },
+        "/media/images/tube-furnace/wiring-diagram.png": {
+          "left": 0,
+          "top": 51.445802,
+          "width": 23.930486,
+          "height": 48.554198
+        }
+      }
+    }
+  },
+  "Reinforcement learning for microgrids": {
+    "signature": "2ea1019078885911cf32e0ce37f9b59f4cebbaf70d4ef3cddc343b968d195acf",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.765864,
+      "width": 1000,
+      "height": 566.295151,
+      "tiles": {
+        "/media/images/autogrid-ai/dashboard.png": {
+          "left": 0,
+          "top": 0,
+          "width": 45.724424,
+          "height": 50.464435
+        },
+        "/media/images/autogrid-ai/microgrid-system-export.png": {
+          "left": 46.524424,
+          "top": 0,
+          "width": 51.833449,
+          "height": 44.51676
+        },
+        "/media/images/autogrid-ai/load-distribution.png": {
+          "left": 0,
+          "top": 51.877126,
+          "width": 47.949282,
+          "height": 48.122874
+        },
+        "/media/images/autogrid-ai/power-sources.png": {
+          "left": 48.749282,
+          "top": 51.877126,
+          "width": 51.250718,
+          "height": 45.022925
+        }
+      }
+    },
+    "compact": {
+      "aspect": 2.679509,
+      "width": 1000,
+      "height": 373.202709,
+      "tiles": {
+        "/media/images/autogrid-ai/dashboard.png": {
+          "left": 0,
+          "top": 0,
+          "width": 31.045722,
+          "height": 51.992056
+        },
+        "/media/images/autogrid-ai/load-distribution.png": {
+          "left": 31.845722,
+          "top": 0,
+          "width": 32.556344,
+          "height": 49.579612
+        },
+        "/media/images/autogrid-ai/power-sources.png": {
+          "left": 65.202065,
+          "top": 0,
+          "width": 34.797935,
+          "height": 46.385824
+        },
+        "/media/images/autogrid-ai/microgrid-system-export.png": {
+          "left": 0,
+          "top": 54.135663,
+          "width": 35.193595,
+          "height": 45.864337
+        }
+      }
+    }
+  },
+  "GPU-accelerated 3D map renderer": {
+    "signature": "4afd7ce417bb3ed139fd1af6fa641ad6bd54394e957932a8746a595302d14edd",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.592357,
+      "width": 1000,
+      "height": 628,
+      "tiles": {
+        "/media/images/mapcraft-rollout.jpg": {
+          "left": 0,
+          "top": 0,
+          "width": 49.6,
+          "height": 49.363057
+        },
+        "/media/images/map-renderer/cn-tower.jpg": {
+          "left": 50.4,
+          "top": 0,
+          "width": 49.6,
+          "height": 49.363057
+        },
+        "/media/images/map-renderer/aerial.jpg": {
+          "left": 0,
+          "top": 50.636943,
+          "width": 49.6,
+          "height": 49.363057
+        },
+        "/media/images/map-renderer/legislature.jpg": {
+          "left": 50.4,
+          "top": 50.636943,
+          "width": 49.6,
+          "height": 49.363057
+        }
+      }
+    },
+    "compact": {
+      "aspect": 2.392344,
+      "width": 1000,
+      "height": 418,
+      "tiles": {
+        "/media/images/mapcraft-rollout.jpg": {
+          "left": 0,
+          "top": 0,
+          "width": 32.8,
+          "height": 49.043062
+        },
+        "/media/images/map-renderer/cn-tower.jpg": {
+          "left": 0,
+          "top": 50.956938,
+          "width": 32.8,
+          "height": 49.043062
+        },
+        "/media/images/map-renderer/aerial.jpg": {
+          "left": 33.6,
+          "top": 50.956938,
+          "width": 32.8,
+          "height": 49.043062
+        },
+        "/media/images/map-renderer/legislature.jpg": {
+          "left": 67.2,
+          "top": 50.956938,
+          "width": 32.8,
+          "height": 49.043062
+        }
+      }
+    }
+  },
+  "Reinforcement learning on a physical cart-pole": {
+    "signature": "102fb4bef6fd993fcd5c2c2fdc0bb650ae5f18d8497f644ae57dce37a6f0fd63",
+    "count": 2,
+    "desktop": {
+      "aspect": 3.162278,
+      "width": 1000,
+      "height": 316.227766,
+      "tiles": {
+        "/media/videos/cartuino.mp4": {
+          "left": 0,
+          "top": 0,
+          "width": 40,
+          "height": 71.151247
+        },
+        "/media/images/cartuino.jpg": {
+          "left": 40.8,
+          "top": 0,
+          "width": 23.717082,
+          "height": 100
+        }
+      }
+    },
+    "compact": {
+      "aspect": 3.162278,
+      "width": 1000,
+      "height": 316.227766,
+      "tiles": {
+        "/media/videos/cartuino.mp4": {
+          "left": 0,
+          "top": 0,
+          "width": 40,
+          "height": 71.151247
+        },
+        "/media/images/cartuino.jpg": {
+          "left": 40.8,
+          "top": 0,
+          "width": 23.717082,
+          "height": 100
+        }
+      }
+    }
+  },
+  "Neural network on an FPGA": {
+    "signature": "e6d26b4c8b5f307976ad3490a00666ea3a32bd5f657791f21383421727d72908",
+    "count": 3,
+    "desktop": {
+      "aspect": 3.477957,
+      "width": 1000,
+      "height": 287.525101,
+      "tiles": {
+        "/media/images/veri-nn-digit-8.jpg": {
+          "left": 0,
+          "top": 0,
+          "width": 33.400786,
+          "height": 100
+        },
+        "/media/images/veri-nn-rtl.png": {
+          "left": 34.200786,
+          "top": 0,
+          "width": 34.641056,
+          "height": 82.645417
+        },
+        "/media/images/modelsim-output.png": {
+          "left": 69.641842,
+          "top": 0,
+          "width": 30.358158,
+          "height": 78.587458
+        }
+      }
+    },
+    "compact": {
+      "aspect": 3.477957,
+      "width": 1000,
+      "height": 287.525101,
+      "tiles": {
+        "/media/images/veri-nn-digit-8.jpg": {
+          "left": 0,
+          "top": 0,
+          "width": 33.400786,
+          "height": 100
+        },
+        "/media/images/veri-nn-rtl.png": {
+          "left": 34.200786,
+          "top": 0,
+          "width": 34.641056,
+          "height": 82.645417
+        },
+        "/media/images/modelsim-output.png": {
+          "left": 69.641842,
+          "top": 0,
+          "width": 30.358158,
+          "height": 78.587458
+        }
+      }
+    }
+  },
+  "Image captioning using vision transformers, coded by hand": {
+    "signature": "74d2c9cb672ed93e5c86d25a856c6ebac248e3bcfc9062e95a1781e8a01a0ed1",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.024904,
+      "width": 1000,
+      "height": 975.700787,
+      "tiles": {
+        "/media/images/image-captioning/tennis-caption-example.webp": {
+          "left": 0,
+          "top": 0,
+          "width": 32.8,
+          "height": 58.829511
+        },
+        "/media/images/image-captioning/skateboarding-caption-example.webp": {
+          "left": 33.6,
+          "top": 0,
+          "width": 32.8,
+          "height": 58.829511
+        },
+        "/media/images/image-captioning/surfing-caption-example.webp": {
+          "left": 67.2,
+          "top": 0,
+          "width": 32.8,
+          "height": 58.829511
+        },
+        "/media/images/image-captioning/model-and-tokenizer.png": {
+          "left": 0,
+          "top": 59.649434,
+          "width": 100,
+          "height": 40.350566
+        }
+      }
+    },
+    "compact": {
+      "aspect": 1.024904,
+      "width": 1000,
+      "height": 975.700787,
+      "tiles": {
+        "/media/images/image-captioning/tennis-caption-example.webp": {
+          "left": 0,
+          "top": 0,
+          "width": 32.8,
+          "height": 58.829511
+        },
+        "/media/images/image-captioning/skateboarding-caption-example.webp": {
+          "left": 33.6,
+          "top": 0,
+          "width": 32.8,
+          "height": 58.829511
+        },
+        "/media/images/image-captioning/surfing-caption-example.webp": {
+          "left": 67.2,
+          "top": 0,
+          "width": 32.8,
+          "height": 58.829511
+        },
+        "/media/images/image-captioning/model-and-tokenizer.png": {
+          "left": 0,
+          "top": 59.649434,
+          "width": 100,
+          "height": 40.350566
+        }
+      }
+    }
+  },
+  "dope interactive shell (dish) - a Unix shell": {
+    "signature": "69a77b39f13d469e330849b88be9f726bad3dd05b0373de35af1d5743def6530",
+    "count": 1,
+    "desktop": {
+      "aspect": 4.444444,
+      "width": 1000,
+      "height": 225,
+      "tiles": {
+        "/media/images/dish/terminal.gif": {
+          "left": 0,
+          "top": 0,
+          "width": 40,
+          "height": 100
+        }
+      }
+    },
+    "compact": {
+      "aspect": 4.444444,
+      "width": 1000,
+      "height": 225,
+      "tiles": {
+        "/media/images/dish/terminal.gif": {
+          "left": 0,
+          "top": 0,
+          "width": 40,
+          "height": 100
+        }
+      }
+    }
+  },
+  "Open source TPU - performs training/inference of neural networks": {
+    "signature": "d24ff8d3c5b54357c8fc8a2ba2f27caa332f68aea0cd6788e639952b6c39897c",
+    "count": 4,
+    "desktop": {
+      "aspect": 1.455717,
+      "width": 970.477871,
+      "height": 666.666667,
+      "tiles": {
+        "/media/videos/tiny-tpu/tiny-tpu-demo.mp4": {
+          "left": 0,
+          "top": 0,
+          "width": 27.289194,
+          "height": 70.622825
+        },
+        "/media/images/tiny-tpu/article-tpu.svg": {
+          "left": 28.11353,
+          "top": 0,
+          "width": 28.942765,
+          "height": 57.075403
+        },
+        "/media/videos/tiny-tpu/tinytpu.mp4": {
+          "left": 57.880632,
+          "top": 0,
+          "width": 42.119368,
+          "height": 45.756621
+        },
+        "/media/images/tiny-tpu/article-xor-mlp.svg": {
+          "left": 0,
+          "top": 71.822825,
+          "width": 48.855145,
+          "height": 28.177175
+        }
+      }
+    },
+    "compact": {
+      "aspect": 3.108915,
+      "width": 1000,
+      "height": 321.655587,
+      "tiles": {
+        "/media/videos/tiny-tpu/tiny-tpu-demo.mp4": {
+          "left": 0,
+          "top": 0,
+          "width": 18.093127,
+          "height": 100
+        },
+        "/media/images/tiny-tpu/article-tpu.svg": {
+          "left": 18.893127,
+          "top": 0,
+          "width": 19.189468,
+          "height": 80.81722
+        },
+        "/media/videos/tiny-tpu/tinytpu.mp4": {
+          "left": 38.882595,
+          "top": 0,
+          "width": 27.925745,
+          "height": 64.790132
+        },
+        "/media/images/tiny-tpu/article-xor-mlp.svg": {
+          "left": 67.608339,
+          "top": 0,
+          "width": 32.391661,
+          "height": 39.898115
+        }
+      }
+    }
+  }
+}
