@@ -183,3 +183,8 @@ article:has(> .rollouts-shell) {
     gap: 2.5rem;
   }
 }
+
+/* One continuous backdrop for the orbiting surface-material study. */
+.rollout-images.is-turntable-grid {
+  background: #0d121a;
+}

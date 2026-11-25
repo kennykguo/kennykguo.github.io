@@ -39,6 +39,8 @@ plus an optional `poster`. A single `video` field is also supported with
 For a fixed arrangement, `media_rows: [3, 1]` puts the first three media items
 in one row and the fourth underneath. Explicit rows preserve source order and
 fill the content width. Their height grows naturally to keep the images readable.
+`compact_media_rows` can supply a separate fixed arrangement below 60em; Shady
+uses two rows of eight on desktop and four rows of four on compact screens.
 
 Use Markdown in descriptions. References belong inline; links to your own work
 (GitHub, papers, Twitter posts, demos) belong in `links`.

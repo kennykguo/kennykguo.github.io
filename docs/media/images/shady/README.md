@@ -1,7 +1,8 @@
 # Shady teapot workspace
 
-`teapot-workspace-8x16.webp` is the website asset. The matching PNG is the
-full-resolution version linked below the project.
+`teapot-workspace-8x16.webp` is the previous static study. The current website
+entry uses the orbiting gradient videos in `docs/media/videos/shady/`.
+The matching PNG here retains the original full-resolution static study.
 
 - Eight rows and sixteen columns: 128 distinct renders.
 - First four rows: 64 simple/medium materials. Last four: 64 complex materials.

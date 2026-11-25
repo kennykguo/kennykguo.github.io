@@ -76,13 +76,90 @@
 - title: Shady - GLSL to SPIR-V compiler
   start_date: 2025-12-04
   description: Spent a lot of time working through the [Dragon Book](https://dpvipracollege.ac.in/wp-content/uploads/2023/01/Alfred-V.-Aho-Monica-S.-Lam-Ravi-Sethi-Jeffrey-D.-Ullman-Compilers-Principles-Techniques-and-Tools-Pearson_Addison-Wesley-2007.pdf) for a class. Ended up building a GLSL compiler that emits SPIR-V, then using a small Vulkan renderer to run the shaders on my GPU.
-  images:
-    - src: /media/images/shady/teapot-workspace-8x16.webp
-      width: 6144
-      height: 1712
-      full_width: true
-      priority: 3
-      alt: Eight rows of sixteen teapots on one continuous dark workspace, with 64 simple and medium surface shaders followed by 64 complex shaders, compiled by Shady and rendered with Vulkan.
+  media_layout: turntables
+  media_rows: [8, 8]
+  compact_media_rows: [4, 4, 4, 4]
+  videos:
+    - src: /media/videos/shady/01_spectrum_glaze.mp4
+      poster: /media/videos/shady/01_spectrum_glaze.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant spectrum glaze surface gradient, compiled by Shady.
+    - src: /media/videos/shady/02_sunset_porcelain.mp4
+      poster: /media/videos/shady/02_sunset_porcelain.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant sunset porcelain surface gradient, compiled by Shady.
+    - src: /media/videos/shady/03_tropical_diagonal.mp4
+      poster: /media/videos/shady/03_tropical_diagonal.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant tropical diagonal surface gradient, compiled by Shady.
+    - src: /media/videos/shady/04_violet_lagoon.mp4
+      poster: /media/videos/shady/04_violet_lagoon.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant violet lagoon surface gradient, compiled by Shady.
+    - src: /media/videos/shady/05_aurora_silk.mp4
+      poster: /media/videos/shady/05_aurora_silk.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant aurora silk surface gradient, compiled by Shady.
+    - src: /media/videos/shady/06_solar_ribbons.mp4
+      poster: /media/videos/shady/06_solar_ribbons.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant solar ribbons surface gradient, compiled by Shady.
+    - src: /media/videos/shady/07_iridescent_pearl.mp4
+      poster: /media/videos/shady/07_iridescent_pearl.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant iridescent pearl surface gradient, compiled by Shady.
+    - src: /media/videos/shady/08_prismatic_tide.mp4
+      poster: /media/videos/shady/08_prismatic_tide.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant prismatic tide surface gradient, compiled by Shady.
+    - src: /media/videos/shady/09_liquid_opal.mp4
+      poster: /media/videos/shady/09_liquid_opal.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant liquid opal surface gradient, compiled by Shady.
+    - src: /media/videos/shady/10_coral_aurora.mp4
+      poster: /media/videos/shady/10_coral_aurora.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant coral aurora surface gradient, compiled by Shady.
+    - src: /media/videos/shady/11_peacock_silk.mp4
+      poster: /media/videos/shady/11_peacock_silk.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant peacock silk surface gradient, compiled by Shady.
+    - src: /media/videos/shady/12_rainbow_clouds.mp4
+      poster: /media/videos/shady/12_rainbow_clouds.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant rainbow clouds surface gradient, compiled by Shady.
+    - src: /media/videos/shady/13_chromatic_flow.mp4
+      poster: /media/videos/shady/13_chromatic_flow.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant chromatic flow surface gradient, compiled by Shady.
+    - src: /media/videos/shady/14_nebula_glaze.mp4
+      poster: /media/videos/shady/14_nebula_glaze.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant nebula glaze surface gradient, compiled by Shady.
+    - src: /media/videos/shady/15_northern_lights.mp4
+      poster: /media/videos/shady/15_northern_lights.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant northern lights surface gradient, compiled by Shady.
+    - src: /media/videos/shady/16_molten_rainbow.mp4
+      poster: /media/videos/shady/16_molten_rainbow.jpg
+      width: 384
+      height: 288
+      alt: A rotating teapot with the vibrant molten rainbow surface gradient, compiled by Shady.
   links:
     - label: GitHub
       url: https://github.com/kennykguo/shady

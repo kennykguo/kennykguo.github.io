@@ -9,7 +9,7 @@
     </div>
     {% endif %}
     {% if project.images.size > 0 or project.videos.size > 0 or project.video %}
-    <div class="rollout-images{% if media_plan %} is-planned{% endif %}{% if project.media_layout == 'intrinsic-row' %} is-intrinsic-row{% endif %}{% if project.media_rows %} has-explicit-rows{% endif %}"{% if media_plan %} style="--gallery-aspect: {{ media_plan.desktop.aspect }}; --compact-gallery-aspect: {{ media_plan.compact.aspect }};"{% endif %} role="group" aria-label="{{ project.title | escape }} images">
+    <div class="rollout-images{% if media_plan %} is-planned{% endif %}{% if project.media_layout == 'intrinsic-row' %} is-intrinsic-row{% endif %}{% if project.media_rows %} has-explicit-rows{% endif %}{% if project.media_layout == 'turntables' %} is-turntable-grid{% endif %}"{% if media_plan %} style="--gallery-aspect: {{ media_plan.desktop.aspect }}; --compact-gallery-aspect: {{ media_plan.compact.aspect }};"{% endif %} role="group" aria-label="{{ project.title | escape }} images">
       {% for video in project.videos %}
       <video class="rollout-media rollout-video" {% include rollouts/media-style.html plan=media_plan src=video.src %}{% if video.width and video.height %} width="{{ video.width }}" height="{{ video.height }}"{% endif %} data-priority="{{ video.priority | default: 1 }}" controls autoplay muted loop playsinline preload="metadata"{% if video.poster %} poster="{{ video.poster | relative_url }}"{% endif %} aria-label="{{ video.alt | default: project.title | escape }}">
         <source src="{{ video.src | relative_url }}" type="video/mp4">

@@ -33,15 +33,15 @@ for (const project of projects) {
       aspect: item.layout_ratio || item.width / item.height,
       ...(item.full_width ? { fullWidth: true } : {}) };
   });
-  const signature = crypto.createHash('sha256').update(algorithm + JSON.stringify({ media, profiles, rows: project.media_rows })).digest('hex');
+  const signature = crypto.createHash('sha256').update(algorithm + JSON.stringify({ media, profiles, rows: project.media_rows, ...(project.compact_media_rows ? { compactRows: project.compact_media_rows } : {}) })).digest('hex');
   if (previous[project.title]?.signature === signature) {
     next[project.title] = previous[project.title];
     reused += 1;
     continue;
   }
-  const planFor = limit => project.media_rows ? computeRows(media, project.media_rows) : computeLayout(media, limit);
+  const planFor = (limit, rows = project.media_rows) => rows ? computeRows(media, rows) : computeLayout(media, limit);
   next[project.title] = { signature, count: media.length,
-    desktop: planFor(profiles.desktop), compact: planFor(profiles.compact) };
+    desktop: planFor(profiles.desktop), compact: planFor(profiles.compact, project.compact_media_rows || project.media_rows) };
   calculated += 1;
 }
 
