@@ -80,86 +80,86 @@
   media_rows: [8, 8]
   compact_media_rows: [4, 4, 4, 4]
   videos:
-    - src: /media/videos/shady/01_spectrum_glaze.mp4
-      poster: /media/videos/shady/01_spectrum_glaze.jpg
+    - src: /media/videos/shady/01_sunset_ombre.mp4
+      poster: /media/videos/shady/01_sunset_ombre.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant spectrum glaze surface gradient, compiled by Shady.
-    - src: /media/videos/shady/02_sunset_porcelain.mp4
-      poster: /media/videos/shady/02_sunset_porcelain.jpg
+      alt: "Orbiting teapot: Sunset ombre. Broad indigo, coral, and apricot vertical gradient."
+    - src: /media/videos/shady/02_lagoon_bloom.mp4
+      poster: /media/videos/shady/02_lagoon_bloom.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant sunset porcelain surface gradient, compiled by Shady.
-    - src: /media/videos/shady/03_tropical_diagonal.mp4
-      poster: /media/videos/shady/03_tropical_diagonal.jpg
+      alt: "Orbiting teapot: Lagoon bloom. Turquoise-to-lime pools over a deep blue glaze."
+    - src: /media/videos/shady/03_aurora_curtain.mp4
+      poster: /media/videos/shady/03_aurora_curtain.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant tropical diagonal surface gradient, compiled by Shady.
-    - src: /media/videos/shady/04_violet_lagoon.mp4
-      poster: /media/videos/shady/04_violet_lagoon.jpg
+      alt: "Orbiting teapot: Aurora curtain. Emerald and violet broad flowing color curtains."
+    - src: /media/videos/shady/04_pearl_iridescence.mp4
+      poster: /media/videos/shady/04_pearl_iridescence.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant violet lagoon surface gradient, compiled by Shady.
-    - src: /media/videos/shady/05_aurora_silk.mp4
-      poster: /media/videos/shady/05_aurora_silk.jpg
+      alt: "Orbiting teapot: Pearl iridescence. Pale pearl with camera-dependent pink and cyan sheen."
+    - src: /media/videos/shady/05_copper_patina.mp4
+      poster: /media/videos/shady/05_copper_patina.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant aurora silk surface gradient, compiled by Shady.
-    - src: /media/videos/shady/06_solar_ribbons.mp4
-      poster: /media/videos/shady/06_solar_ribbons.jpg
+      alt: "Orbiting teapot: Copper patina. Teal oxidation islands on warm polished copper."
+    - src: /media/videos/shady/06_lava_veins.mp4
+      poster: /media/videos/shady/06_lava_veins.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant solar ribbons surface gradient, compiled by Shady.
-    - src: /media/videos/shady/07_iridescent_pearl.mp4
-      poster: /media/videos/shady/07_iridescent_pearl.jpg
+      alt: "Orbiting teapot: Lava veins. Orange-gold molten veins in a dark plum ceramic."
+    - src: /media/videos/shady/07_cobalt_porcelain.mp4
+      poster: /media/videos/shady/07_cobalt_porcelain.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant iridescent pearl surface gradient, compiled by Shady.
-    - src: /media/videos/shady/08_prismatic_tide.mp4
-      poster: /media/videos/shady/08_prismatic_tide.jpg
+      alt: "Orbiting teapot: Cobalt porcelain. Cream porcelain with broad flowing cobalt marbling."
+    - src: /media/videos/shady/08_malachite_gold.mp4
+      poster: /media/videos/shady/08_malachite_gold.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant prismatic tide surface gradient, compiled by Shady.
-    - src: /media/videos/shady/09_liquid_opal.mp4
-      poster: /media/videos/shady/09_liquid_opal.jpg
+      alt: "Orbiting teapot: Malachite gold. Layered emerald mineral bands with sparse golden seams."
+    - src: /media/videos/shady/09_prismatic_panels.mp4
+      poster: /media/videos/shady/09_prismatic_panels.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant liquid opal surface gradient, compiled by Shady.
-    - src: /media/videos/shady/10_coral_aurora.mp4
-      poster: /media/videos/shady/10_coral_aurora.jpg
+      alt: "Orbiting teapot: Prismatic panels. Large angled blocks with local jewel-colored gradients."
+    - src: /media/videos/shady/10_coral_ribbons.mp4
+      poster: /media/videos/shady/10_coral_ribbons.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant coral aurora surface gradient, compiled by Shady.
-    - src: /media/videos/shady/11_peacock_silk.mp4
-      poster: /media/videos/shady/11_peacock_silk.jpg
+      alt: "Orbiting teapot: Coral ribbons. Soft coral ribbons across a pink and cream glaze."
+    - src: /media/videos/shady/11_enamel_droplets.mp4
+      poster: /media/videos/shady/11_enamel_droplets.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant peacock silk surface gradient, compiled by Shady.
-    - src: /media/videos/shady/12_rainbow_clouds.mp4
-      poster: /media/videos/shady/12_rainbow_clouds.jpg
+      alt: "Orbiting teapot: Enamel droplets. Soft coral droplets in turquoise enamel."
+    - src: /media/videos/shady/12_honeycomb_foil.mp4
+      poster: /media/videos/shady/12_honeycomb_foil.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant rainbow clouds surface gradient, compiled by Shady.
-    - src: /media/videos/shady/13_chromatic_flow.mp4
-      poster: /media/videos/shady/13_chromatic_flow.jpg
+      alt: "Orbiting teapot: Honeycomb foil. Gold cellular lattice over navy blue."
+    - src: /media/videos/shady/13_electric_velvet.mp4
+      poster: /media/videos/shady/13_electric_velvet.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant chromatic flow surface gradient, compiled by Shady.
-    - src: /media/videos/shady/14_nebula_glaze.mp4
-      poster: /media/videos/shady/14_nebula_glaze.jpg
+      alt: "Orbiting teapot: Electric velvet. Deep violet body with an electric cyan camera-dependent rim."
+    - src: /media/videos/shady/14_opal_brushed_metal.mp4
+      poster: /media/videos/shady/14_opal_brushed_metal.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant nebula glaze surface gradient, compiled by Shady.
-    - src: /media/videos/shady/15_northern_lights.mp4
-      poster: /media/videos/shady/15_northern_lights.jpg
+      alt: "Orbiting teapot: Opal brushed metal. Cool silver with a subtle cyan-peach sweep and fine brushed highlights."
+    - src: /media/videos/shady/15_neon_current.mp4
+      poster: /media/videos/shady/15_neon_current.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant northern lights surface gradient, compiled by Shady.
-    - src: /media/videos/shady/16_molten_rainbow.mp4
-      poster: /media/videos/shady/16_molten_rainbow.jpg
+      alt: "Orbiting teapot: Neon current. Turquoise and hot-pink glowing flowing contours on dark blue."
+    - src: /media/videos/shady/16_jewel_patchwork.mp4
+      poster: /media/videos/shady/16_jewel_patchwork.jpg
       width: 384
       height: 288
-      alt: A rotating teapot with the vibrant molten rainbow surface gradient, compiled by Shady.
+      alt: "Orbiting teapot: Jewel patchwork. Multicolor tile panels with soft internal color transitions."
   links:
     - label: GitHub
       url: https://github.com/kennykguo/shady
